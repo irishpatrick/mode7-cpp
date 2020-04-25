@@ -11,7 +11,7 @@ public:
     ~Tree();
 
     void init();
-    void update();
+    virtual void update();
 
 private:
 

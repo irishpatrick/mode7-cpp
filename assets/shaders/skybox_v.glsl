@@ -12,9 +12,11 @@ uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
 
+uniform int uv_tile;
+
 void main()
 {
     gl_Position = p * v * m * (vec4(position, 1));
 
-    uv = vertex_uv;
+    uv = vertex_uv * uv_tile;
 }

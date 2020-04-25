@@ -14,6 +14,8 @@ public:
 
     GLuint getDiffuseTexture();
 
+    int tile;
+
 private:
 
     GLuint diffuseTex;

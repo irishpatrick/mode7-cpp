@@ -46,7 +46,13 @@ int compile(GLuint id, const std::string& code)
     return res;
 }
 
-Shader::Shader()
+Shader::Shader() :
+    id(0),
+    projection(0),
+    view(0),
+    model(0),
+    diffuseTexture(0),
+    uv_tile(0)
 {
 }
 
@@ -104,6 +110,7 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
     view = glGetUniformLocation(id, "v");
     model = glGetUniformLocation(id, "m");
     diffuseTexture = glGetUniformLocation(id, "tex");
+    uv_tile = glGetUniformLocation(id, "uv_tile");
 
     ec();
 
@@ -122,7 +129,8 @@ void Shader::use()
 
 void Shader::setMaterial(Material& m)
 {
-    glUniform1d(diffuseTexture, m.getDiffuseTexture());
+    glUniform1ui(diffuseTexture, m.getDiffuseTexture());
+    glUniform1i(uv_tile, m.tile);
 }
 
 void Shader::setModel(Object& o)

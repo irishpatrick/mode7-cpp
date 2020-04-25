@@ -24,9 +24,14 @@ public:
 
     BBox* getBoundingBox();
 
+    void accumulate();
+    void decompose();
+
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
+
+    glm::mat4 matrix;
 
 protected:
 
@@ -40,12 +45,9 @@ protected:
     glm::vec3 front;
     glm::vec3 right;
 
-    glm::mat4 matrix;
     glm::mat4 worldMatrix;
 
 private:
-
-    void decompose();
 
     BBox bbox;
 

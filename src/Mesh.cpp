@@ -122,6 +122,21 @@ void Mesh::createFromShape(int shape)
     );
 }
 
+void Mesh::drawTriangles()
+{
+    glBindVertexArray(vao);
+    
+    if (elements)
+    {
+        glDrawElements(GL_TRIANGLES, triangles, GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, triangles);
+    }
+    glBindVertexArray(0);
+}
+
 void Mesh::draw(Shader& s)
 {
     glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
@@ -135,14 +150,5 @@ void Mesh::draw(Shader& s)
     s.setModel(*this);
 
     // draw
-    glBindVertexArray(vao);
-    if (elements)
-    {
-        glDrawElements(GL_TRIANGLES, triangles, GL_UNSIGNED_INT, 0);
-    }
-    else
-    {
-        glDrawArrays(GL_TRIANGLES, 0, triangles);
-    }
-    glBindVertexArray(0);
+    drawTriangles();
 }

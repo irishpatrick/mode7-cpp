@@ -43,15 +43,7 @@ void Object::update()
 
     matrix = t * r * s;
 
-    if (parent != nullptr)
-    {
-        worldMatrix = parent->worldMatrix * matrix;
-    }
-    else
-    {
-        worldMatrix = matrix;
-    }
-
+    accumulate();
     decompose();
 
     // etc
@@ -84,6 +76,18 @@ glm::vec3 Object::getWorldRotation()
 glm::vec3 Object::getWorldScale()
 {
     return worldScale;
+}
+
+void Object::accumulate()
+{
+    if (parent != nullptr)
+    {
+        worldMatrix = parent->worldMatrix * matrix;
+    }
+    else
+    {
+        worldMatrix = matrix;
+    }
 }
 
 void Object::decompose()

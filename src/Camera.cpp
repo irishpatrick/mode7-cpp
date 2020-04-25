@@ -15,6 +15,13 @@ void Camera::update()
     view = glm::inverse(object.getWorldMatrix());
 }
 
+void Camera::lookAt(glm::vec3 eye, glm::vec3 target)
+{
+    object.matrix = glm::lookAt(eye, target, glm::vec3(0, 1, 0));
+    object.accumulate();
+    object.decompose();
+}
+
 glm::mat4 Camera::getProjection()
 {
     return projection;

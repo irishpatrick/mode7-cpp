@@ -18,6 +18,8 @@ void Tree::init()
     // set texture
     material.setDiffuseTexture(Texture::open("assets/textures/tree.png"));
     Mesh::createFromShape(Mesh::PLANE);
+    scale *= 2;
+    
 }
 
 void Tree::update()

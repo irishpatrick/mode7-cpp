@@ -11,6 +11,7 @@
 #include "Tree.hpp"
 #include "Track.hpp"
 #include "Texture.hpp"
+#include "Car.hpp"
 
 SDL_Event e;
 int running;
@@ -18,6 +19,7 @@ Shader spriteShader;
 
 Mesh skybox;
 Tree tree;
+Car car;
 
 void update()
 {
@@ -64,9 +66,27 @@ void update()
         }
     }
 
+    if (Keyboard::isDown("c"))
+    {
+        car.gas();
+    }
+    if (Keyboard::isDown("x"))
+    {
+        car.brake();
+    }
+    if (left)
+    {
+        car.turnLeft();
+    }
+    if (right)
+    {
+        car.turnRight();
+    }
+
     tree.update();
     skybox.update();
     Track::update();
+    car.update();
     Camera::update();
 }
 
@@ -74,9 +94,10 @@ void draw()
 {
     Screen::clear();
 
+    skybox.draw(spriteShader);
     Track::draw(spriteShader);
     tree.draw(spriteShader);
-    skybox.draw(spriteShader);
+    car.draw(spriteShader);
 
     Screen::flip();
 }
@@ -94,18 +115,22 @@ int main(int argc, char** argv)
         "assets/shaders/skybox_f.glsl");
 
     skybox = ModelLoader::open("assets/models/skybox.obj");
-    skybox.material.setDiffuseTexture(Texture::open("assets/textures/skybox.png"));
     skybox.scale = glm::vec3(1000.0f);
     skybox.position.z = -10;
 
     tree.init();
     tree.position.x = 3;
-    tree.position.y = 1.0f;
+    tree.position.y = 2;
     tree.position.z = -5;
 
     Track::open("nothing");
 
-    Camera::getObject().position = glm::vec3(1.0f);
+    car.open("assets/cars/testCar.json");
+    car.position.y = 1;
+    car.position.x = 0;
+    Camera::getObject().position = glm::vec3(0, 1, 6);
+    Camera::lookAt(Camera::getObject().position, car.position);
+    car.addChild(Camera::getObject());
 
     running = 1;
     Clock::start();

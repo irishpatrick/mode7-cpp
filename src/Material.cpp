@@ -1,6 +1,7 @@
 #include "Material.hpp"
 
 Material::Material() :
+    tile(1),
     diffuseTex(0)
 {
 

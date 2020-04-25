@@ -25,6 +25,8 @@ public:
 
 protected:
 
+    void drawTriangles();
+
 private:
 
     GLuint vao;

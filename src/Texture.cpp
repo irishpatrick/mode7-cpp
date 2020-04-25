@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <iostream>
 #include "gl.h"
 
 GLuint Texture::open(const std::string& fn)
@@ -16,6 +17,7 @@ GLuint Texture::open(const std::string& fn)
     int mode = GL_RGB;
     if (s->format->BytesPerPixel == 4)
     {
+        std::cout << "Texture: " << fn << ": mode switch" << std::endl;
         mode = GL_RGBA;
     }
 

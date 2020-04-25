@@ -13,5 +13,4 @@ void main()
         discard;
     }
     color = tc;
-    //color = vec4(1, 0, 1, 1);
 }

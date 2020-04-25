@@ -26,6 +26,7 @@ private:
     GLuint view;
     GLuint model;
     GLuint diffuseTexture;
+    GLuint uv_tile;
 };
 
 
