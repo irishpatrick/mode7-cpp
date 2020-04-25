@@ -1,0 +1,2 @@
+Add normals
+Add lights to shaders
