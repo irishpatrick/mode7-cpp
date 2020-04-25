@@ -11,6 +11,9 @@
 #define IDLE 0
 #define ACCEL 1
 #define BRAKE 2
+#define THROTTLE_RATE 0.1f
+#define COAST_RATE -0.02f
+#define BRAKE_RATE -0.12f
 
 class Car : public Mesh
 {
@@ -40,7 +43,8 @@ private:
     Object sprite;
     GLuint textures[4];
 
-    int throttlePos;
+    float throttle;
+    float topSpeed;
     std::vector<Line> velCurve;
 };
 

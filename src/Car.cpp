@@ -12,7 +12,8 @@ Car::Car() :
     state(IDLE),
     tracked(false),
     speed(0.0f),
-    throttlePos(0)
+    throttle(0.0f),
+    topSpeed(1.3f)
 {
 
 }
@@ -52,37 +53,34 @@ void Car::open(const std::string& fn)
 
 void Car::update()
 {
-    std::cout << "\rthrottle: " << throttlePos;
+    //mastd::cout << "\rthrottle: " << throttle << "           ";
     std::fflush(stdout);
+    float delta;
     if (state == ACCEL)
     {
-        throttlePos += 10;
-        if (throttlePos >= 10000)
-        {
-            throttlePos = 10000;
-        }
+        delta = THROTTLE_RATE;
     }
     else if (state == BRAKE)
     {
-        throttlePos -= 30;
-        if (throttlePos <= 0)
-        {
-            throttlePos = 0;
-        }
+        delta = BRAKE_RATE;
     }
     else if (state == IDLE)
     {
-        throttlePos -= 2;
-        if (throttlePos <= 0)
-        {
-            throttlePos = 0;
-        }
+        delta = COAST_RATE;
     }
+
+    throttle += delta;
+    if (throttle < 0.0f) throttle = 0.0f;
+    if (throttle > 10.0f) throttle = 10.0f;
 
     state = IDLE;
 
-    float temp = velCurve[throttlePos / 1000].solve((float)throttlePos / 1000.0f);
-    Object::position -= (0.07f * temp) * Object::front;
+    int piece = (int)fminf(9, floorf(throttle));
+    float temp = velCurve[piece].solve(throttle);
+    std::cout << "\rtemp: " << temp << "                    ";
+    speed = topSpeed * temp / 10.0f;
+
+    Object::position -= speed * Object::front;
     Object::update();
 
     sprite.position = Object::position;
@@ -116,12 +114,12 @@ void Car::brake()
 
 void Car::turnLeft()
 {
-    rotation.y += 0.03f;
+    rotation.y += 0.03f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
-    rotation.y -= 0.03f;
+    rotation.y -= 0.03f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)
