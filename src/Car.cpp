@@ -12,8 +12,10 @@ Car::Car() :
     state(IDLE),
     tracked(false),
     speed(0.0f),
+    drift(0.0f),
     throttle(0.0f),
-    topSpeed(1.3f)
+    topSpeed(1.3f),
+    traction(0.3f)
 {
 
 }
@@ -86,6 +88,9 @@ void Car::update()
     speed = topSpeed * temp / 10.0f;
 
     Object::position -= speed * Object::front;
+    Object::position += drift * Object::right;
+
+    drift = 0.0f;
 
     sprite.position = Object::position;
     sprite.scale = Object::scale;
@@ -126,12 +131,14 @@ void Car::brake()
 
 void Car::turnLeft()
 {
-    rotation.y += 0.022f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotation.y += TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    drift = traction * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
-    rotation.y -= 0.022f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotation.y -= TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    drift = -traction * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)

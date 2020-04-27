@@ -50,6 +50,7 @@ void Object::update()
     //glm::mat4 inv = glm::inverse(worldMatrix);
     //front = glm::normalize(glm::vec3(inv[2]));
     front = worldQuat * Util::zAxis();
+    right = -glm::cross(front, glm::vec3(0, 1, 0));
 
     // update children
     for (auto& e : children)

@@ -14,6 +14,7 @@
 #define THROTTLE_RATE 0.1f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE -0.12f
+#define TURN_RATE 0.022f
 
 class Car : public Mesh
 {
@@ -33,6 +34,8 @@ public:
 
     void setTracked(bool);
 
+    float traction;
+
 private:
 
     Mesh shadow;
@@ -41,6 +44,7 @@ private:
     
     bool tracked;
     float speed;
+    float drift;
 
     Object sprite;
     GLuint textures[4];
