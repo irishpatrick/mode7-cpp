@@ -25,6 +25,12 @@ Car::~Car()
 
 void Car::open(const std::string& fn)
 {
+    shadow.material.setDiffuseTexture(Texture::open("assets/textures/drop_shadow.png"));
+    shadow.createFromShape(Mesh::PLANE);
+    shadow.rotation.x = M_PI / 2.0f;
+    shadow.position.y = -0.99f;
+    Object::addChild(shadow);
+
     material.setDiffuseTexture(Texture::open("assets/textures/car.png"));
     Mesh::createFromShape(Mesh::PLANE);
 
@@ -77,23 +83,29 @@ void Car::update()
 
     int piece = (int)fminf(9, floorf(throttle));
     float temp = velCurve[piece].solve(throttle);
-    std::cout << "\rtemp: " << temp << "                    ";
     speed = topSpeed * temp / 10.0f;
 
     Object::position -= speed * Object::front;
-    Object::update();
 
     sprite.position = Object::position;
     sprite.scale = Object::scale;
-    sprite.update();
-    if (!tracked)
+    
+    sprite.rotation = Camera::getObject().getWorldRotation();
+
+    if (tracked)
     {
-        sprite.rotation = Camera::getObject().getWorldRotation();
+        sprite.rotation.y = rotation.y;
     }
+
+    shadow.update();
+    Object::update();
+    sprite.update();
 }
 
 void Car::draw(Shader& s)
 {
+    shadow.draw(s);
+
     glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
     s.use();
     s.setMaterial(material);
@@ -114,12 +126,12 @@ void Car::brake()
 
 void Car::turnLeft()
 {
-    rotation.y += 0.03f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotation.y += 0.022f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
-    rotation.y -= 0.03f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotation.y -= 0.022f * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)

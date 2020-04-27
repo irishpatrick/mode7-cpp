@@ -35,6 +35,8 @@ public:
 
 private:
 
+    Mesh shadow;
+
     int state;
     
     bool tracked;

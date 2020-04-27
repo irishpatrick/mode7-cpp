@@ -40,31 +40,8 @@ void update()
         running = 0;
     }
 
-    int up = Keyboard::isDown("up");
-    int down = Keyboard::isDown("down");
     int left = Keyboard::isDown("left");
     int right = Keyboard::isDown("right");
-    int fly = Keyboard::isDown("f");
-    if (fly)
-    {
-        Camera::getObject().position -= 0.5f * glm::normalize(Camera::getObject().getFront());
-        if (up)
-        {
-            Camera::getObject().rotation.x += 0.01f;
-        }
-        if (down)
-        {
-            Camera::getObject().rotation.x -= 0.01f;
-        }
-        if (left)
-        {
-            Camera::getObject().rotation.y += 0.01f;
-        }
-        if (right)
-        {
-            Camera::getObject().rotation.y -= 0.01f;
-        }
-    }
 
     if (Keyboard::isDown("c"))
     {
@@ -107,7 +84,7 @@ int main(int argc, char** argv)
     printf("hello world!\n");
 
     Screen::create(1024, 768);
-    Camera::create(1024.0f, 768.0f, 60.0f, 0.01f, 2000.0f);
+    Camera::create(1024.0f, 768.0f, 80.0f, 0.01f, 5000.0f);
     Keyboard::attach();
 
     spriteShader.open(
@@ -115,8 +92,7 @@ int main(int argc, char** argv)
         "assets/shaders/skybox_f.glsl");
 
     skybox = ModelLoader::open("assets/models/skybox.obj");
-    skybox.scale = glm::vec3(1000.0f);
-    skybox.position.z = -10;
+    skybox.scale = glm::vec3(2000.0f);
 
     tree.init();
     tree.position.x = 3;
@@ -128,9 +104,10 @@ int main(int argc, char** argv)
     car.open("assets/cars/testCar.json");
     car.position.y = 1;
     car.position.x = 0;
-    Camera::getObject().position = glm::vec3(0, 1, 6);
-    Camera::lookAt(Camera::getObject().position, car.position);
+    Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
+    Camera::getObject().rotation.x = -atanf(2.0f / 12.0f);
     car.addChild(Camera::getObject());
+    car.setTracked(true);
 
     running = 1;
     Clock::start();

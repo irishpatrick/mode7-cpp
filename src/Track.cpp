@@ -14,9 +14,9 @@ static std::vector<Tree> trees;
 void Track::open(const std::string& fn)
 {
     mesh.createFromShape(Mesh::PLANE);
-    mesh.scale = glm::vec3(100.0f);
-    mesh.material.setDiffuseTexture(Texture::open("assets/textures/road.bmp"));
-    mesh.material.tile = 40;
+    mesh.scale = glm::vec3(300.0f);
+    mesh.material.setDiffuseTexture(Texture::open("assets/textures/track.png"));
+    //mesh.material.tile = 10;
     mesh.rotation.x = M_PI / 2.0f;
 
     std::ifstream in(fn);

@@ -10,7 +10,7 @@ void main()
     vec4 tc = texture(tex, uv);
     if (tc.a < 0.5)
     {
-        discard;
+        //discard;
     }
     color = tc;
 }

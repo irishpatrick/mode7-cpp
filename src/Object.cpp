@@ -96,7 +96,15 @@ void Object::decompose()
     glm::vec4 persp;
     glm::decompose(worldMatrix, worldScale, worldQuat, worldPosition, skew, persp);
     //worldQuat = glm::conjugate(worldQuat);
-    worldRotation = glm::eulerAngles(worldQuat);
+    float a = glm::angle(worldQuat);
+    if (a > M_PI / 2.0f)
+    {
+        worldRotation = -glm::vec3(M_PI) + glm::eulerAngles(worldQuat);
+    }
+    else if (a < M_PI / 2.0f)
+    {
+        worldRotation = glm::eulerAngles(worldQuat);   
+    }    
 }
 
 BBox* Object::getBoundingBox()
