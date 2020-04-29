@@ -35,7 +35,7 @@ void Mesh::setMaterial(Material& mat)
 void Mesh::createFromBuffer(const float* buffer, GLuint vertices)
 {
     elements = false;
-    triangles = 10000;
+    triangles = 100'000'000;
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);

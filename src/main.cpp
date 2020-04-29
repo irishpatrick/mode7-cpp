@@ -20,6 +20,7 @@ Shader spriteShader;
 Mesh skybox;
 Tree tree;
 Car car;
+Mesh track;
 
 void update()
 {
@@ -63,6 +64,7 @@ void update()
     tree.update();
     skybox.update();
     Track::update();
+    track.update();
     car.update();
     Camera::update();
 }
@@ -71,8 +73,9 @@ void draw()
 {
     Screen::clear();
 
-    skybox.draw(spriteShader);
-    Track::draw(spriteShader);
+    //skybox.draw(spriteShader);
+    track.draw(spriteShader);
+    //Track::draw(spriteShader);
     tree.draw(spriteShader);
     car.draw(spriteShader);
 
@@ -93,6 +96,11 @@ int main(int argc, char** argv)
 
     skybox = ModelLoader::open("assets/models/skybox.obj");
     skybox.scale = glm::vec3(2000.0f);
+
+    track = ModelLoader::open("assets/models/track.obj");
+    track.scale *= 2;
+    track.position.y = -1.0f;
+    //track.material.setDiffuseTexture(Texture::open("assets/textures/road.png"));
 
     tree.init();
     tree.position.x = 3;

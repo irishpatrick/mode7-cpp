@@ -15,7 +15,7 @@ Car::Car() :
     drift(0.0f),
     throttle(0.0f),
     topSpeed(1.3f),
-    traction(0.3f)
+    traction(0.01f)
 {
 
 }
@@ -132,13 +132,13 @@ void Car::brake()
 void Car::turnLeft()
 {
     rotation.y += TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
-    drift = traction * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    drift = traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
     rotation.y -= TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
-    drift = -traction * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    drift = -traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)
