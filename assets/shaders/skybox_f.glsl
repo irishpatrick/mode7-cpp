@@ -8,7 +8,7 @@ uniform sampler2D tex;
 void main()
 {
     vec4 tc = texture(tex, uv);
-    if (tc.a < 0.5)
+    if (tc.a < 0.3)
     {
         discard;
     }
