@@ -39,6 +39,16 @@ void Object::setRotation(float x, float y, float z)
     rz = glm::angleAxis(z, Util::zAxis());
 }
 
+glm::quat Object::getWorldRx()
+{
+    if (parent != nullptr)
+    {
+        return rx * parent->getWorldRx();
+    }
+
+    return rx;
+}
+
 glm::quat Object::getWorldRy()
 {
     if (parent != nullptr)
@@ -52,6 +62,9 @@ glm::quat Object::getWorldRy()
 void Object::addChild(Object& o)
 {
     o.parent = this;
+    o.rx = o.rx * glm::inverse(rx);
+    o.ry = o.ry * glm::inverse(ry);
+    o.rz = o.rz * glm::inverse(rz);
     children.push_back(&o);
 }
 

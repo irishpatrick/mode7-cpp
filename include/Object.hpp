@@ -35,6 +35,7 @@ public:
     void setRotationY(float);
     void setRotationZ(float);
 
+    glm::quat getWorldRx();
     glm::quat getWorldRy();
 
     glm::vec3 position;

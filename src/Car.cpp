@@ -95,6 +95,7 @@ void Car::update()
     sprite.position = Object::position;
     sprite.scale = Object::scale;
 
+    sprite.rx = Camera::getObject().getWorldRx();
     if (tracked)
     {
         sprite.ry = ry;
