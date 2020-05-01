@@ -19,7 +19,8 @@ Mesh::Mesh() :
     vbo(0),
     ebo(0),
     elements(false),
-    triangles(0)
+    triangles(0),
+    alt(nullptr)
 {
 }
 
@@ -120,6 +121,11 @@ void Mesh::createFromShape(int shape)
         8 * sizeof(float),
         (void*)(6 * sizeof(float))
     );
+}
+
+void Mesh::setAltShader(Shader& s)
+{
+    alt = &s;
 }
 
 void Mesh::drawTriangles()

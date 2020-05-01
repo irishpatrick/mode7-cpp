@@ -114,7 +114,7 @@ void Car::draw(Shader& s)
     glEnable(GL_ALPHA_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-    shadow.draw(s);
+    shadow.draw(*alt);
     glDisable(GL_BLEND);
     glDisable(GL_ALPHA_TEST);
     glEnable(GL_DEPTH_TEST);

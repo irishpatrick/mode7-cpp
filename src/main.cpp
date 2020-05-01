@@ -17,6 +17,7 @@
 SDL_Event e;
 int running;
 Shader spriteShader;
+Shader shadowShader;
 
 Mesh skybox;
 Tree tree;
@@ -95,11 +96,16 @@ int main(int argc, char** argv)
         "assets/shaders/skybox_v.glsl", 
         "assets/shaders/skybox_f.glsl");
 
+    shadowShader.open(
+        "assets/shaders/shadow_v.glsl",
+        "assets/shaders/shadow_f.glsl"
+    );
+
     skybox = ModelLoader::open("assets/models/skybox.obj");
-    skybox.scale = glm::vec3(500.0f);
+    skybox.scale = glm::vec3(1500.0f);
 
     track = ModelLoader::open("assets/models/track.obj");
-    track.scale *= 2;
+    track.scale = glm::vec3(4.0f);
     track.position.y = -1.0f;
     //track.material.setDiffuseTexture(Texture::open("assets/textures/road.png"));
 
@@ -107,8 +113,7 @@ int main(int argc, char** argv)
     tree.position.x = 3;
     tree.position.y = 2;
     tree.position.z = -5;
-
-    Track::open("nothing");
+    tree.setAltShader(shadowShader);
 
     car.open("assets/cars/testCar.json");
     car.position.y = 1;
@@ -117,6 +122,7 @@ int main(int argc, char** argv)
     Camera::getObject().rotate(-atanf(2.0f / 12.0f), 0, 0);
     car.addChild(Camera::getObject());
     car.setTracked(true);
+    car.setAltShader(shadowShader);
 
     running = 1;
     Clock::start();

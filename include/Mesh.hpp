@@ -19,6 +19,8 @@ public:
     void createFromShape(int);
     virtual void draw(Shader&);
 
+    void setAltShader(Shader&);
+
     Material material;
 
     static const int PLANE = 0;
@@ -26,6 +28,8 @@ public:
 protected:
 
     void drawTriangles();
+
+    Shader* alt;
 
 private:
 
