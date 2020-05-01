@@ -13,6 +13,7 @@ public:
     virtual ~Object();
 
     void addChild(Object&);
+    void addChild(Object*);
     virtual void update();
 
     glm::mat4 getWorldMatrix();
@@ -21,21 +22,33 @@ public:
     glm::vec3 getWorldRotation();
     glm::vec3 getWorldScale();
     glm::vec3 getFront();
+    glm::quat getWorldQuat();
 
     BBox* getBoundingBox();
 
     void accumulate();
     void decompose();
 
+    void setRotation(float, float, float);
+    void rotate(float, float, float);
+    void setRotationX(float);
+    void setRotationY(float);
+    void setRotationZ(float);
+
+    glm::quat getWorldRy();
+
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
 
+    glm::quat quat;
+    glm::quat rx;
+    glm::quat ry;
+    glm::quat rz;
+
     glm::mat4 matrix;
 
 protected:
-
-    glm::quat quat;
 
     glm::vec3 worldPosition;
     glm::vec3 worldRotation;

@@ -11,6 +11,7 @@
 #include "Tree.hpp"
 #include "Track.hpp"
 #include "Texture.hpp"
+#include "Group.hpp"
 #include "Car.hpp"
 
 SDL_Event e;
@@ -20,6 +21,7 @@ Shader spriteShader;
 Mesh skybox;
 Tree tree;
 Car car;
+//Group track;
 Mesh track;
 
 void update()
@@ -74,10 +76,10 @@ void draw()
     Screen::clear();
 
     skybox.draw(spriteShader);
-    //track.draw(spriteShader);
-    Track::draw(spriteShader);
-    tree.draw(spriteShader);
+    track.draw(spriteShader);
+    //Track::draw(spriteShader);
     car.draw(spriteShader);
+    tree.draw(spriteShader);
 
     Screen::flip();
 }
@@ -113,7 +115,7 @@ int main(int argc, char** argv)
     car.position.y = 1;
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
-    Camera::getObject().rotation.x = -atanf(2.0f / 12.0f);
+    Camera::getObject().rotate(-atanf(2.0f / 12.0f), 0, 0);
     car.addChild(Camera::getObject());
     car.setTracked(true);
 

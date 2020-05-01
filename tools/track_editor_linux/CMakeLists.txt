@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(mode7 C CXX)
+project(track_editor C CXX)
 
 if (MSVC)
     set(flags /W3 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
@@ -14,19 +14,11 @@ set(libs "")
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 
-    find_package(SDL2 CONFIG REQUIRED)
-    find_package(sdl2-image CONFIG REQUIRED)
-    find_package(sdl2-ttf CONFIG REQUIRED)
-    find_package(GLEW CONFIG REQUIRED)
+    
 
     set(libs
         ${libs}
-        SDL2::SDL2
-        SDL2::SDL2main
-        SDL2::SDL2_image
-        SDL2::SDL2_ttf
-        GLEW::GLEW
-        OpenGL32
+        
     )
 
 else ()
@@ -53,7 +45,10 @@ endif()
 find_path(BOOST_INCL boost)
 find_path(GLM_INCL glm)
 find_path(JSON_INCL nlohmann)
-set(incl ${incl} ${GLM_INCL} ${BOOST_INCL} ${JSON_INCL})
+set(incl ${incl} ../track_editor_core/include ${GLM_INCL} ${BOOST_INCL} ${JSON_INCL})
+set(libs ${libs} tecore)
+
+link_directories(../track_editor_core/build)
 
 file(GLOB sources src/* include/*)
 add_executable(${PROJECT_NAME} ${sources})

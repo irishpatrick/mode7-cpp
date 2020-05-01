@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(track_editor C CXX)
+project(tecore C CXX)
 
 if (MSVC)
     set(flags /W3 /DEBUG /D_CRT_SECURE_NO_WARNINGS)

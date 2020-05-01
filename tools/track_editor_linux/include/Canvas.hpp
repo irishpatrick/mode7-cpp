@@ -10,10 +10,27 @@ public:
     Canvas();
     ~Canvas();
 
+    void create();
+    void attach();
+    void clear();
+    void configureEvent();
+    gboolean scrollEvent(GdkEventScroll*);
+    gboolean motionEvent(GdkEventMotion*);
+    gboolean buttonEvent(GdkEventButton*);
+    void drawEvent(cairo_t*);
+
     GtkWidget* getWidget();
 
 private:
 
+    double offsetX;
+    double offsetY;
+    int lastX;
+    int lastY;
+    int scale;
+    int w;
+    int h;
+    cairo_surface_t* surface;
     GtkWidget* widget;
 };
 

@@ -27,11 +27,11 @@ Car::~Car()
 
 void Car::open(const std::string& fn)
 {
-    shadow.scale.y = 0.5;
+    shadow.scale.y = 0.3;
     shadow.material.setDiffuseTexture(Texture::open("assets/textures/drop_shadow.png"));
     shadow.createFromShape(Mesh::PLANE);
     shadow.rotation.x = M_PI / 2.0f;
-    shadow.position.y = -0.90f;
+    shadow.position.y = -1.0f;
     Object::addChild(shadow);
 
     material.setDiffuseTexture(Texture::open("assets/textures/car.png"));
@@ -62,7 +62,6 @@ void Car::open(const std::string& fn)
 
 void Car::update()
 {
-    //mastd::cout << "\rthrottle: " << throttle << "           ";
     std::fflush(stdout);
     float delta;
     if (state == ACCEL)
@@ -95,12 +94,10 @@ void Car::update()
 
     sprite.position = Object::position;
     sprite.scale = Object::scale;
-    
-    sprite.rotation = Camera::getObject().getWorldRotation();
 
     if (tracked)
     {
-        sprite.rotation.y = rotation.y;
+        sprite.ry = ry;
     }
 
     shadow.update();
@@ -140,13 +137,13 @@ void Car::brake()
 
 void Car::turnLeft()
 {
-    rotation.y += TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotate(0, TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
     drift = traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
-    rotation.y -= TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotate(0, -TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
     drift = -traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
 }
 
