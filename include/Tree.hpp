@@ -13,9 +13,11 @@ public:
     void init();
     virtual void update();
 
+    virtual void draw(Shader& s);
+
 private:
 
-
+    Mesh shadow;
 };
 
 #endif /* TREE_HPP */

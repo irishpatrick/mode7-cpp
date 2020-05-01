@@ -77,9 +77,8 @@ void draw()
 
     skybox.draw(spriteShader);
     track.draw(spriteShader);
-    //Track::draw(spriteShader);
-    car.draw(spriteShader);
     tree.draw(spriteShader);
+    car.draw(spriteShader);
 
     Screen::flip();
 }
