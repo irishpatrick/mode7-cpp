@@ -14,7 +14,7 @@ Car::Car() :
     speed(0.0f),
     drift(0.0f),
     throttle(0.0f),
-    topSpeed(1.3f),
+    topSpeed(1.7f),
     traction(0.01f)
 {
 

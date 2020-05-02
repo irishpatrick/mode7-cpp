@@ -35,6 +35,8 @@ public:
     void setRotationY(float);
     void setRotationZ(float);
 
+    std::vector<Object*> getChildren();
+
     glm::quat getWorldRx();
     glm::quat getWorldRy();
 

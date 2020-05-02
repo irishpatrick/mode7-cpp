@@ -25,6 +25,11 @@ Object::~Object()
 
 }
 
+std::vector<Object*> Object::getChildren()
+{
+    return children;
+}
+
 void Object::rotate(float x, float y, float z)
 {
     rx = rx * glm::angleAxis(x, Util::xAxis());

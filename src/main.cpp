@@ -105,9 +105,8 @@ int main(int argc, char** argv)
     skybox.scale = glm::vec3(1500.0f);
 
     track = ModelLoader::open("assets/models/track.obj");
-    track.scale = glm::vec3(4.0f);
+    track.scale = glm::vec3(3.0f);
     track.position.y = -1.0f;
-    //track.material.setDiffuseTexture(Texture::open("assets/textures/road.png"));
 
     tree.init();
     tree.position.x = 3;
