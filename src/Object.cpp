@@ -37,6 +37,22 @@ void Object::rotate(float x, float y, float z)
     rz = rz * glm::angleAxis(z, Util::zAxis());
 }
 
+void Object::setRotationX(float x)
+{
+    rx = glm::angleAxis(x, Util::xAxis());
+
+}
+
+void Object::setRotationY(float y)
+{
+    ry = glm::angleAxis(y, Util::yAxis());
+}
+
+void Object::setRotationZ(float z)
+{
+    rz = glm::angleAxis(z, Util::zAxis());
+}
+
 void Object::setRotation(float x, float y, float z)
 {
     rx = glm::angleAxis(x, Util::xAxis());
@@ -91,8 +107,6 @@ glm::quat Object::getWorldQuat()
 
 void Object::update()
 {
-    // update
-    //quat = glm::quat(rotation);
     quat = ry * rz * rx;
 
     glm::mat4 t = glm::translate(glm::mat4(1.0f), position);
@@ -105,12 +119,9 @@ void Object::update()
     decompose();
 
     // etc
-    //glm::mat4 inv = glm::inverse(worldMatrix);
-    //front = glm::normalize(glm::vec3(inv[2]));
     front = worldQuat * Util::zAxis();
-    right = -glm::cross(front, glm::vec3(0, 1, 0));
+    right = -glm::cross(front, Util::yAxis());
 
-    // update children
     for (auto& e : children)
     {
         e->update();
@@ -154,17 +165,6 @@ void Object::decompose()
     glm::vec3 skew;
     glm::vec4 persp;
     glm::decompose(worldMatrix, worldScale, worldQuat, worldPosition, skew, persp);
-    //worldQuat = glm::conjugate(worldQuat);
-    float a = glm::angle(worldQuat);
-    if (a > M_PI / 2.0f)
-    {
-        worldRotation = -glm::vec3(M_PI) + glm::eulerAngles(worldQuat);
-    }
-    else if (a <= M_PI / 2.0f)
-    {
-        worldRotation = glm::eulerAngles(worldQuat);   
-    }
-    
 }
 
 BBox* Object::getBoundingBox()

@@ -14,17 +14,15 @@ public:
 
     void addChild(Object&);
     void addChild(Object*);
+
     virtual void update();
 
     glm::mat4 getWorldMatrix();
-
     glm::vec3 getWorldPosition();
     glm::vec3 getWorldRotation();
     glm::vec3 getWorldScale();
     glm::vec3 getFront();
     glm::quat getWorldQuat();
-
-    BBox* getBoundingBox();
 
     void accumulate();
     void decompose();
@@ -35,20 +33,19 @@ public:
     void setRotationY(float);
     void setRotationZ(float);
 
-    std::vector<Object*> getChildren();
-
     glm::quat getWorldRx();
     glm::quat getWorldRy();
 
-    glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 scale;
+    BBox* getBoundingBox();
+    std::vector<Object*> getChildren();
 
-    glm::quat quat;
+    glm::vec3 position;
     glm::quat rx;
     glm::quat ry;
     glm::quat rz;
+    glm::vec3 scale;
 
+    glm::quat quat;
     glm::mat4 matrix;
 
 protected:

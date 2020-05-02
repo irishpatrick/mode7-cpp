@@ -89,7 +89,7 @@ int main(int argc, char** argv)
     printf("hello world!\n");
 
     Screen::create(1024, 768);
-    Camera::create(1024.0f, 768.0f, 80.0f, 0.01f, 3000.0f);
+    Camera::create(1024.0f, 768.0f, 80.0f, 0.1f, 4 * 3000.0f);
     Keyboard::attach();
 
     spriteShader.open(
