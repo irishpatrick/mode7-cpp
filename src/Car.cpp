@@ -29,13 +29,13 @@ void Car::open(const std::string& fn)
 {
     shadow.scale.y = 0.3;
     shadow.scale.x = 1.1;
-    shadow.material.setDiffuseTexture(Texture::open("assets/textures/drop_shadow.png"));
+    shadow.material.addDiffuseMap(Texture::open("assets/textures/drop_shadow.png"));
     shadow.createFromShape(Mesh::PLANE);
     shadow.rotate(M_PI / 2.0f, 0, 0);
     shadow.position.y = -1.0f;
     Object::addChild(shadow);
 
-    material.setDiffuseTexture(Texture::open("assets/textures/car.png"));
+    material.addDiffuseMap(Texture::open("assets/textures/car.png"));
     Mesh::createFromShape(Mesh::PLANE);
 
     std::ifstream in(fn);
@@ -119,7 +119,7 @@ void Car::draw(Shader& s)
     glDisable(GL_ALPHA_TEST);
     glEnable(GL_DEPTH_TEST);
 
-    glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
+    //glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
     s.use();
     s.setMaterial(material);
     s.setModel(sprite);

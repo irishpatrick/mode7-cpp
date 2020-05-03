@@ -38,6 +38,7 @@ else ()
     pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
     pkg_check_modules(CAIRO REQUIRED cairo)
     pkg_check_modules(GLEW REQUIRED glew)
+    pkg_check_modules(ASSIMP REQUIRED assimp)
 
     set(incl
         ${incl}
@@ -47,6 +48,7 @@ else ()
         ${CAIRO_INCLUDE_DIRS}
 	    ${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
+        ${ASSIMP_INCLUDE_DIRS}
     )
 
     set(libs
@@ -56,7 +58,8 @@ else ()
         ${SDL2_TTF_LIBRARIES}
 	    ${GLEW_LIBRARIES}
         ${CAIRO_LIBRARIES}
-	    m
+        ${ASSIMP_LIBRARIES}
+        m
     )
 endif()
 

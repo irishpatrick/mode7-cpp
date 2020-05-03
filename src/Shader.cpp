@@ -129,8 +129,16 @@ void Shader::use()
 
 void Shader::setMaterial(Material& m)
 {
-    glUniform1ui(diffuseTexture, m.getDiffuseTexture());
     glUniform1i(uv_tile, m.tile);
+    
+    for (int i = 0; i < m.numDiffuseMaps(); ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        unsigned int loc = glGetUniformLocation(id, std::string("diffuseMap_" + i).c_str());
+        glUniform1ui(loc, m.getDiffuseMap(i));
+        glBindTexture(GL_TEXTURE_2D, m.getDiffuseMap(i));
+    }
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void Shader::setModel(Object& o)

@@ -1,8 +1,7 @@
 #include "Material.hpp"
 
 Material::Material() :
-    tile(1),
-    diffuseTex(0)
+    tile(1)
 {
 
 }
@@ -12,12 +11,17 @@ Material::~Material()
 
 }
 
-void Material::setDiffuseTexture(GLuint id)
+void Material::addDiffuseMap(unsigned int id)
 {
-    diffuseTex = id;
+    diffuseMaps.push_back(id);
 }
 
-GLuint Material::getDiffuseTexture()
+unsigned int Material::getDiffuseMap(unsigned int index)
 {
-    return diffuseTex;
+    return diffuseMaps[index];
+}
+
+unsigned int Material::numDiffuseMaps()
+{
+    return diffuseMaps.size();
 }

@@ -6,6 +6,18 @@
 #include "Material.hpp"
 #include "gl.h"
 
+class Vertex
+{
+public:
+
+    Vertex();
+    ~Vertex();
+
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 uv;
+};
+
 class Mesh : public Object
 {
 public:
@@ -16,6 +28,7 @@ public:
     void init();
     void setMaterial(Material&);
     void createFromBuffer(const float*, GLuint);
+    void createFromArrays(std::vector<Vertex>&, std::vector<unsigned int>&);
     void createFromShape(int);
     virtual void draw(Shader&);
 

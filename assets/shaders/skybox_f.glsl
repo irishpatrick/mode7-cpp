@@ -3,11 +3,11 @@
 in vec2 uv;
 out vec4 color;
 
-uniform sampler2D tex;
+uniform sampler2D diffuseMap_0;
 
 void main()
 {
-    vec4 tc = texture(tex, uv);
+    vec4 tc = texture(diffuseMap_0, uv);
     if (tc.a < 0.3)
     {
         discard;

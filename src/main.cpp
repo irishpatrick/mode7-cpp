@@ -11,7 +11,7 @@
 #include "Tree.hpp"
 #include "Track.hpp"
 #include "Texture.hpp"
-#include "Group.hpp"
+#include "Scene.hpp"
 #include "Car.hpp"
 
 SDL_Event e;
@@ -22,7 +22,6 @@ Shader shadowShader;
 Mesh skybox;
 Tree tree;
 Car car;
-//Group track;
 Mesh track;
 
 void update()
@@ -101,10 +100,10 @@ int main(int argc, char** argv)
         "assets/shaders/shadow_f.glsl"
     );
 
-    skybox = ModelLoader::open("assets/models/skybox.obj");
+    skybox = ModelLoader::open("assets/models/skybox.obj")[0];
     skybox.scale = glm::vec3(1500.0f);
 
-    track = ModelLoader::open("assets/models/track.obj");
+    track = ModelLoader::open("assets/models/track.obj")[0];
     track.scale = glm::vec3(3.0f);
     track.position.y = -1.0f;
 

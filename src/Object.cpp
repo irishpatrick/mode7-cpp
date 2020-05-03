@@ -4,7 +4,6 @@
 Object::Object() :
     parent(nullptr),
     position(0.0f),
-    rotation(0.0f),
     scale(1.0f),
     quat(),
     rx(0, 1, 0, 0),

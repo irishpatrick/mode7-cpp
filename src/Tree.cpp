@@ -16,14 +16,14 @@ Tree::~Tree()
 void Tree::init()
 {
     shadow.scale.y = 0.3;
-    shadow.material.setDiffuseTexture(Texture::open("assets/textures/drop_shadow.png"));
+    shadow.material.addDiffuseMap(Texture::open("assets/textures/drop_shadow.png"));
     shadow.createFromShape(Mesh::PLANE);
     shadow.rotate(M_PI / 2.0f, 0, 0);
     shadow.position.y = -1.0f;
     Object::addChild(shadow);
 
     // set texture
-    material.setDiffuseTexture(Texture::open("assets/textures/tree.png"));
+    material.addDiffuseMap(Texture::open("assets/textures/tree.png"));
     Mesh::createFromShape(Mesh::PLANE);
     scale *= 2;
     

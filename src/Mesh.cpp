@@ -1,6 +1,16 @@
 #include "Mesh.hpp"
 #include <iostream>
 
+Vertex::Vertex()
+{
+
+}
+
+Vertex::~Vertex()
+{
+    
+}
+
 static const GLfloat plane_vertex_data[] = {
    -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
    1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
@@ -123,6 +133,48 @@ void Mesh::createFromShape(int shape)
     );
 }
 
+void Mesh::createFromArrays(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+{
+    elements = true;
+    triangles = indices.size();
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
+
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        0, 3,
+        GL_FLOAT, GL_FALSE,
+        8 * sizeof(float),
+        (void*)0
+    );
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(
+        1, 3,
+        GL_FLOAT, GL_FALSE,
+        8 * sizeof(float),
+        (void*)(3 * sizeof(float))
+    );
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(
+        2, 2,
+        GL_FLOAT, GL_FALSE,
+        8 * sizeof(float),
+        (void*)(6 * sizeof(float))
+    );
+}
+
 void Mesh::setAltShader(Shader& s)
 {
     alt = &s;
@@ -145,16 +197,12 @@ void Mesh::drawTriangles()
 
 void Mesh::draw(Shader& s)
 {
-    glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
-    
-    // use shader
+    //glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
+
     s.use();
-    
+
     s.setMaterial(material);
-    
-    // set matrixes
     s.setModel(*this);
 
-    // draw
     drawTriangles();
 }
