@@ -3,12 +3,28 @@
 
 #include "gl.h"
 #include <string>
+#include <cstdint>
+
+typedef enum {DIFFUSE, SPECULAR, NORMAL, BUMP} textype_t;
 
 class Texture
 {
 public:
 
-    static GLuint open(const std::string&);
+    Texture();
+    ~Texture();
+
+    void open(const std::string&, textype_t);
+    uint32_t getId();
+    textype_t getType();
+
+    // static methods
+    static unsigned int open(const std::string&);
+
+private:
+
+    textype_t type;
+    uint32_t id;
 };
 
 #endif /* TEXTURE_HPP */

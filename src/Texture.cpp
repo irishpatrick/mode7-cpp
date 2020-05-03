@@ -5,7 +5,33 @@
 #include <iostream>
 #include "gl.h"
 
-GLuint Texture::open(const std::string& fn)
+Texture::Texture() :
+    id(0),
+    type(DIFFUSE)
+{
+}
+
+Texture::~Texture()
+{
+}
+
+void Texture::open(const std::string& fn, textype_t type)
+{
+    this->type = type;
+    id = open(fn);
+}
+
+uint32_t Texture::getId()
+{
+    return id;
+}
+
+textype_t Texture::getType()
+{
+    return type;
+}
+
+uint32_t Texture::open(const std::string& fn)
 {
     SDL_Surface* s = IMG_Load(fn.c_str());
     if (s == nullptr)
@@ -17,7 +43,6 @@ GLuint Texture::open(const std::string& fn)
     int mode = GL_RGB;
     if (s->format->BytesPerPixel == 4)
     {
-        std::cout << "Texture: " << fn << ": mode switch" << std::endl;
         mode = GL_RGBA;
     }
 

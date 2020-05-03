@@ -18,6 +18,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     find_package(sdl2-image CONFIG REQUIRED)
     find_package(sdl2-ttf CONFIG REQUIRED)
     find_package(GLEW CONFIG REQUIRED)
+    find_package(assimp CONFIG REQUIRED)
 
     set(libs
         ${libs}
@@ -26,6 +27,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         SDL2::SDL2_image
         SDL2::SDL2_ttf
         GLEW::GLEW
+        assimp::assimp
         OpenGL32
     )
 
