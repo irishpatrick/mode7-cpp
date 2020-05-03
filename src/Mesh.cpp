@@ -197,8 +197,6 @@ void Mesh::drawTriangles()
 
 void Mesh::draw(Shader& s)
 {
-    //glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
-
     s.use();
 
     s.setMaterial(material);

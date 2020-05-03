@@ -2,6 +2,7 @@
 #define MATERIAL_HPP
 
 #include "gl.h"
+#include "Texture.hpp"
 #include <vector>
 
 class Material
@@ -11,17 +12,16 @@ public:
     Material();
     ~Material();
 
-    void addDiffuseMap(unsigned int);
-    unsigned int getDiffuseMap(unsigned int);
-    unsigned int numDiffuseMaps();
+    void addMap(Texture);
+
+    Texture getMap(unsigned int);
+    unsigned int numMaps();
 
     int tile;
 
 private:
 
-    std::vector<unsigned int> diffuseMaps;
-    std::vector<unsigned int> specularMaps;
-    unsigned int diffuseTex;
+    std::vector<Texture> maps;
 };
 
 #endif /* MATERIAL_HPP */

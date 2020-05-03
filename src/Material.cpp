@@ -11,17 +11,17 @@ Material::~Material()
 
 }
 
-void Material::addDiffuseMap(unsigned int id)
+void Material::addMap(Texture map)
 {
-    diffuseMaps.push_back(id);
+    maps.push_back(map);
 }
 
-unsigned int Material::getDiffuseMap(unsigned int index)
+Texture Material::getMap(unsigned int index)
 {
-    return diffuseMaps[index];
+    return maps[index];
 }
 
-unsigned int Material::numDiffuseMaps()
+unsigned int Material::numMaps()
 {
-    return diffuseMaps.size();
+    return maps.size();
 }

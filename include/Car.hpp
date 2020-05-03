@@ -5,6 +5,7 @@
 #include "Mesh.hpp"
 #include "Shader.hpp"
 #include "Line.hpp"
+#include "DropShadow.hpp"
 #include <string>
 #include <vector>
 
@@ -38,7 +39,7 @@ public:
 
 private:
 
-    Mesh shadow;
+    DropShadow shadow;
 
     int state;
     

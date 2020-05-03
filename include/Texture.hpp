@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 
-typedef enum {DIFFUSE, SPECULAR, NORMAL, BUMP} textype_t;
+enum class TexType {DIFFUSE, SPECULAR, NORMAL, BUMP};
 
 class Texture
 {
@@ -14,16 +14,16 @@ public:
     Texture();
     ~Texture();
 
-    void open(const std::string&, textype_t);
+    void open(const std::string&, TexType);
     uint32_t getId();
-    textype_t getType();
+    TexType getType();
 
     // static methods
     static unsigned int open(const std::string&);
 
 private:
 
-    textype_t type;
+    TexType type;
     uint32_t id;
 };
 

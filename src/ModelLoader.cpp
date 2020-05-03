@@ -85,10 +85,10 @@ Mesh ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<unsigned int> d = loadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Texture> d = loadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         for (auto& e : d)
         {
-            mat.addDiffuseMap(e);
+            mat.addMap(e);
         }
     }
 
@@ -98,15 +98,26 @@ Mesh ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
     return out;
 }
 
-std::vector<unsigned int> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType type, const std::string& name)
+std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType type, const std::string& name)
 {
-    std::vector<unsigned int> out;
+    TexType tt;
+    if (name == "texture_diffuse")
+    {
+        tt = TexType::DIFFUSE;
+    }
+    else if (name == "texture_specular")
+    {
+        tt = TexType::SPECULAR;
+    }
+    std::vector<Texture> out;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i)
     {
+        Texture t;
         aiString str;
         mat->GetTexture(type, i, &str);
         unsigned int id = Texture::open(std::string(str.C_Str()));
-        out.push_back(id);
+        t.open(std::string(str.C_Str()), tt);
+        out.push_back(t);
     }
     return out;
 }

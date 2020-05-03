@@ -7,7 +7,7 @@
 
 Texture::Texture() :
     id(0),
-    type(DIFFUSE)
+    type(TexType::DIFFUSE)
 {
 }
 
@@ -15,7 +15,7 @@ Texture::~Texture()
 {
 }
 
-void Texture::open(const std::string& fn, textype_t type)
+void Texture::open(const std::string& fn, TexType type)
 {
     this->type = type;
     id = open(fn);
@@ -26,7 +26,7 @@ uint32_t Texture::getId()
     return id;
 }
 
-textype_t Texture::getType()
+TexType Texture::getType()
 {
     return type;
 }

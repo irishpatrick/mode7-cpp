@@ -2,6 +2,8 @@
 #define TREE_HPP
 
 #include "Mesh.hpp"
+#include "DropShadow.hpp"
+#include "Shader.hpp"
 
 class Tree : public Mesh
 {
@@ -17,7 +19,7 @@ public:
 
 private:
 
-    Mesh shadow;
+    DropShadow shadow;
 };
 
 #endif /* TREE_HPP */

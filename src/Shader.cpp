@@ -72,14 +72,13 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
         return -1;
     }
 
-    std::cout << "Shader: compile " << vfn << std::endl;
+    std::cout << "compile " << vfn << std::endl;
     compile(vsid, vs_code);
     ec();
-    std::cout << "Shader: compile " << ffn << std::endl;
+    std::cout << "compile " << ffn << std::endl;
     compile(fsid, fs_code);
     ec();
-
-    std::cout << "Shader: link" << std::endl;
+    
     GLuint pid = glCreateProgram();
     glAttachShader(pid, vsid);
     glAttachShader(pid, fsid);
@@ -130,13 +129,26 @@ void Shader::use()
 void Shader::setMaterial(Material& m)
 {
     glUniform1i(uv_tile, m.tile);
-    
-    for (int i = 0; i < m.numDiffuseMaps(); ++i)
+
+    std::stringstream ss;   
+    for (int i = 0; i < m.numMaps(); ++i)
     {
+        Texture t = m.getMap(i);
+        std::string typePrefix = "diffuse";
+        if (t.getType() == TexType::DIFFUSE)
+        {
+            typePrefix = "diffuse";
+        }
+        else if (t.getType() == TexType::SPECULAR)
+        {
+            typePrefix = "specular";
+        }
         glActiveTexture(GL_TEXTURE0 + i);
-        unsigned int loc = glGetUniformLocation(id, std::string("diffuseMap_" + i).c_str());
-        glUniform1ui(loc, m.getDiffuseMap(i));
-        glBindTexture(GL_TEXTURE_2D, m.getDiffuseMap(i));
+        ss << typePrefix << "Map[" << i << "]";
+        unsigned int loc = glGetUniformLocation(id, ss.str().c_str());
+        ss.clear();
+        glUniform1ui(loc, t.getId());
+        glBindTexture(GL_TEXTURE_2D, t.getId());
     }
     glActiveTexture(GL_TEXTURE0);
 }

@@ -27,15 +27,12 @@ Car::~Car()
 
 void Car::open(const std::string& fn)
 {
-    shadow.scale.y = 0.3;
-    shadow.scale.x = 1.1;
-    shadow.material.addDiffuseMap(Texture::open("assets/textures/drop_shadow.png"));
-    shadow.createFromShape(Mesh::PLANE);
-    shadow.rotate(M_PI / 2.0f, 0, 0);
-    shadow.position.y = -1.0f;
-    Object::addChild(shadow);
+    shadow.create();
+    shadow.apply(*this);
 
-    material.addDiffuseMap(Texture::open("assets/textures/car.png"));
+    Texture t;
+    t.open("assets/textures/car.png", TexType::DIFFUSE);
+    material.addMap(t);
     Mesh::createFromShape(Mesh::PLANE);
 
     std::ifstream in(fn);
@@ -109,21 +106,11 @@ void Car::update()
 
 void Car::draw(Shader& s)
 {
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glEnable(GL_ALPHA_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
     shadow.draw(*alt);
-    glDisable(GL_BLEND);
-    glDisable(GL_ALPHA_TEST);
-    glEnable(GL_DEPTH_TEST);
 
-    //glBindTexture(GL_TEXTURE_2D, material.getDiffuseTexture());
     s.use();
     s.setMaterial(material);
     s.setModel(sprite);
-
     Mesh::drawTriangles();
 }
 
