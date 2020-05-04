@@ -19,10 +19,10 @@ int running;
 Shader spriteShader;
 Shader shadowShader;
 
-Mesh skybox;
+Scene skybox;
 Tree tree;
 Car car;
-Mesh track;
+Scene track;
 
 void update()
 {
@@ -65,10 +65,9 @@ void update()
 
     tree.update();
     skybox.update();
-    Track::update();
     track.update();
     car.update();
-    Camera::update();
+    Camera::updateView();
 }
 
 void draw()
@@ -100,10 +99,10 @@ int main(int argc, char** argv)
         "assets/shaders/shadow_f.glsl"
     );
 
-    skybox = ModelLoader::open("assets/models/skybox.obj")[0];
+    skybox = ModelLoader::open("assets/models/skybox.dae");
     skybox.scale = glm::vec3(1500.0f);
 
-    track = ModelLoader::open("assets/models/track.obj")[0];
+    track = ModelLoader::open("assets/models/track.dae");
     track.scale = glm::vec3(3.0f);
     track.position.y = -1.0f;
 
@@ -118,7 +117,7 @@ int main(int argc, char** argv)
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
     Camera::getObject().rotate(-atanf(2.0f / 12.0f), 0, 0);
-    car.addChild(Camera::getObject());
+    car.addChild(&Camera::getObject());
     car.setTracked(true);
     car.setAltShader(shadowShader);
 

@@ -2,24 +2,25 @@
 #define SCENE_HPP
 
 #include <vector>
+#include <memory>
 #include "Mesh.hpp"
+#include "Shader.hpp"
 
-class Scene
+class Scene : public Object
 {
 public:
 
     Scene();
     ~Scene();
 
-    void addMesh(Mesh*);
-    Mesh getMesh(unsigned int);
+    void addMesh(std::shared_ptr<Mesh>);
+    Mesh* getMesh(unsigned int);
     
-    void update();
-    void draw();
+    void draw(Shader&);
 
 private:
 
-    std::vector<Mesh*> meshes;
+    std::vector<std::shared_ptr<Mesh>> meshes;
 };
 
 #endif /* SCENE_HPP */

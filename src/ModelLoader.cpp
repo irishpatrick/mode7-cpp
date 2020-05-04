@@ -1,27 +1,42 @@
 #include "ModelLoader.hpp"
 #include "Mesh.hpp"
 #include "Texture.hpp"
+#include "Util.hpp"
+#include <memory>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-std::vector<Mesh> ModelLoader::open(const std::string& fn)
+static int inc = 0;
+static glm::mat4 matrix;
+
+//std::vector<Mesh> ModelLoader::open(const std::string& fn)
+Scene ModelLoader::open(const std::string& fn)
 {
-    std::vector<Mesh> meshes;
+    std::vector<std::shared_ptr<Mesh>> meshes;
+    Scene s;
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(fn, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "error::assimp::" << importer.GetErrorString() << std::endl;
-        return meshes;
+        //return meshes;
+        return s;
     }
 
     processNode(meshes, scene->mRootNode, scene);
 
-    return meshes;
+    for (auto& e : meshes)
+    {
+        s.addMesh(e);
+    }
+    //return meshes;
+    return s;
 }
 
-void ModelLoader::processNode(std::vector<Mesh>& vec, aiNode* node, const aiScene* scene)
+void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene)
 {
+    matrix = Util::fromAi(node->mTransformation);
+    std::cout << "process node: " << node->mName.C_Str() << std::endl;
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -34,9 +49,10 @@ void ModelLoader::processNode(std::vector<Mesh>& vec, aiNode* node, const aiScen
     }
 }
 
-Mesh ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    Mesh out;
+    std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
+    std::shared_ptr<Mesh> out = std::make_shared<Mesh>();
     Material mat;
 
     std::vector<Vertex> vertices;
@@ -92,8 +108,10 @@ Mesh ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
         }
     }
 
-    out.setMaterial(mat);
-    out.createFromArrays(vertices, indices);
+    out->inherent = matrix;
+    out->setMaterial(mat);
+    out->createFromArrays(vertices, indices);
+    
 
     return out;
 }
@@ -115,8 +133,7 @@ std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType ty
         Texture t;
         aiString str;
         mat->GetTexture(type, i, &str);
-        unsigned int id = Texture::open(std::string(str.C_Str()));
-        t.open(std::string(str.C_Str()), tt);
+        t.open("assets/textures/" + std::string(str.C_Str()), tt);
         out.push_back(t);
     }
     return out;

@@ -9,9 +9,8 @@ void Camera::create(float w, float h, float fov, float n, float f)
     projection = glm::perspective(glm::radians(fov), w / h, n, f);
 }
 
-void Camera::update()
+void Camera::updateView()
 {
-    object.update();
     view = glm::inverse(object.getWorldMatrix());
 }
 

@@ -12,10 +12,10 @@ public:
     Object();
     virtual ~Object();
 
-    void addChild(Object&);
     void addChild(Object*);
 
     virtual void update();
+    virtual void update(glm::mat4);
 
     glm::mat4 getWorldMatrix();
     glm::vec3 getWorldPosition();
@@ -39,6 +39,8 @@ public:
     BBox* getBoundingBox();
     std::vector<Object*> getChildren();
 
+    Object* getParent();
+
     glm::vec3 position;
     glm::quat rx;
     glm::quat ry;
@@ -47,6 +49,7 @@ public:
 
     glm::quat quat;
     glm::mat4 matrix;
+    glm::mat4 inherent;
 
 protected:
 
@@ -60,11 +63,12 @@ protected:
 
     glm::mat4 worldMatrix;
 
+    Object* parent;
+
 private:
 
     BBox bbox;
 
-    Object* parent;
     std::vector<Object*> children;
 };
 

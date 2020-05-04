@@ -14,6 +14,7 @@ Object::Object() :
     worldScale(1.0f),
     worldQuat(),
     matrix(1.0f),
+    inherent(1.0f),
     worldMatrix(1.0f)
 {
 
@@ -39,7 +40,6 @@ void Object::rotate(float x, float y, float z)
 void Object::setRotationX(float x)
 {
     rx = glm::angleAxis(x, Util::xAxis());
-
 }
 
 void Object::setRotationY(float y)
@@ -79,19 +79,18 @@ glm::quat Object::getWorldRy()
     return ry;
 }
 
-void Object::addChild(Object& o)
-{
-    o.parent = this;
-    o.rx = o.rx * glm::inverse(rx);
-    o.ry = o.ry * glm::inverse(ry);
-    o.rz = o.rz * glm::inverse(rz);
-    children.push_back(&o);
-}
-
 void Object::addChild(Object* o)
 {
     o->parent = this;
+    o->rx = o->rx * glm::inverse(rx);
+    o->ry = o->ry * glm::inverse(ry);
+    o->rz = o->rz * glm::inverse(rz);
     children.push_back(o);
+}
+
+Object* Object::getParent()
+{
+    return parent;
 }
 
 glm::vec3 Object::getFront()
@@ -106,15 +105,20 @@ glm::quat Object::getWorldQuat()
 
 void Object::update()
 {
+    update(glm::mat4(1.0f));
+}
+
+void Object::update(glm::mat4 pmat)
+{
     quat = ry * rz * rx;
 
     glm::mat4 t = glm::translate(glm::mat4(1.0f), position);
     glm::mat4 r = glm::toMat4(quat);
     glm::mat4 s = glm::scale(glm::mat4(1.0f), scale);
 
-    matrix = t * r * s;
-
-    accumulate();
+    matrix = inherent * t * r * s;
+    worldMatrix = pmat * matrix;
+    //accumulate();
     decompose();
 
     // etc
@@ -123,7 +127,7 @@ void Object::update()
 
     for (auto& e : children)
     {
-        e->update();
+        e->update(worldMatrix);
     }
 }
 
@@ -152,6 +156,7 @@ void Object::accumulate()
     if (parent != nullptr)
     {
         worldMatrix = parent->worldMatrix * matrix;
+        std::cout << "parent: " << glm::to_string(parent->worldMatrix) << std::endl;
     }
     else
     {

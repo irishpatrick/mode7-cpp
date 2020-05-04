@@ -60,7 +60,6 @@ void Car::open(const std::string& fn)
 
 void Car::update()
 {
-    std::fflush(stdout);
     float delta;
     if (state == ACCEL)
     {

@@ -33,6 +33,7 @@ TexType Texture::getType()
 
 uint32_t Texture::open(const std::string& fn)
 {
+    std::cout << "load texture " << fn << std::endl;
     SDL_Surface* s = IMG_Load(fn.c_str());
     if (s == nullptr)
     {

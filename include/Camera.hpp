@@ -9,7 +9,7 @@ class Camera
 public:
 
     static void create(float, float, float, float, float);
-    static void update();
+    static void updateView();
     static void lookAt(glm::vec3, glm::vec3);
     static glm::mat4 getProjection();
     static glm::mat4 getView();
