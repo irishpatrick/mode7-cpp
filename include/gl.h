@@ -1,5 +1,5 @@
-#ifndef GL_H
-#define GL_H
+#ifndef GL_HPP
+#define GL_HPP
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -37,4 +37,4 @@ inline void ec()
     }
 }
 
-#endif /* GL_H */
+#endif /* GL_HPP */
