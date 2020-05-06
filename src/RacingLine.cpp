@@ -19,7 +19,7 @@ Rect::~Rect()
 
 void Rect::create(glm::vec2 pos, glm::vec2 dim)
 {
-    this->pos = pos;
+    this->pos = pos - (0.5f * dim);
     this->dim = dim;
 }
 
@@ -32,6 +32,8 @@ bool Rect::check(glm::vec2 pt)
 
 bool Rect::check(Rect r)
 {
+    //std::cout << "[" << glm::to_string(pos) << " | " << glm::to_string(dim) << "]" << std::endl;
+    //std::cout << "[" << glm::to_string(r.pos) << " | " << glm::to_string(r.dim) << "]" << std::endl;
     return
         pos.x < r.pos.x + r.dim.x &&
         pos.x + dim.x > r.pos.x &&
@@ -78,7 +80,7 @@ void RacingLine::open(const std::string& fn)
     for (int i = 0; i < point.size() - 1; ++i)
     {
         Rect r;
-        r.create(point[i], glm::vec2(10, 2));
+        r.create(point[i], glm::vec2(width, width));
         check.push_back(r);
     }
 }

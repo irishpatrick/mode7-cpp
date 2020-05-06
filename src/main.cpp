@@ -13,6 +13,7 @@
 #include "Texture.hpp"
 #include "Scene.hpp"
 #include "Car.hpp"
+#include "RacingLine.hpp"
 
 SDL_Event e;
 int running;
@@ -23,6 +24,8 @@ Scene skybox;
 Tree tree;
 Car car;
 Scene track;
+
+RacingLine rltest;
 
 void update()
 {
@@ -69,7 +72,9 @@ void update()
     car.update();
     Camera::updateView();
 
-    std::cout << glm::to_string(car.position) << std::endl;
+    rltest.update(glm::vec2(car.position.x, car.position.z));
+    std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
+    //std::cout << glm::to_string(car.position) << std::endl;
 }
 
 void draw()
@@ -122,6 +127,8 @@ int main(int argc, char** argv)
     car.addChild(&Camera::getObject());
     car.setTracked(true);
     car.setAltShader(shadowShader);
+
+    rltest.open("assets/track_data/test.json");
 
     running = 1;
     Clock::start();
