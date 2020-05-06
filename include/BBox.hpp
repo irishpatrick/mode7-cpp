@@ -11,8 +11,8 @@ public:
     ~BBox();
 
     bool intersects(BBox&);
+    bool intersects(glm::vec3);
 
-private:
     glm::vec3 pos;
     glm::vec3 dim;
 };

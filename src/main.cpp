@@ -72,8 +72,8 @@ void update()
     car.update();
     Camera::updateView();
 
-    rltest.update(glm::vec2(car.position.x, car.position.z));
-    std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
+    rltest.update(car.position);
+    //std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
     //std::cout << glm::to_string(car.position) << std::endl;
 }
 

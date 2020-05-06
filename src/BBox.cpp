@@ -31,3 +31,11 @@ bool BBox::intersects(BBox& b)
 
     return out;
 }
+
+bool BBox::intersects(glm::vec3 pt)
+{
+    BBox b;
+    b.pos = pt;
+    b.dim = glm::vec3(1.0f);
+    return intersects(b);
+}

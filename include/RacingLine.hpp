@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include "gl.h"
+#include "BBox.hpp"
 
 class Rect
 {
@@ -31,7 +32,7 @@ public:
     ~RacingLine();
 
     void open(const std::string&);
-    void update(glm::vec2);
+    void update(glm::vec3);
     glm::vec2 getTarget();
 
 private:
@@ -40,7 +41,7 @@ private:
 
     uint32_t current;
     std::vector<glm::vec2> point;
-    std::vector<Rect> check;
+    std::vector<BBox> check;
 };
 
 #endif /* RACINGLINE_HPP */

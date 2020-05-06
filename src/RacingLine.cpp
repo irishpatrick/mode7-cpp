@@ -77,18 +77,20 @@ void RacingLine::open(const std::string& fn)
         point.push_back(glm::vec2(x, y));
     }
 
-    for (int i = 0; i < point.size() - 1; ++i)
+    for (int i = 0; i < point.size(); ++i)
     {
-        Rect r;
-        r.create(point[i], glm::vec2(width, width));
-        check.push_back(r);
+        BBox b;
+        glm::vec3 pt(point[i].x, 0, point[i].y);
+        b.pos = pt;
+        b.dim = glm::vec3(40.0f, 10.0f, 40.0f);
+        check.push_back(b);
     }
 }
 
-void RacingLine::update(glm::vec2 position)
+void RacingLine::update(glm::vec3 position)
 {
     //glm::vec2 dir = glm::normalize(point[increment()] - point[current]);
-    if (check[current].check(position))
+    if (check[current].intersects(position))
     {
         current = increment();
     }
