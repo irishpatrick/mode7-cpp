@@ -68,6 +68,8 @@ void update()
     track.update();
     car.update();
     Camera::updateView();
+
+    std::cout << glm::to_string(car.position) << std::endl;
 }
 
 void draw()
@@ -103,8 +105,8 @@ int main(int argc, char** argv)
     skybox.scale = glm::vec3(500.0f);
 
     track = ModelLoader::open("assets/models/oval.dae");
-    //track.scale = glm::vec3(3.0f);
-    track.position.y = -1.0f;
+    //track.scale = glm::vec3(2.0f);
+    track.position.y = 1 * -1.1f;
 
     tree.init();
     tree.position.x = 3;

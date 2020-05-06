@@ -5,7 +5,9 @@
 
 using json = nlohmann::json;
 
-Rect::Rect()
+Rect::Rect() :
+    pos(0),
+    dim(1)
 {
 
 }
@@ -37,7 +39,8 @@ bool Rect::check(Rect r)
         pos.y + dim.y > r.pos.y ;
 }
 
-RacingLine::RacingLine()
+RacingLine::RacingLine() :
+    current(0)
 {
 
 }
@@ -96,5 +99,5 @@ glm::vec2 RacingLine::getTarget()
 
 uint32_t RacingLine::increment()
 {
-    return (current + 1) % point.size();
+    return (current + 1) % (uint32_t)point.size();
 }
