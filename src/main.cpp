@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     printf("hello world!\n");
 
     Screen::create(1024, 768);
-    Camera::create(1024.0f, 768.0f, 80.0f, 0.1f, 4 * 3000.0f);
+    Camera::create(1024.0f, 768.0f, 80.0f, 0.1f, 1000.0f);
     Keyboard::attach();
 
     spriteShader.open(
@@ -100,10 +100,10 @@ int main(int argc, char** argv)
     );
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
-    skybox.scale = glm::vec3(1500.0f);
+    skybox.scale = glm::vec3(500.0f);
 
-    track = ModelLoader::open("assets/models/track.dae");
-    track.scale = glm::vec3(3.0f);
+    track = ModelLoader::open("assets/models/oval.dae");
+    //track.scale = glm::vec3(3.0f);
     track.position.y = -1.0f;
 
     tree.init();
