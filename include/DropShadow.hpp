@@ -12,8 +12,14 @@ public:
 
     void create();
     void apply(Mesh&);
+    void setTracked(bool);
 
+    virtual void update();
     virtual void draw(Shader&);
+
+private:
+
+    bool tracked;
 };
 
 #endif /* DROPSHADOW_HPP */

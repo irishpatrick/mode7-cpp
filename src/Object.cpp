@@ -2,20 +2,22 @@
 #include "Util.hpp"
 
 Object::Object() :
-    parent(nullptr),
     position(0.0f),
-    scale(1.0f),
-    quat(),
     rx(0, 1, 0, 0),
     ry(0, 0, 1, 0),
     rz(0, 0, 0, 1),
+    scale(1.0f),
+    quat(),
+    matrix(1.0f),
+    inherent(1.0f),
     worldPosition(0.0f),
     worldRotation(0.0f),
     worldScale(1.0f),
     worldQuat(),
-    matrix(1.0f),
-    inherent(1.0f),
-    worldMatrix(1.0f)
+    worldMatrix(1.0f),
+    front(),
+    right(),
+    parent(nullptr)
 {
 
 }

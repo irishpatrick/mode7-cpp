@@ -57,11 +57,10 @@ protected:
     glm::vec3 worldRotation;
     glm::vec3 worldScale;
     glm::quat worldQuat;
+    glm::mat4 worldMatrix;
 
     glm::vec3 front;
     glm::vec3 right;
-
-    glm::mat4 worldMatrix;
 
     Object* parent;
 

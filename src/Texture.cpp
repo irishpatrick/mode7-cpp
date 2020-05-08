@@ -6,8 +6,8 @@
 #include "gl.h"
 
 Texture::Texture() :
-    id(0),
-    type(TexType::DIFFUSE)
+    type(TexType::DIFFUSE),
+    id(0)
 {
 }
 

@@ -14,6 +14,7 @@
 #include "Scene.hpp"
 #include "Car.hpp"
 #include "RacingLine.hpp"
+#include "AI.hpp"
 
 SDL_Event e;
 int running;
@@ -24,6 +25,7 @@ Scene skybox;
 Tree tree;
 Car car;
 Scene track;
+AI aitest;
 
 RacingLine rltest;
 
@@ -70,6 +72,7 @@ void update()
     skybox.update();
     track.update();
     car.update();
+    aitest.update();
     Camera::updateView();
 
     rltest.update(car.position);
@@ -84,6 +87,7 @@ void draw()
     skybox.draw(spriteShader);
     track.draw(spriteShader);
     tree.draw(spriteShader);
+    aitest.draw(spriteShader);
     car.draw(spriteShader);
 
     Screen::flip();
@@ -119,6 +123,8 @@ int main(int argc, char** argv)
     tree.position.z = -5;
     tree.setAltShader(shadowShader);
 
+    rltest.open("assets/track_data/test.json");
+
     car.open("assets/cars/testCar.json");
     car.position.y = 1;
     car.position.x = 0;
@@ -128,7 +134,14 @@ int main(int argc, char** argv)
     car.setTracked(true);
     car.setAltShader(shadowShader);
 
-    rltest.open("assets/track_data/test.json");
+    aitest.open("assets/cars/testCar.json");
+    aitest.position.y = 1;
+    aitest.position.x = 1;
+    aitest.rotate(0, -M_PI / 2.0f, 0);
+    aitest.setAltShader(shadowShader);
+    aitest.setRacingLine(rltest);
+    aitest.setTracked(false);
+    aitest.update();
 
     running = 1;
     Clock::start();

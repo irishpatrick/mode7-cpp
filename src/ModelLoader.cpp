@@ -6,7 +6,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-static int inc = 0;
 static glm::mat4 matrix;
 
 //std::vector<Mesh> ModelLoader::open(const std::string& fn)

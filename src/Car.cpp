@@ -9,13 +9,13 @@ using json = nlohmann::json;
 
 Car::Car() :
     Mesh(),
+    traction(0.01f),
     state(IDLE),
     tracked(false),
     speed(0.0f),
     drift(0.0f),
     throttle(0.0f),
-    topSpeed(1.7f),
-    traction(0.01f)
+    topSpeed(1.7f)
 {
 
 }
@@ -97,6 +97,11 @@ void Car::update()
     {
         sprite.ry = ry;
     }
+    else
+    {
+        sprite.ry = Camera::getObject().getWorldRy();
+    }
+    
 
     shadow.update();
     Object::update();
@@ -138,4 +143,5 @@ void Car::turnRight()
 void Car::setTracked(bool val)
 {
     tracked = val;
+    shadow.setTracked(tracked);
 }

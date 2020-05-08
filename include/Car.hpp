@@ -46,12 +46,11 @@ private:
     bool tracked;
     float speed;
     float drift;
-
-    Object sprite;
-    GLuint textures[4];
-
     float throttle;
     float topSpeed;
+    
+    Object sprite;
+    GLuint textures[4];
     std::vector<Line> velCurve;
 };
 

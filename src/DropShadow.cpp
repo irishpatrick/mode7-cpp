@@ -1,9 +1,11 @@
 #include "DropShadow.hpp"
 #include "Texture.hpp"
 #include "gl.h"
+#include "Camera.hpp"
 
 DropShadow::DropShadow() :
-    Mesh()
+    Mesh(),
+    tracked(false)
 {
 
 }
@@ -31,6 +33,21 @@ void DropShadow::apply(Mesh& parent)
 {
     parent.addChild(this);
     position.y = -1.0f; // temporary
+}
+
+void DropShadow::setTracked(bool val)
+{
+    tracked = val;
+}
+
+void DropShadow::update()
+{
+    if (!tracked)
+    {
+        ry = Camera::getObject().getWorldRy();
+    }
+
+    Mesh::update();
 }
 
 void DropShadow::draw(Shader& s)
