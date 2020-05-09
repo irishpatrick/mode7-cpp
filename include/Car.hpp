@@ -6,6 +6,7 @@
 #include "Shader.hpp"
 #include "Line.hpp"
 #include "DropShadow.hpp"
+#include "Animation.hpp"
 #include <string>
 #include <vector>
 
@@ -54,7 +55,7 @@ private:
     float topSpeed;
     
     Object sprite;
-    GLuint textures[4];
+    Animation anim;
     std::vector<Line> velCurve;
 };
 
