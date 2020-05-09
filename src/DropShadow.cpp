@@ -1,5 +1,6 @@
 #include "DropShadow.hpp"
 #include "Texture.hpp"
+#include "TexCache.hpp"
 #include "gl.h"
 #include "Camera.hpp"
 
@@ -17,9 +18,7 @@ DropShadow::~DropShadow()
 
 void DropShadow::create()
 {
-    Texture t;
-    t.open("assets/textures/drop_shadow.png", TexType::DIFFUSE);
-    material.addMap(t);
+    material.addMap(TexCache::open("assets/textures/drop_shadow.png", TexType::DIFFUSE));
 
     Mesh::createFromShape(Mesh::PLANE);
 

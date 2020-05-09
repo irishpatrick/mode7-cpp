@@ -21,37 +21,31 @@ void AI::setRacingLine(RacingLine line)
 
 void AI::update()
 {
-    Car::gas();
-    //Car::turnLeft();
-    //position -= 1.1f * front;
     glm::vec2 xz = line.getTarget();
     glm::vec3 target(xz.x, position.y, xz.y);
     glm::vec3 dir = glm::normalize(target - position);
     float dist = glm::distance(target, position);
-    std::cout << dist << std::endl;
-    //float theta = glm::angle(front, dir);
-    //std::cout << glm::to_string(dir) << std::endl;
-    //std::cout << "theta: " << theta * 180.f / M_PI << std::endl;
-    //std::cout << "cross: " << glm::to_string(glm::cross(front, dir)) << std::endl;
-
     float cross = glm::cross(front, dir).y;
+    //std::cout << dist << std::endl;
     //std::cout << "cross: " << cross << std::endl;
-    if (cross < -0.2)
+    //std::cout << "\rdist: " << dist << "\tcross: " << cross;
+    //std::fflush(stdout);
+    if (cross < -0.1)
     {
         turnLeft();
     }
 
-    if (cross > 0.2)
+    if (cross > 0.1)
     {
         turnRight();
     }
 
-    if (cross > -0.1 && cross < 0.1)
+    if (dist > 20 || cross > -0.1 && cross < 0.1)
     {
         Car::gas();
     }
 
-    if (dist < 200 && fabs(cross) > 0.8)
+    if (speed > 0.2f && dist < 200 && fabs(cross) > 0.4)
     {
         Car::brake();
     }

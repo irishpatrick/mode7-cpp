@@ -1,6 +1,7 @@
 #include "Tree.hpp"
 #include "Texture.hpp"
 #include "Camera.hpp"
+#include "TexCache.hpp"
 
 Tree::Tree() :
     Mesh()
@@ -19,9 +20,7 @@ void Tree::init()
     shadow.apply(*this);
 
     // set texture
-    Texture t;
-    t.open("assets/textures/tree.png", TexType::DIFFUSE);
-    material.addMap(t);
+    material.addMap(TexCache::open("assets/textures/tree.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
     scale *= 2;
     

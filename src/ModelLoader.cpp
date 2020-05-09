@@ -2,7 +2,9 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 #include "Util.hpp"
+#include "TexCache.hpp"
 #include <memory>
+#include <map>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -127,13 +129,14 @@ std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType ty
         tt = TexType::SPECULAR;
     }
     std::vector<Texture> out;
+
     for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i)
     {
         Texture t;
         aiString str;
         mat->GetTexture(type, i, &str);
-        t.open("assets/textures/" + std::string(str.C_Str()), tt);
-        out.push_back(t);
+        std::string fn = "assets/textures/" + std::string(str.C_Str());
+        out.push_back(TexCache::open(fn, tt));
     }
     return out;
 }

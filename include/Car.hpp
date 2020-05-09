@@ -36,7 +36,11 @@ public:
     void setTracked(bool);
 
     float traction;
+    
+protected:
 
+    float speed;
+    
 private:
 
     DropShadow shadow;
@@ -44,7 +48,7 @@ private:
     int state;
     
     bool tracked;
-    float speed;
+    
     float drift;
     float throttle;
     float topSpeed;

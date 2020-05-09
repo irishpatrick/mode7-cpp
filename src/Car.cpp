@@ -1,6 +1,7 @@
 #include "Car.hpp"
 #include "Camera.hpp"
 #include "Texture.hpp"
+#include "TexCache.hpp"
 #include <iostream>
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -30,9 +31,7 @@ void Car::open(const std::string& fn)
     shadow.create();
     shadow.apply(*this);
 
-    Texture t;
-    t.open("assets/textures/car.png", TexType::DIFFUSE);
-    material.addMap(t);
+    material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
 
     std::ifstream in(fn);
@@ -100,6 +99,34 @@ void Car::update()
     else
     {
         sprite.ry = Camera::getObject().getWorldRy();
+
+        glm::vec3 cf = Camera::getObject().getFront();
+        cf.y = 0.f;
+        cf = glm::normalize(cf);
+        float cross = glm::cross(front, cf).y;
+        float dot = glm::dot(front, cf);
+
+        bool north = dot > 0.5f;
+        bool south = dot < -0.5f;
+        bool east = cross > 0.5f;
+        bool west = cross < -0.5f;
+
+        if (north)
+        {
+            std::cout << "north" << std::endl;
+        }
+        else if (south)
+        {
+            std::cout << "south" << std::endl;
+        }
+        else if (east)
+        {
+            std::cout << "east" << std::endl;
+        }
+        else if (west)
+        {
+            std::cout << "west" << std::endl;
+        }
     }
     
 

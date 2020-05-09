@@ -41,6 +41,7 @@ else ()
     pkg_check_modules(CAIRO REQUIRED cairo)
     pkg_check_modules(GLEW REQUIRED glew)
     pkg_check_modules(ASSIMP REQUIRED assimp)
+    pkg_check_modules(BULLET REQUIRED bullet)
 
     set(incl
         ${incl}
@@ -51,6 +52,7 @@ else ()
 	    ${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
         ${ASSIMP_INCLUDE_DIRS}
+        ${BULLET_INCLUDE_DIRS}
     )
 
     set(libs
@@ -61,6 +63,7 @@ else ()
 	    ${GLEW_LIBRARIES}
         ${CAIRO_LIBRARIES}
         ${ASSIMP_LIBRARIES}
+        ${BULLET_LIBRARIES}
         m
     )
 endif()
