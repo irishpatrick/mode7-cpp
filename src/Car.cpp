@@ -31,7 +31,8 @@ void Car::open(const std::string& fn)
     shadow.create();
     shadow.apply(*this);
 
-    material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
+    anim.open("assets/animations/test_anim.json");
+    //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
 
     std::ifstream in(fn);
@@ -113,19 +114,19 @@ void Car::update()
 
         if (north)
         {
-            std::cout << "north" << std::endl;
+            anim.setCurrentFrame(0);
         }
         else if (south)
         {
-            std::cout << "south" << std::endl;
+            anim.setCurrentFrame(3);
         }
         else if (east)
         {
-            std::cout << "east" << std::endl;
+            anim.setCurrentFrame(2);
         }
         else if (west)
         {
-            std::cout << "west" << std::endl;
+            anim.setCurrentFrame(1);
         }
     }
     
@@ -140,7 +141,7 @@ void Car::draw(Shader& s)
     shadow.draw(*alt);
 
     s.use();
-    s.setMaterial(material);
+    s.setMaterial(anim);
     s.setModel(sprite);
     Mesh::drawTriangles();
 }

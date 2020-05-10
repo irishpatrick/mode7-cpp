@@ -4,6 +4,7 @@
 #include "gl.h"
 #include "Texture.hpp"
 #include <vector>
+#include <cstdint>
 
 class Material
 {
@@ -14,8 +15,8 @@ public:
 
     void addMap(Texture);
 
-    virtual Texture getMap(unsigned int);
-    unsigned int numMaps();
+    virtual Texture getMap(uint32_t);
+    virtual uint32_t numMaps();
 
     int tile;
 

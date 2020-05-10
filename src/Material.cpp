@@ -16,12 +16,12 @@ void Material::addMap(Texture map)
     maps.push_back(map);
 }
 
-Texture Material::getMap(unsigned int index)
+Texture Material::getMap(uint32_t index)
 {
     return maps[index];
 }
 
-unsigned int Material::numMaps()
+uint32_t Material::numMaps()
 {
     return maps.size();
 }
