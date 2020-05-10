@@ -99,6 +99,8 @@ int main(int argc, char** argv)
 
     Screen::create(1024, 768);
     Camera::create(1024.0f, 768.0f, 80.0f, 0.1f, 1000.0f);
+    //Screen::create(1920, 1080);
+    //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
     Keyboard::attach();
 
     spriteShader.open(
