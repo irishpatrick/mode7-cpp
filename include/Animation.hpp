@@ -5,16 +5,18 @@
 #include <string>
 #include <cstdint>
 #include "Texture.hpp"
+#include "Material.hpp"
 
-class Animation
+class Animation : public Material
 {
 public:
 
     Animation();
-    ~Animation();
+    virtual ~Animation();
 
     void open(const std::string&);
-    Texture getFrame(uint32_t);
+
+    virtual Texture getMap(uint32_t);
 
 private:
 

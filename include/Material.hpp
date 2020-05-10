@@ -10,16 +10,16 @@ class Material
 public:
 
     Material();
-    ~Material();
+    virtual ~Material();
 
     void addMap(Texture);
 
-    Texture getMap(unsigned int);
+    virtual Texture getMap(unsigned int);
     unsigned int numMaps();
 
     int tile;
 
-private:
+protected:
 
     std::vector<Texture> maps;
 };

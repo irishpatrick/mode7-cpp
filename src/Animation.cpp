@@ -36,7 +36,7 @@ void Animation::open(const std::string& fn)
     }
 }
 
-Texture Animation::getFrame(uint32_t index)
+Texture Animation::getMap(uint32_t)
 {
-    return frames[index];
+    return frames[mCurrentFrame];
 }
