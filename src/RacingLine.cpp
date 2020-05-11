@@ -5,6 +5,18 @@
 
 using json = nlohmann::json;
 
+Point::Point() :
+    pos(0.f),
+    mode(ACCEL_PT)
+{
+
+}
+
+Point::~Point()
+{
+
+}
+
 Rect::Rect() :
     pos(0),
     dim(1)
@@ -67,20 +79,35 @@ void RacingLine::open(const std::string& fn)
     in.close();
 
     // parse
-    uint32_t width = 100;
-
     for (auto& e : o["points"])
     {
         float x = e[0].get<float>();
         float y = e[1].get<float>();
+        std::string mode = e[2].get<std::string>();
+        
+        Point p;
+        p.pos = glm::vec2(x, y);
+        
+        if (mode == "accel")
+        {
+            p.mode = Point::ACCEL_PT;
+        }
+        else if (mode == "coast")
+        {
+            p.mode = Point::COAST_PT;
+        }
+        else if (mode == "brake")
+        {
+            p.mode = Point::BRAKE_PT;
+        }
 
-        point.push_back(glm::vec2(x, y));
+        points.push_back(p);
     }
 
-    for (int i = 0; i < point.size(); ++i)
+    for (int i = 0; i < points.size(); ++i)
     {
         BBox b;
-        glm::vec3 pt(point[i].x, 0, point[i].y);
+        glm::vec3 pt(points[i].pos.x, 0, points[i].pos.y);
         b.pos = pt;
         b.dim = glm::vec3(40.0f, 10.0f, 40.0f);
         check.push_back(b);
@@ -89,7 +116,7 @@ void RacingLine::open(const std::string& fn)
 
 void RacingLine::update(glm::vec3 position)
 {
-    //glm::vec2 dir = glm::normalize(point[increment()] - point[current]);
+    //glm::vec2 dir = glm::normalize(points[increment()] - points[current]);
     if (check[current].intersects(position))
     {
         current = increment();
@@ -98,10 +125,15 @@ void RacingLine::update(glm::vec3 position)
 
 glm::vec2 RacingLine::getTarget()
 {
-    return point[current];
+    return points[current].pos;
+}
+
+uint32_t RacingLine::getAction()
+{
+    return points[current].mode;
 }
 
 uint32_t RacingLine::increment()
 {
-    return (current + 1) % (uint32_t)point.size();
+    return (current + 1) % (uint32_t)points.size();
 }

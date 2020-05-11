@@ -30,25 +30,44 @@ void AI::update()
     //std::cout << "cross: " << cross << std::endl;
     //std::cout << "\rdist: " << dist << "\tcross: " << cross;
     //std::fflush(stdout);
-    if (cross < -0.1)
+    if (cross < -0.1f)
     {
         turnLeft();
     }
 
-    if (cross > 0.1)
+    if (cross > 0.1f)
     {
         turnRight();
     }
 
-    if (dist > 20 || cross > -0.1 && cross < 0.1)
+    uint32_t action = line.getAction();
+    if (action == Point::ACCEL_PT)
+    {
+        ticksLeft = 0;
+        Car::gas();
+    }
+    else if (action == Point::COAST_PT)
+    {
+
+    }
+    else if (action == Point::BRAKE_PT)
+    {
+        ticksLeft++;
+        if (ticksLeft < 10)
+        {
+            Car::brake();
+        }
+    }
+
+    /*if (dist > 20.f || (cross > -0.1f && cross < 0.1f))
     {
         Car::gas();
     }
 
-    if (speed > 0.2f && dist < 200 && fabs(cross) > 0.4)
+    if (speed > 0.2f && dist < 200.f && fabs(cross) > 0.4f)
     {
         Car::brake();
-    }
+    }*/
 
     Car::update();
     line.update(position);
