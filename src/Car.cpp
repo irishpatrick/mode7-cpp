@@ -29,7 +29,8 @@ Car::~Car()
 void Car::open(const std::string& fn)
 {
     shadow.create();
-    shadow.apply(*this);
+    shadow.position.y = -1.f;
+    sprite.addChild(&shadow);
 
     anim.open("assets/animations/test_anim.json");
     //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));

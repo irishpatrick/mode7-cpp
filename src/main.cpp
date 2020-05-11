@@ -132,18 +132,18 @@ int main(int argc, char** argv)
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
     Camera::getObject().rotate(-atanf(2.0f / 12.0f), 0, 0);
-    //car.addChild(&Camera::getObject());
-    car.setTracked(false);
+    car.addChild(&Camera::getObject());
+    car.setTracked(true);
     car.setAltShader(shadowShader);
 
     aitest.open("assets/cars/testCar.json");
     aitest.position.y = 1;
     aitest.position.x = 1;
-    aitest.addChild(&Camera::getObject());
-    //aitest.rotate(0, -M_PI / 2.0f, 0);
+    //aitest.addChild(&Camera::getObject());
     aitest.setAltShader(shadowShader);
     aitest.setRacingLine(rltest);
-    aitest.setTracked(true);
+    //aitest.setTracked(true);
+    aitest.setTracked(false);
     aitest.update();
 
     running = 1;
