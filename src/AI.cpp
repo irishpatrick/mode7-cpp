@@ -44,7 +44,7 @@ void AI::update()
     if (action == Point::ACCEL_PT)
     {
         ticksLeft = 0;
-        Car::gas();
+        //Car::gas();
     }
     else if (action == Point::COAST_PT)
     {

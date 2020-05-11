@@ -30,7 +30,7 @@ void Car::open(const std::string& fn)
 {
     shadow.create();
     shadow.position.y = -1.f;
-    sprite.addChild(&shadow);
+    //addChild(&shadow);
 
     anim.open("assets/animations/test_anim.json");
     //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
@@ -92,6 +92,10 @@ void Car::update()
 
     sprite.position = Object::position;
     sprite.scale = Object::scale;
+    shadow.position = Object::position - glm::vec3(0.f, 1.f, 0.f);
+    //shadow.scale = Object::scale;
+
+    shadow.ry = Camera::getObject().getWorldRy();
 
     sprite.rx = Camera::getObject().getWorldRx();
     if (tracked)
