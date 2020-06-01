@@ -16,7 +16,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 
     find_package(SDL2 CONFIG REQUIRED)
     find_package(sdl2-image CONFIG REQUIRED)
-    find_package(sdl2-ttf CONFIG REQUIRED)
+    #find_package(sdl2-ttf CONFIG REQUIRED)
     find_package(GLEW CONFIG REQUIRED)
     find_package(assimp CONFIG REQUIRED)
 
@@ -25,7 +25,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         SDL2::SDL2
         SDL2::SDL2main
         SDL2::SDL2_image
-        SDL2::SDL2_ttf
+	#SDL2::SDL2_ttf
         GLEW::GLEW
         assimp::assimp
         OpenGL32
@@ -37,8 +37,8 @@ else ()
 
     pkg_check_modules(SDL2 REQUIRED sdl2)
     pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
-    pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
-    pkg_check_modules(CAIRO REQUIRED cairo)
+    #pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
+    #pkg_check_modules(CAIRO REQUIRED cairo)
     pkg_check_modules(GLEW REQUIRED glew)
     pkg_check_modules(ASSIMP REQUIRED assimp)
     pkg_check_modules(BULLET REQUIRED bullet)
@@ -47,9 +47,9 @@ else ()
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
-        ${SDL2_TTF_INCLUDE_DIRS}
-        ${CAIRO_INCLUDE_DIRS}
-	    ${GLEW_INCLUDE_DIRS}
+	#${SDL2_TTF_INCLUDE_DIRS}
+	#${CAIRO_INCLUDE_DIRS}
+	${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
         ${ASSIMP_INCLUDE_DIRS}
         ${BULLET_INCLUDE_DIRS}
@@ -59,9 +59,9 @@ else ()
         ${libs}
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES}
-	    ${GLEW_LIBRARIES}
-        ${CAIRO_LIBRARIES}
+	#${SDL2_TTF_LIBRARIES}
+	${GLEW_LIBRARIES}
+	#${CAIRO_LIBRARIES}
         ${ASSIMP_LIBRARIES}
         ${BULLET_LIBRARIES}
         m
