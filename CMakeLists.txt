@@ -14,6 +14,8 @@ set(libs "")
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 
+    message(STATUS "Using vcpkg")
+
     find_package(SDL2 CONFIG REQUIRED)
     find_package(sdl2-image CONFIG REQUIRED)
     find_package(sdl2-ttf CONFIG REQUIRED)
@@ -28,7 +30,6 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         SDL2::SDL2_ttf
         GLEW::GLEW
         assimp::assimp
-        OpenGL32
     )
 
 else ()
@@ -49,7 +50,7 @@ else ()
         ${SDL2_IMAGE_INCLUDE_DIRS}
         ${SDL2_TTF_INCLUDE_DIRS}
         ${CAIRO_INCLUDE_DIRS}
-	    ${GLEW_INCLUDE_DIRS}
+        ${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
         ${ASSIMP_INCLUDE_DIRS}
         ${BULLET_INCLUDE_DIRS}
@@ -60,7 +61,7 @@ else ()
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
-	    ${GLEW_LIBRARIES}
+        ${GLEW_LIBRARIES}
         ${CAIRO_LIBRARIES}
         ${ASSIMP_LIBRARIES}
         ${BULLET_LIBRARIES}
