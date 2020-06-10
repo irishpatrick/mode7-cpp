@@ -97,14 +97,14 @@ int main(int argc, char** argv)
 {
     printf("hello world!\n");
 
-    Screen::create(1920, 1080);
-    Camera::create(1920.f, 1080.f, 80.0f, 0.1f, 1000.0f);
+    Screen::create(3840, 2160);
+    Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
     //Screen::create(1920, 1080);
     //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
     Keyboard::attach();
 
     spriteShader.open(
-        "assets/shaders/skybox_v.glsl", 
+        "assets/shaders/skybox_v.glsl",
         "assets/shaders/skybox_f.glsl");
 
     shadowShader.open(
