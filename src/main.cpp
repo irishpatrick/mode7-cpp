@@ -97,10 +97,11 @@ int main(int argc, char** argv)
 {
     printf("hello world!\n");
 
-    Screen::create(3840, 2160);
-    Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
-    //Screen::create(1920, 1080);
-    //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
+    //Screen::create(3840, 2160);
+    //Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
+    Screen::create(1280, 720);
+    Camera::create(1280.f, 720.f, 80.f, 0.1f, 1000.f);
+
     Keyboard::attach();
 
     spriteShader.open(
