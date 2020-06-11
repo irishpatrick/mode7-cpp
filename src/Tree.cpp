@@ -23,13 +23,11 @@ void Tree::init()
     material.addMap(TexCache::open("assets/textures/tree.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
     scale *= 2;
-    
 }
 
 void Tree::update()
 {
     // set rotation to camera
-
     rx = Camera::getObject().getWorldRx();
     ry = Camera::getObject().getWorldRy();
 

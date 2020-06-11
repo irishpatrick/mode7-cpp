@@ -37,7 +37,7 @@ Scene ModelLoader::open(const std::string& fn)
 void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene)
 {
     matrix = Util::fromAi(node->mTransformation);
-    std::cout << "process node: " << node->mName.C_Str() << std::endl;
+    //std::cout << "process node: " << node->mName.C_Str() << std::endl;
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -52,7 +52,7 @@ void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* n
 
 std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
+    //std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
     std::shared_ptr<Mesh> out = std::make_shared<Mesh>();
     Material mat;
 
@@ -85,7 +85,7 @@ std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scen
         {
             v.uv = glm::vec2(0.0f);
         }
-        
+
 
         vertices.push_back(v);
     }
@@ -112,7 +112,7 @@ std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scen
     out->inherent = matrix;
     out->setMaterial(mat);
     out->createFromArrays(vertices, indices);
-    
+
 
     return out;
 }

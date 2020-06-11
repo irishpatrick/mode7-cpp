@@ -14,6 +14,7 @@ public:
 
     void addChild(Object*);
 
+    void move();
     virtual void update();
     virtual void update(glm::mat4);
 
@@ -46,6 +47,7 @@ public:
     glm::quat ry;
     glm::quat rz;
     glm::vec3 scale;
+    glm::vec3 velocity;
 
     glm::quat quat;
     glm::mat4 matrix;
@@ -61,6 +63,7 @@ protected:
 
     glm::vec3 front;
     glm::vec3 right;
+    glm::vec3 up;
 
     Object* parent;
 

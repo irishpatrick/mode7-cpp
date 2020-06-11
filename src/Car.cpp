@@ -10,12 +10,19 @@ using json = nlohmann::json;
 
 Car::Car() :
     Mesh(),
-    traction(0.01f),
+    traction(0.005f),
     state(IDLE),
+    ticks(0),
+    m_inStun(false),
     tracked(false),
     speed(0.0f),
     drift(0.0f),
     throttle(0.0f),
+    m_gasPos(0.f),
+    m_brakePos(0.f),
+    m_power(0.f),
+    m_brake(0.f),
+    m_maxPower(0.05f),
     topSpeed(1.7f)
 {
 
@@ -44,7 +51,7 @@ void Car::open(const std::string& fn)
     }
 
     json o;
-    o << in;
+    in >> o;
     in.close();
 
     // parse velocity curve;
@@ -59,44 +66,83 @@ void Car::open(const std::string& fn)
     }
 }
 
-void Car::update()
+void Car::updateControls()
 {
-    float delta;
-    if (state == ACCEL)
+    if (m_inStun)
     {
-        delta = THROTTLE_RATE;
+        --ticks;
+        if (ticks == 0)
+        {
+            m_inStun = false;
+            traction = 0.005;
+        }
     }
-    else if (state == BRAKE)
+    else
     {
-        delta = BRAKE_RATE;
-    }
-    else if (state == IDLE)
-    {
-        delta = COAST_RATE;
-    }
+        if (state == ACCEL)
+        {
+            m_gasPos += THROTTLE_RATE;
+            m_brakePos = 0.f;
+        }
+        else if (state == BRAKE)
+        {
+            m_brakePos += BRAKE_RATE;
+            m_gasPos = 0.f;
+        }
+        else if (state == IDLE)
+        {
+            m_gasPos = 0.f;
+            m_brakePos = 0.f;
+        }
 
-    throttle += delta;
-    if (throttle < 0.0f) throttle = 0.0f;
-    if (throttle > 10.0f) throttle = 10.0f;
+        if (m_gasPos < 0.0f) m_gasPos = 0.0f;
+        if (m_gasPos > 10.0f) m_gasPos = 10.0f;
+        if (m_brakePos < 0.f) m_brakePos = 0.f;
+        if (m_brakePos > 10.0f) m_brakePos = 10.0f;
+    }
 
     state = IDLE;
 
-    int piece = (int)fminf(9, floorf(throttle));
-    float temp = velCurve[piece].solve(throttle);
-    speed = topSpeed * temp / 10.0f;
+    int pt = (int)fminf(9, floorf(m_gasPos));
+    float output = velCurve[pt].solve(m_gasPos);
+    m_power = m_maxPower * output / 10.f;
+    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;
+}
 
-    Object::position -= speed * Object::front;
-    Object::position += drift * Object::right;
+void Car::update()
+{
+    updateControls();
 
+    Object::move();
+
+    float sign = 0.f;
+    if (velocity.z < -0.01f || velocity.z > 0.01f)
+    {
+        sign = velocity.z / fabs(velocity.z);
+    }
+
+    velocity.z += m_power - (velocity.z * (0.005f + m_brake));
+    velocity.x += drift - (velocity.x * 0.05f);
+    //velocity.x += drift - (velocity.x * 0.005f);
     drift = 0.0f;
 
+    std::cout << glm::to_string(velocity) << std::endl;
+    std::cout << glm::to_string(position) << std::endl;
+
+    updateSprite();
+    shadow.update();
+    Object::update();
+    sprite.update();
+}
+
+void Car::updateSprite()
+{
     sprite.position = Object::position;
     sprite.scale = Object::scale;
     shadow.position = Object::position - glm::vec3(0.f, 1.f, 0.f);
     //shadow.scale = Object::scale;
 
     shadow.ry = Camera::getObject().getWorldRy();
-
     sprite.rx = Camera::getObject().getWorldRx();
     if (tracked)
     {
@@ -134,11 +180,6 @@ void Car::update()
             anim.setCurrentFrame(1);
         }
     }
-    
-
-    shadow.update();
-    Object::update();
-    sprite.update();
 }
 
 void Car::draw(Shader& s)
@@ -163,18 +204,27 @@ void Car::brake()
 
 void Car::turnLeft()
 {
-    rotate(0, TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
-    drift = traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotate(0, TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
+    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
 }
 
 void Car::turnRight()
 {
-    rotate(0, -TURN_RATE * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
-    drift = -traction * speed * fminf(1.0f, (speed / (topSpeed * 0.1f)));
+    rotate(0, -TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
+    drift = -traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)
 {
     tracked = val;
     shadow.setTracked(tracked);
+}
+
+void Car::stun()
+{
+    m_gasPos = 0.f;
+    m_brakePos = 0.f;
+    m_inStun = true;
+    traction = 0.1;
+    ticks = 40;
 }

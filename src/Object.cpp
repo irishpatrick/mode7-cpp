@@ -17,6 +17,7 @@ Object::Object() :
     worldMatrix(1.0f),
     front(),
     right(),
+    up(0, 1, 0),
     parent(nullptr)
 {
 
@@ -105,6 +106,13 @@ glm::quat Object::getWorldQuat()
     return quat;
 }
 
+void Object::move()
+{
+    position += velocity.x * right;
+    position += velocity.y * up;
+    position += velocity.z * -front;
+}
+
 void Object::update()
 {
     update(glm::mat4(1.0f));
@@ -125,7 +133,8 @@ void Object::update(glm::mat4 pmat)
 
     // etc
     front = worldQuat * Util::zAxis();
-    right = -glm::cross(front, Util::yAxis());
+    right = -glm::cross(front, up);
+    up = glm::cross(front, right);
 
     for (auto& e : children)
     {

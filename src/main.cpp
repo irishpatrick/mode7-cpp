@@ -15,6 +15,7 @@
 #include "Car.hpp"
 #include "RacingLine.hpp"
 #include "AI.hpp"
+#include "Collisions.hpp"
 
 SDL_Event e;
 int running;
@@ -26,6 +27,7 @@ Tree tree;
 Car car;
 Scene track;
 AI aitest;
+Collisions cl;
 
 RacingLine rltest;
 
@@ -74,8 +76,9 @@ void update()
     car.update();
     aitest.update();
     Camera::updateView();
-
     rltest.update(car.position);
+
+    cl.update();
     //std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
     //std::cout << glm::to_string(car.position) << std::endl;
 }
@@ -99,8 +102,10 @@ int main(int argc, char** argv)
 
     //Screen::create(3840, 2160);
     //Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
+    //Screen::create(1920, 1080);
+    //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
     Screen::create(1280, 720);
-    Camera::create(1280.f, 720.f, 80.f, 0.1f, 1000.f);
+    Camera::create(1280.f, 720.f, 80.f, 1.0f, 2000.f);
 
     Keyboard::attach();
 
@@ -114,7 +119,7 @@ int main(int argc, char** argv)
     );
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
-    skybox.scale = glm::vec3(500.0f);
+    skybox.scale = glm::vec3(1000.0f);
 
     track = ModelLoader::open("assets/models/oval.dae");
     //track.scale = glm::vec3(2.0f);
@@ -147,6 +152,9 @@ int main(int argc, char** argv)
     aitest.setTracked(false);
     aitest.update();
 
+    cl.addObject(&car, 2.f);
+    cl.addObject(&tree, 0.f);
+
     running = 1;
     Clock::start();
     while (running)
@@ -160,6 +168,8 @@ int main(int argc, char** argv)
 
         draw();
     }
+
+    SDL_Quit();
 
     return 0;
 }
