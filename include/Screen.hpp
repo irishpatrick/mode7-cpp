@@ -8,6 +8,7 @@ public:
     static void create(int, int);
     static void clear();
     static void flip();
+    static void destroy();
 
 private:
 

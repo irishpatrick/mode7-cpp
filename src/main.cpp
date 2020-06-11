@@ -104,8 +104,10 @@ int main(int argc, char** argv)
     //Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
     //Screen::create(1920, 1080);
     //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
-    Screen::create(1280, 720);
-    Camera::create(1280.f, 720.f, 80.f, 1.0f, 2000.f);
+    //Screen::create(1600, 900);
+    //Camera::create(1600.f, 900.f, 80.f, 1.0f, 2000.f);
+    Screen::create(1720 * 2, 968 * 2);
+    Camera::create(1720.f * 2, 968.f * 2, 70.f, 1.0f, 2000.f);
 
     Keyboard::attach();
 
@@ -165,10 +167,10 @@ int main(int argc, char** argv)
             update();
             Clock::lagTick();
         }
-
         draw();
     }
 
+    Screen::destroy();
     SDL_Quit();
 
     return 0;

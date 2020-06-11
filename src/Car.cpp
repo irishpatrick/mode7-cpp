@@ -22,7 +22,7 @@ Car::Car() :
     m_brakePos(0.f),
     m_power(0.f),
     m_brake(0.f),
-    m_maxPower(0.05f),
+    m_maxPower(0.02f),
     topSpeed(1.7f)
 {
 
@@ -125,9 +125,6 @@ void Car::update()
     velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
     drift = 0.0f;
-
-    std::cout << glm::to_string(velocity) << std::endl;
-    std::cout << glm::to_string(position) << std::endl;
 
     updateSprite();
     shadow.update();

@@ -15,7 +15,6 @@ Collisions::~Collisions()
 void Collisions::addObject(Object* m, float radius)
 {
     m_objs.push_back(std::pair<Object*, float>(m, radius));
-    std::cout << m_objs.size() << std::endl;
 }
 
 void Collisions::update()

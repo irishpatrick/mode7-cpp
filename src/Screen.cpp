@@ -57,3 +57,8 @@ void Screen::flip()
     glFlush();
     SDL_GL_SwapWindow(window);
 }
+
+void Screen::destroy()
+{
+    SDL_DestroyWindow(window);
+}
