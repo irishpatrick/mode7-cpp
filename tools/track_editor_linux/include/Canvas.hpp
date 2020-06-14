@@ -2,6 +2,7 @@
 #define CANVAS_HPP
 
 #include <gtk/gtk.h>
+#include <track_editor.hpp>
 
 class Canvas
 {
@@ -13,6 +14,8 @@ public:
     void create();
     void attach();
     void clear();
+    void drawPart(Part*);
+
     void configureEvent();
     gboolean scrollEvent(GdkEventScroll*);
     gboolean motionEvent(GdkEventMotion*);

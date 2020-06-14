@@ -2,8 +2,7 @@
 #define TRACK_HPP
 
 #include <vector>
-#include <memory>
-#include "Part.hpp"
+#include "Piece.hpp"
 
 class Track
 {
@@ -14,7 +13,8 @@ public:
 
 private:
 
-    std::vector<std::unique_ptr<Part>> m_parts;
+    std::vector<Piece> pieces;
 };
+
 
 #endif /* TRACK_HPP */

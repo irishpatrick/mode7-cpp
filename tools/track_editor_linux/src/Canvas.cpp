@@ -100,6 +100,26 @@ void Canvas::clear()
     cairo_destroy(cr);
 }
 
+void Canvas::drawPart(Part* p)
+{
+    cairo_t* cr;
+    cr = cairo_create(surface);
+
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_set_line_width(cr, 1);
+
+    auto& pts = p->getPoints();
+    cairo_move_to(cr, pts[0].x, pts[0].y);
+    for (int i = 1; i < pts.size(); ++i)
+    {
+        cairo_line_to(cr, pts[i].x, pts[i].y);
+    }
+    cairo_stroke(cr);
+
+    cairo_destroy(cr);
+    gtk_widget_queue_draw(widget);
+}
+
 void Canvas::configureEvent()
 {
     w = gtk_widget_get_allocated_width(widget);
@@ -109,9 +129,9 @@ void Canvas::configureEvent()
         cairo_surface_destroy(surface);
     }
     surface = gdk_window_create_similar_surface(
-        gtk_widget_get_window(widget), 
-        CAIRO_CONTENT_COLOR, 
-        gtk_widget_get_allocated_width(widget), 
+        gtk_widget_get_window(widget),
+        CAIRO_CONTENT_COLOR,
+        gtk_widget_get_allocated_width(widget),
         gtk_widget_get_allocated_height(widget));
 
     clear();
@@ -179,7 +199,7 @@ gboolean Canvas::buttonEvent(GdkEventButton* event)
 
     if (event->button == GDK_BUTTON_PRIMARY)
     {
-        
+
     }
     else if (event->button == GDK_BUTTON_SECONDARY)
     {

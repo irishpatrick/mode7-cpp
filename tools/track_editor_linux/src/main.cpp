@@ -1,12 +1,16 @@
 #include <iostream>
 #include <cstdlib>
+#include <memory>
 #include <gtk/gtk.h>
 #include <cairo/cairo.h>
+#include <track_editor.hpp>
 #include "Canvas.hpp"
+#include "Library.hpp"
 
-static cairo_surface_t* surface = nullptr;
 static Canvas drawing_area;
 static Canvas editing_area;
+static Library part_library;
+static std::unique_ptr<Track> track;
 
 static void close_window(void)
 {
