@@ -106,8 +106,10 @@ int main(int argc, char** argv)
     //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
     //Screen::create(1600, 900);
     //Camera::create(1600.f, 900.f, 80.f, 1.0f, 2000.f);
-    Screen::create(1720 * 2, 968 * 2);
-    Camera::create(1720.f * 2, 968.f * 2, 70.f, 1.0f, 2000.f);
+    Screen::create(1720, 968);
+    Camera::create(1720.f, 968.f, 70.f, 1.0f, 2000.f);
+    //Screen::create(1720 * 2, 968 * 2);
+    //Camera::create(1720.f * 2, 968.f * 2, 70.f, 1.0f, 2000.f);
 
     Keyboard::attach();
 
