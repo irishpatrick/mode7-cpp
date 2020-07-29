@@ -21,6 +21,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     #find_package(sdl2-ttf CONFIG REQUIRED)
     find_package(GLEW CONFIG REQUIRED)
     find_package(assimp CONFIG REQUIRED)
+    find_package(Bullet CONFIG REQUIRED)
 
     set(libs
         ${libs}
@@ -30,6 +31,10 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 	#SDL2::SDL2_ttf
         GLEW::GLEW
         assimp::assimp
+        LinearMath
+        Bullet3Common
+        BulletDynamics
+        BulletSoftBody
     )
 
 else ()
