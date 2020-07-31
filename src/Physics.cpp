@@ -1,5 +1,9 @@
 #include "Physics.hpp"
+#if defined __linux__
 #include <btBulletDynamicsCommon.h>
+#elif defined _WIN32
+#include <bullet/btBulletDynamicsCommon.h>
+#endif
 
 static btBroadphaseInterface* broadphase = nullptr;
 static btDefaultCollisionConfiguration* collisionConfiguration = nullptr;
