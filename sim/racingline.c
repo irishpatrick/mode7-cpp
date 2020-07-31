@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
+#include "getline.h"
+#endif
 
 RacingLine* racingline_create()
 {
     RacingLine* out = (RacingLine*)malloc(sizeof(RacingLine));
-    out->lines = NULL;
-    out->num_lines = 0;
+    memset(out, 0, sizeof(RacingLine));
     return out;
 }
 
@@ -21,7 +23,7 @@ void racingline_load(RacingLine* rl, const char* fn)
     }
 
     size_t len = 0;
-    ssize_t read;
+    size_t read;
     char* line = NULL;
     int lnum = 0;
     while ((read = getline(&line, &len, fp)) != -1)

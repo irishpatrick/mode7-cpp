@@ -1,5 +1,5 @@
 #include "Physics.hpp"
-#if defined __linux__
+/*#if defined __linux__
 #include <btBulletDynamicsCommon.h>
 #elif defined _WIN32
 #include <bullet/btBulletDynamicsCommon.h>
@@ -28,4 +28,4 @@ void Physics::destroy()
     delete dispatcher;
     delete collisionConfiguration;
     delete broadphase;
-}
+}*/

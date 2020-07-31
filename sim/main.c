@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+//#include <unistd.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "racingline.h"
 #include "car.h"
@@ -22,9 +23,7 @@ int main(int argc, char** argv)
 
     // simulate
     for (int i = 0; i < 100000; ++i)
-    //while (1)
     {
-        //sleep(1);
         car_update(car_a);
     }
 
