@@ -83,3 +83,5 @@ file(COPY ${assets} DESTINATION ./assets)
 target_compile_options(${PROJECT_NAME} PRIVATE ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
+
+add_subdirectory(./sim)
