@@ -17,6 +17,7 @@ def print_usage():
     print("usage: ./track.py <radius>")
 
 def main():
+    num = 16
     if len(sys.argv) < 2:
         print_usage()
         return
@@ -24,8 +25,8 @@ def main():
     r = int(sys.argv[1])
     lines = []
     last = Point(r, 0)
-    part = 2.0 * math.pi / 16
-    for i in range(1, 17):
+    part = 2.0 * math.pi / num
+    for i in range(1, num + 1):
         theta = i * part
         pt = Point(r * math.cos(theta), r * math.sin(theta))
         add = Line()

@@ -75,6 +75,11 @@ void car_update(Car* c)
         //printf("%d: ", zone);
         car_control(c, *racingline_get_line(c->racingline, zone), *racingline_get_line(c->racingline, future));
     }
+    else
+    {
+        printf("bad zone\n");
+    }
+    
 }
 
 void car_destroy(Car* c)
