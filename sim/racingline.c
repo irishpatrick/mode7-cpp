@@ -86,7 +86,7 @@ void racingline_load(RacingLine* rl, const char* fn)
         vec2 l_norm = line_normal(*l);
         Line p_norm = line_create(l->p, l_norm);
         Line e_norm = line_create(l->e, l_norm);
-        float w = 2;
+        float w = 10;
         vec2 a = line_solve(p_norm, -w);
         vec2 b = line_solve(p_norm, w);
         vec2 c = line_solve(e_norm, w);
