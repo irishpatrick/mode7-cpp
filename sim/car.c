@@ -63,6 +63,8 @@ void car_control(Car* c, Line cur, Line next)
         c->vel = 0.5f;
     }
 
+    c->vel = 0.1f + dot_next;
+
     //if (dist_to_line < 0.f && cross_line <= 0.f) // turn left
     if (right_of_line && moving_right && dist_threshold)
     {

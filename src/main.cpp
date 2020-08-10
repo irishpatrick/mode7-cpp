@@ -70,6 +70,8 @@ void update()
         car.turnRight();
     }
 
+    skybox.position = car.position;
+
     tree.update();
     skybox.update();
     track.update();
