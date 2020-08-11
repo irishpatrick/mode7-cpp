@@ -14,12 +14,12 @@ public:
     {
         m_p = a;
         m_e = a;
-        m_v = b;
+        m_v = glm::normalize(b);
     }
 
     inline void fromPoints(glm::vec2 a, glm::vec2 b)
     {
-        m_v = b - a;
+        m_v = glm::normalize(b - a);
         m_p = a;
         m_e = b;
     }
@@ -52,6 +52,11 @@ public:
     inline glm::vec2 e()
     {
         return m_e;
+    }
+
+    inline glm::vec2 v()
+    {
+        return m_v;
     }
 
 private:
