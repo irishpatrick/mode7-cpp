@@ -3,43 +3,19 @@
 
 #include <string>
 #include <vector>
-#include <cstdint>
 #include "gl.h"
-#include "BBox.hpp"
+#include "Line2D.hpp"
 
-class Point
+typedef struct _Rect
 {
-public:
+    Line2D a, b, c, d;
+} Rect;
 
-    Point();
-    ~Point();
-
-    glm::vec2 pos;
-    uint32_t mode;
-
-    static const uint32_t ACCEL_PT = 0;
-    static const uint32_t COAST_PT = 1;
-    static const uint32_t BRAKE_PT = 2;
-private:
-
-};
-
-class Rect
+static inline int mod(int a, int b)
 {
-public:
-
-    Rect();
-    ~Rect();
-
-    void create(glm::vec2, glm::vec2);
-    bool check(glm::vec2);
-    bool check(Rect);
-
-private:
-
-    glm::vec2 pos;
-    glm::vec2 dim;
-};
+    int r = a % b;
+    return r < 0 ? r + b : r;
+}
 
 class RacingLine
 {
@@ -48,18 +24,23 @@ public:
     RacingLine();
     ~RacingLine();
 
-    void open(const std::string&);
-    void update(glm::vec3);
-    glm::vec2 getTarget();
-    uint32_t getAction();
+    int load(const std::string&);
+    int getCurrentIndex(glm::vec2, int);
+
+    inline Line2D getLine(int index)
+    {
+        return m_lines[index];
+    }
+
+    inline Line2D getNext(int index)
+    {
+        return m_lines[mod(index + 1, m_lines.size())];
+    }
 
 private:
 
-    uint32_t increment();
-
-    uint32_t current;
-    std::vector<Point> points;
-    std::vector<BBox> check;
+    std::vector<Line2D> m_lines;
+    std::vector<Rect> m_rects;
 };
 
 #endif /* RACINGLINE_HPP */

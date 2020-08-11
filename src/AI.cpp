@@ -4,7 +4,8 @@
 
 AI::AI() :
     Car(),
-    ticksLeft(0)
+    m_currentZone(0),
+    m_racingLine(nullptr)
 {
 
 }
@@ -14,61 +15,30 @@ AI::~AI()
 
 }
 
-void AI::setRacingLine(RacingLine line)
+void AI::setRacingLine(RacingLine* line)
 {
-    this->line = line;
+    m_racingLine = line;
+}
+
+void AI::control()
+{
+    int cur = m_racingLine->getCurrentIndex(Car::position, m_currentZone);
+    if (cur > 0)
+    {
+        m_currentZone = cur;
+    }
+    Line2D line = m_racingLine->getLine(m_currentZone);
+    Line2D next = m_racingLine->getNext(m_currentZone);
+
+    float distToLine = line.distTo(Car::position);
+    float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
 }
 
 void AI::update()
 {
-    glm::vec2 xz = line.getTarget();
-    glm::vec3 target(xz.x, position.y, xz.y);
-    glm::vec3 dir = glm::normalize(target - position);
-    float dist = glm::distance(target, position);
-    float cross = glm::cross(front, dir).y;
-    //std::cout << dist << std::endl;
-    //std::cout << "cross: " << cross << std::endl;
-    //std::cout << "\rdist: " << dist << "\tcross: " << cross;
-    //std::fflush(stdout);
-    if (cross < -0.1f)
+    if (m_racingLine)
     {
-        turnLeft();
+        control();
     }
-
-    if (cross > 0.1f)
-    {
-        turnRight();
-    }
-
-    uint32_t action = line.getAction();
-    if (action == Point::ACCEL_PT)
-    {
-        ticksLeft = 0;
-        //Car::gas();
-    }
-    else if (action == Point::COAST_PT)
-    {
-
-    }
-    else if (action == Point::BRAKE_PT)
-    {
-        ticksLeft++;
-        if (ticksLeft < 10)
-        {
-            Car::brake();
-        }
-    }
-
-    /*if (dist > 20.f || (cross > -0.1f && cross < 0.1f))
-    {
-        Car::gas();
-    }
-
-    if (speed > 0.2f && dist < 200.f && fabs(cross) > 0.4f)
-    {
-        Car::brake();
-    }*/
-
     Car::update();
-    line.update(position);
 }

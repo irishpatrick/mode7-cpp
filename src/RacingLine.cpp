@@ -1,60 +1,9 @@
 #include "RacingLine.hpp"
-#include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <iostream>
+#include <cstdio>
 
-using json = nlohmann::json;
-
-Point::Point() :
-    pos(0.f),
-    mode(ACCEL_PT)
-{
-
-}
-
-Point::~Point()
-{
-
-}
-
-Rect::Rect() :
-    pos(0),
-    dim(1)
-{
-
-}
-
-Rect::~Rect()
-{
-
-}
-
-void Rect::create(glm::vec2 pos, glm::vec2 dim)
-{
-    this->pos = pos - (0.5f * dim);
-    this->dim = dim;
-}
-
-bool Rect::check(glm::vec2 pt)
-{
-    Rect r;
-    r.create(pt, glm::vec2(1, 1));
-    return check(r);
-}
-
-bool Rect::check(Rect r)
-{
-    //std::cout << "[" << glm::to_string(pos) << " | " << glm::to_string(dim) << "]" << std::endl;
-    //std::cout << "[" << glm::to_string(r.pos) << " | " << glm::to_string(r.dim) << "]" << std::endl;
-    return
-        pos.x < r.pos.x + r.dim.x &&
-        pos.x + dim.x > r.pos.x &&
-        pos.y < r.pos.y + r.dim.y &&
-        pos.y + dim.y > r.pos.y ;
-}
-
-RacingLine::RacingLine() :
-    current(0)
+RacingLine::RacingLine()
 {
 
 }
@@ -64,76 +13,70 @@ RacingLine::~RacingLine()
 
 }
 
-void RacingLine::open(const std::string& fn)
+int RacingLine::load(const std::string& fn)
 {
-    // open
     std::ifstream in(fn);
     if (!in)
     {
-        std::cout << "cannot open " << fn << std::endl;
-        return;
+        return 1;
     }
 
-    json o;
-    o << in;
+    std::string line;
+    float a, b, c, d;
+    int lineNum = 0;
+    while(std::getline(in, line))
+    {
+        ++lineNum;
+        if (lineNum == 1) // skip first line
+        {
+            continue;
+        }
+
+        sscanf(line.c_str(), "%f,%f,%f,%f", &a, &b, &c, &d);
+        Line2D segment;
+        segment.fromPoints({a, b}, {c, d});
+        m_lines.push_back(segment);
+
+        Line2D top, bot;
+        glm::vec2 n = segment.normal();
+        bot.create(segment.p(), n);
+        top.create(segment.e(), n);
+        float w = 10;
+        Rect r;
+        r.a = top;
+        r.b.fromPoints(top.solve(-w), top.solve(w));
+        r.c = bot;
+        r.d.fromPoints(bot.solve(-w), bot.solve(w));
+        m_rects.push_back(r);
+    }
+
     in.close();
 
-    // parse
-    for (auto& e : o["points"])
-    {
-        float x = e[0].get<float>();
-        float y = e[1].get<float>();
-        std::string mode = e[2].get<std::string>();
-        
-        Point p;
-        p.pos = glm::vec2(x, y);
-        
-        if (mode == "accel")
-        {
-            p.mode = Point::ACCEL_PT;
-        }
-        else if (mode == "coast")
-        {
-            p.mode = Point::COAST_PT;
-        }
-        else if (mode == "brake")
-        {
-            p.mode = Point::BRAKE_PT;
-        }
+    return 0;
+}
 
-        points.push_back(p);
+int RacingLine::getCurrentIndex(glm::vec2 position, int current)
+{
+    int start = current - 1;
+    int index;
+    for (int i = start; i < start + 3; ++i)
+    {
+        index = mod(i, m_rects.size());
+        Rect* r = &m_rects[index];
+
+        float da = fabsf(r->a.distTo(position));
+        float db = fabsf(r->b.distTo(position));
+        float dc = fabsf(r->c.distTo(position));
+        float dd = fabsf(r->d.distTo(position));
+
+        float l = r->a.length();
+        float w = r->b.length();
+
+        if ((da <= w) && (db <= l) && (dc <= w) && (dd <= l))
+        {
+            return index;
+        }
     }
 
-    for (int i = 0; i < points.size(); ++i)
-    {
-        BBox b;
-        glm::vec3 pt(points[i].pos.x, 0, points[i].pos.y);
-        b.pos = pt;
-        b.dim = glm::vec3(40.0f, 10.0f, 40.0f);
-        check.push_back(b);
-    }
-}
-
-void RacingLine::update(glm::vec3 position)
-{
-    //glm::vec2 dir = glm::normalize(points[increment()] - points[current]);
-    if (check[current].intersects(position))
-    {
-        current = increment();
-    }
-}
-
-glm::vec2 RacingLine::getTarget()
-{
-    return points[current].pos;
-}
-
-uint32_t RacingLine::getAction()
-{
-    return points[current].mode;
-}
-
-uint32_t RacingLine::increment()
-{
-    return (current + 1) % (uint32_t)points.size();
+    return -1;
 }

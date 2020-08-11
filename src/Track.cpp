@@ -26,7 +26,7 @@ void Track::open(const std::string& fn)
     }
 
     json o;
-    o << in;
+    in >> o;
     in.close();
 }
 
