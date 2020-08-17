@@ -79,6 +79,7 @@ void update()
     skybox.update();
     track.update();
     car.update();
+    std::cout << car.getFront().x << "," << car.getFront().z << std::endl;
     aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
@@ -97,6 +98,7 @@ void draw()
     tree.draw(spriteShader);
     aitest.draw(spriteShader);
     car.draw(spriteShader);
+    rltest.getDebugPath()->draw();
 
     Screen::flip();
 }
@@ -140,7 +142,7 @@ int main(int argc, char** argv)
     tree.position.z = -5;
     tree.setAltShader(shadowShader);
 
-    rltest.load("assets/track_data/oval.line");
+    rltest.load("assets/track_data/oval2.line");
 
     car.open("assets/cars/testCar.json");
     car.position.y = 1;

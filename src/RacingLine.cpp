@@ -16,6 +16,9 @@ RacingLine::~RacingLine()
 
 int RacingLine::load(const std::string& fn)
 {
+    m_path.init();
+    std::vector<glm::vec2> points;
+
     std::ifstream in(fn);
     if (!in)
     {
@@ -39,6 +42,8 @@ int RacingLine::load(const std::string& fn)
         }
 
         sscanf(line.c_str(), "%f,%f,%f,%f", &a, &b, &c, &d);
+        
+        points.push_back({a, b});
 
         Line2D segment;
         segment.fromPoints(glm::vec2(a, b), glm::vec2(c, d));
@@ -66,6 +71,11 @@ int RacingLine::load(const std::string& fn)
         m_rects.push_back(r);
     }
 
+    points.push_back(points[0]);
+    m_path.createFromPoints(points);
+    m_path.position.y = 1.f;
+    m_path.update();
+
     in.close();
 
     return 0;
@@ -73,7 +83,7 @@ int RacingLine::load(const std::string& fn)
 
 int RacingLine::getCurrentIndex(glm::vec2 position, int current)
 {
-    int start = current - 1;
+    //int start = current - 1;
     int index;
     //for (int i = start; i < start + 3; ++i)
     for (int i = 0; i < m_rects.size(); ++i)

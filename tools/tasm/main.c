@@ -1,33 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "vec2.h"
 #include "line.h"
+#include "util.h"
 
 static int num_lines;
 static int buffer_size;
 static float* buffer;
-
-char* skip(char* line, int amt)
-{
-    line += 3;
-    while (*line == ' ' || *line == '\t')
-    {
-        ++line;
-    }
-    return line;
-}
-
-float d2r(float deg)
-{
-    return deg * M_PI / 180.f;
-}
-
-float r2d(float rad)
-{
-    return rad * 180.f / M_PI;
-}
 
 float get_angle(Line l)
 {
@@ -39,32 +21,9 @@ float get_angle(Line l)
     return theta;
 }
 
-int startswith(char* ref, char* pat)
-{
-    if (strlen(ref) < strlen(pat))
-    {
-        return 0;
-    }
-
-    char* ref_p = ref;
-    char* pat_p = pat;
-    while (*pat_p != 0)
-    {
-        if (*ref_p != *pat_p)
-        {
-            return 0;
-        }
-
-        ++ref_p;
-        ++pat_p;
-    }
-
-    return 1;
-}
-
 void print_usage()
 {
-    printf("usage: ./tasm <file>\n");
+    printf("usage: ./tasm <file> [output]\n");
 }
 
 Line buffer_get_last()
@@ -175,7 +134,15 @@ int main(int argc, char** argv)
         free(line);
     }
 
-    FILE* out = fopen("a.line", "w");
+    FILE* out;
+    if (argc == 3)
+    {
+        out = fopen(argv[2], "w");
+    }
+    else
+    {
+        out = fopen("a.line", "w");
+    }
     for (int i = 0; i < num_lines * 4; i += 4)
     {
         fprintf(out, "%f,%f,%f,%f\n",

@@ -5,6 +5,7 @@
 #include <vector>
 #include "gl.h"
 #include "Line2D.hpp"
+#include "DebugPath.hpp"
 
 typedef struct _Rect
 {
@@ -37,8 +38,14 @@ public:
         return m_lines[mod(index + 1, m_lines.size())];
     }
 
+    inline DebugPath* getDebugPath()
+    {
+        return &m_path;
+    }
+
 private:
 
+    DebugPath m_path;
     std::vector<Line2D> m_lines;
     std::vector<Rect> m_rects;
 };
