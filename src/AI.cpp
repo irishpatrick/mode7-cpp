@@ -4,7 +4,8 @@
 
 AI::AI() :
     Car(),
-    ticksLeft(0)
+    m_currentZone(0),
+    m_racingLine(nullptr)
 {
 
 }
@@ -14,61 +15,102 @@ AI::~AI()
 
 }
 
-void AI::setRacingLine(RacingLine line)
+void AI::setRacingLine(RacingLine* line)
 {
-    this->line = line;
+    m_racingLine = line;
+}
+
+void AI::control()
+{
+    int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
+    if (cur >= 0)
+    {
+        m_currentZone = cur;
+        std::cout << "current zone: " << cur << std::endl;
+    }
+    else
+    {
+        std::cout << "bad zone" << std::endl;
+    }
+
+    Line2D line = m_racingLine->getLine(m_currentZone);
+    Line2D next = m_racingLine->getNext(m_currentZone);
+
+    float distToLine = line.distTo(Car::position);
+    float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
+    float absDistToLine = fabsf(distToLine);
+    float dot_line = glm::dot(
+        line.v(), 
+        glm::vec2(Car::front.x, Car::front.z)
+    );
+    glm::vec3 cross_line_vec = glm::cross(
+        glm::vec3(line.v().x, 0.f, line.v().y),
+        Car::front
+    );
+    float cross_line = cross_line_vec.y;
+    float dot_next = glm::dot(
+        next.normal(),
+        glm::vec2(Car::front.x, Car::front.z)
+    );
+    glm::vec3 cross_next_vec = glm::cross(
+        glm::vec3(line.normal().x, 0.f, line.normal().y),
+        Car::front
+    );
+    float cross_next = cross_next_vec.y;
+
+    //std::cout << front.x << "," << front.z << "\t" << line.v().x << "," << line.v().y << std::endl;
+
+    int moving_right = cross_line < 0.f;
+    int moving_left = cross_line > 0.f;
+    int right_of_line = distToLine < 0.f;
+    int left_of_line = distToLine > 0.f;
+    int dist_threshold = absDistToLine > 0.5f;
+
+    std::cout <<
+        getWorldPosition().x << "," <<
+        getWorldPosition().z << "\t" <<
+
+        distToLine << "," <<
+        distToNext << "," <<
+        dot_line << "," <<
+        cross_line << "," <<
+        dot_next << "," <<
+        cross_next << "\t" <<
+        
+        moving_right << "," <<
+        moving_left << "," <<
+        right_of_line << "," <<
+        left_of_line << "," <<
+        dist_threshold << "," <<
+        std::endl;
+
+    velocity.z = -1.f * (0.01f + 0.05f * dot_next);
+
+    if (right_of_line && moving_right && dist_threshold)
+    {
+        //Car::turnLeft();
+        std::cout << "turn left" << std::endl;
+        rotate(0.f, 0.1f, 0.f);
+    }
+
+    else if (left_of_line && moving_left && dist_threshold)
+    {
+        //Car::turnRight();
+        std::cout << "turn right" << std::endl;
+        rotate(0.f, -0.1f, 0.f);
+    }
 }
 
 void AI::update()
 {
-    glm::vec2 xz = line.getTarget();
-    glm::vec3 target(xz.x, position.y, xz.y);
-    glm::vec3 dir = glm::normalize(target - position);
-    float dist = glm::distance(target, position);
-    float cross = glm::cross(front, dir).y;
-    //std::cout << dist << std::endl;
-    //std::cout << "cross: " << cross << std::endl;
-    //std::cout << "\rdist: " << dist << "\tcross: " << cross;
-    //std::fflush(stdout);
-    if (cross < -0.1f)
+    if (m_racingLine)
     {
-        turnLeft();
+        control();
     }
-
-    if (cross > 0.1f)
-    {
-        turnRight();
-    }
-
-    uint32_t action = line.getAction();
-    if (action == Point::ACCEL_PT)
-    {
-        ticksLeft = 0;
-        //Car::gas();
-    }
-    else if (action == Point::COAST_PT)
-    {
-
-    }
-    else if (action == Point::BRAKE_PT)
-    {
-        ticksLeft++;
-        if (ticksLeft < 10)
-        {
-            Car::brake();
-        }
-    }
-
-    /*if (dist > 20.f || (cross > -0.1f && cross < 0.1f))
-    {
-        Car::gas();
-    }
-
-    if (speed > 0.2f && dist < 200.f && fabs(cross) > 0.4f)
-    {
-        Car::brake();
-    }*/
-
-    Car::update();
-    line.update(position);
+    
+    Object::move();
+    Car::updateSprite();
+    Car::shadow.update();
+    Object::update();
+    Car::sprite.update();
 }

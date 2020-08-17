@@ -79,9 +79,10 @@ void update()
     skybox.update();
     track.update();
     car.update();
+    std::cout << car.getFront().x << "," << car.getFront().z << std::endl;
     aitest.update();
     Camera::updateView();
-    rltest.update(car.position);
+    //rltest.update(car.position);
 
     cl.update();
     //std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
@@ -97,6 +98,7 @@ void draw()
     tree.draw(spriteShader);
     aitest.draw(spriteShader);
     car.draw(spriteShader);
+    rltest.getDebugPath()->draw();
 
     Screen::flip();
 }
@@ -129,7 +131,13 @@ int main(int argc, char** argv)
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
     skybox.scale = glm::vec3(500.f);
+<<<<<<< HEAD
     track = ModelLoader::open("assets/models/oval.dae");
+=======
+
+    track = ModelLoader::open("assets/models/oval2.dae");
+    //track.scale = glm::vec3(2.0f);
+>>>>>>> c01c2dc191ded5abe01735fb0d2dc45d18d4f2d7
     track.position.y = 1 * -1.1f;
 
     tree.init();
@@ -138,7 +146,7 @@ int main(int argc, char** argv)
     tree.position.z = -5;
     tree.setAltShader(shadowShader);
 
-    rltest.open("assets/track_data/test.json");
+    rltest.load("assets/track_data/oval2.line");
 
     car.open("assets/cars/testCar.json");
     car.position.y = 1;
@@ -154,7 +162,7 @@ int main(int argc, char** argv)
     aitest.position.x = 1;
     //aitest.addChild(&Camera::getObject());
     aitest.setAltShader(shadowShader);
-    aitest.setRacingLine(rltest);
+    aitest.setRacingLine(&rltest);
     //aitest.setTracked(true);
     aitest.setTracked(false);
     aitest.update();

@@ -47,7 +47,7 @@ protected:
 
     float speed;
 
-private:
+protected:
 
     DropShadow shadow;
 

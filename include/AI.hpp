@@ -12,14 +12,14 @@ public:
     AI();
     virtual ~AI();
 
-    void setRacingLine(RacingLine);
-
+    void setRacingLine(RacingLine*);
+    void control();
     virtual void update();
 
 private:
 
-    int ticksLeft;
-    RacingLine line;
+    int m_currentZone;
+    RacingLine* m_racingLine;
 };
 
 #endif /* AI_HPP */

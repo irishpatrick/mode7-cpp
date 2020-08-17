@@ -28,7 +28,7 @@ void Animation::open(const std::string& fn)
     }
 
     json o;
-    o << in;
+    in >> o;
     in.close();
 
     // parse
