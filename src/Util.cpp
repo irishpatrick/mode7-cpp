@@ -66,3 +66,18 @@ glm::mat4 Util::fromAi(const aiMatrix4x4& from)
         from.a4, from.b4, from.c4, from.d4
     };
 }
+
+std::pair<int, int> Util::getMonitorRes()
+{
+    std::pair<int, int> out;
+#ifdef _WIN32
+    // win32 size
+#elif defined __linux__
+    Display* d = XOpenDisplay(NULL);
+    Screen* s = DefaultScreenOfDisplay(d);
+    out.first = s->width;
+    out.second = s->height;
+#endif
+
+    return out;
+}

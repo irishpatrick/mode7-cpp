@@ -3,6 +3,9 @@
 
 #include "gl.h"
 
+namespace mode7
+{
+
 class Line2D
 {
 public:
@@ -65,5 +68,7 @@ private:
     glm::vec2 m_e;
     glm::vec2 m_v;
 };
+
+}
 
 #endif /* LINE2D_HPP */

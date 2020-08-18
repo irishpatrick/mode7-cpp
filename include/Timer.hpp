@@ -1,6 +1,9 @@
 #ifndef TIMER_HPP
 #define TIMER_HPP
 
+namespace mode7
+{
+
 class Timer
 {
 public:
@@ -19,5 +22,7 @@ private:
     bool loop;
     bool running;
 };
+
+}
 
 #endif /* TIMER_HPP */

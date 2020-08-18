@@ -6,6 +6,9 @@
 #include "Object.hpp"
 #include <string>
 
+namespace mode7
+{
+
 class Shader
 {
 public:
@@ -16,8 +19,14 @@ public:
     int open(const std::string&, const std::string&);
 
     void use();
+    void onlyUse();
     void setMaterial(Material&);
     void setModel(Object&);
+
+    inline GLuint pid()
+    {
+        return id;
+    }
 
 private:
 
@@ -29,5 +38,6 @@ private:
     GLuint uv_tile;
 };
 
+}
 
 #endif /* SHADER_HPP */

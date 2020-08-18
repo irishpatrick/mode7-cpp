@@ -6,6 +6,9 @@
 
 using json = nlohmann::json;
 
+namespace mode7
+{
+
 Animation::Animation() :
     mCurrentFrame(0)
 {
@@ -52,4 +55,6 @@ Texture Animation::getMap(uint32_t)
 uint32_t Animation::numMaps()
 {
     return 1;
+}
+
 }

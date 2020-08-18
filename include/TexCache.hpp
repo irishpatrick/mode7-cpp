@@ -4,6 +4,9 @@
 #include <string>
 #include "Texture.hpp"
 
+namespace mode7
+{
+
 class TexCache
 {
 public:
@@ -11,5 +14,7 @@ public:
     static Texture open(const std::string&, TexType);
 
 };
+
+}
 
 #endif /* TEXCACHE_HPP */

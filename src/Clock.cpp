@@ -3,6 +3,9 @@
 
 #define MILLIS SDL_GetTicks
 
+namespace mode7
+{
+
 static int interval = 20;
 static long cur = 0;
 static long prev = 0;
@@ -48,3 +51,5 @@ float Clock::extrapolate()
     }
     return ex;
 }
+
+};

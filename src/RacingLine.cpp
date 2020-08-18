@@ -4,6 +4,9 @@
 #include <cstdio>
 #include <cassert>
 
+namespace mode7
+{
+
 RacingLine::RacingLine()
 {
 
@@ -110,4 +113,6 @@ int RacingLine::getCurrentIndex(glm::vec2 position, int current)
     }
 
     return -1;
+}
+
 }

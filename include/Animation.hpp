@@ -7,6 +7,9 @@
 #include "Texture.hpp"
 #include "Material.hpp"
 
+namespace mode7
+{
+
 class Animation : public Material
 {
 public:
@@ -25,5 +28,7 @@ private:
     uint32_t mCurrentFrame;
     std::vector<Texture> frames;
 };
+
+}
 
 #endif /* ANIMATION_HPP */

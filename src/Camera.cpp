@@ -1,5 +1,8 @@
 #include "Camera.hpp"
 
+namespace mode7
+{
+
 glm::mat4 Camera::view(1.0f);
 glm::mat4 Camera::projection(1.0f);
 Object Camera::object;
@@ -34,4 +37,6 @@ glm::mat4 Camera::getView()
 Object& Camera::getObject()
 {
     return object;
+}
+
 }

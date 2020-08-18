@@ -2,6 +2,9 @@
 #include "Car.hpp"
 #include <iostream>
 
+namespace mode7
+{
+
 Collisions::Collisions()
 {
 
@@ -49,4 +52,6 @@ void Collisions::update()
             }
         }
     }
+}
+
 }

@@ -1,6 +1,9 @@
 #include "Mesh.hpp"
 #include <iostream>
 
+namespace mode7
+{
+
 Vertex::Vertex()
 {
 
@@ -203,4 +206,6 @@ void Mesh::draw(Shader& s)
     s.setModel(*this);
 
     drawTriangles();
+}
+
 }

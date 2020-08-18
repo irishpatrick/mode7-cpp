@@ -1,5 +1,8 @@
 #include "DebugPath.hpp"
 
+namespace mode7
+{
+
 DebugPath::DebugPath() :
     Object(),
     m_isReady(false),
@@ -59,4 +62,6 @@ void DebugPath::draw()
         glBindVertexArray(vao);
         glDrawArrays(GL_LINES, 0, num_lines);
     }
+}
+
 }

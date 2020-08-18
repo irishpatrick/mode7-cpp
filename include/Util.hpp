@@ -4,6 +4,10 @@
 #include <assimp/Importer.hpp>
 #include "gl.h"
 
+#ifdef __linux__
+#include <X11/Xlib.h>
+#endif
+
 class Util
 {
 public:
@@ -16,6 +20,7 @@ public:
     static float lerp(float, float, float);
     static float map(float, float, float, float, float);
     static glm::mat4 fromAi(const aiMatrix4x4&);
+    static std::pair<int, int> getMonitorRes();
 
 private:
 

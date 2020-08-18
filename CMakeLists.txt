@@ -6,10 +6,10 @@ if (MSVC)
     set(flags /W3 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
 else()
     set(flags -Wall -g -std=c++17)
+    set(libs -lX11)
 endif()
 
 set(incl include)
-set(libs "")
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")

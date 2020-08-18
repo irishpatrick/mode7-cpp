@@ -1,5 +1,8 @@
 #include "BBox.hpp"
 
+namespace mode7
+{
+
 BBox::BBox() :
     pos(0.0f),
     dim(0.0f)
@@ -38,4 +41,6 @@ bool BBox::intersects(glm::vec3 pt)
     b.pos = pt;
     b.dim = glm::vec3(1.0f);
     return intersects(b);
+}
+
 }

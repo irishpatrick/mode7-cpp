@@ -17,8 +17,10 @@
 #include "AI.hpp"
 #include "Collisions.hpp"
 
-#define WIDTH 1365
-#define HEIGHT 768
+#define WIDTH 1920
+#define HEIGHT 1080
+
+using namespace mode7;
 
 SDL_Event e;
 int running;
@@ -91,7 +93,8 @@ void update()
 
 void draw()
 {
-    Screen::clear();
+    //Screen::clear();
+    Screen::beginRender();
 
     skybox.draw(spriteShader);
     track.draw(spriteShader);

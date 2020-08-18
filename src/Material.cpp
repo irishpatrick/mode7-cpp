@@ -1,5 +1,8 @@
 #include "Material.hpp"
 
+namespace mode7
+{
+
 Material::Material() :
     tile(1)
 {
@@ -24,4 +27,6 @@ Texture Material::getMap(uint32_t index)
 uint32_t Material::numMaps()
 {
     return maps.size();
+}
+
 }

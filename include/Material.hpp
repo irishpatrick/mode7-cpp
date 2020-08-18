@@ -6,6 +6,9 @@
 #include <vector>
 #include <cstdint>
 
+namespace mode7
+{
+
 class Material
 {
 public:
@@ -24,5 +27,7 @@ protected:
 
     std::vector<Texture> maps;
 };
+
+}
 
 #endif /* MATERIAL_HPP */

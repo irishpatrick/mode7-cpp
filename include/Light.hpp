@@ -4,6 +4,9 @@
 #include "Object.hpp"
 #include "gl.h"
 
+namespace mode7
+{
+
 class Light : public Object
 {
 public:
@@ -31,5 +34,7 @@ private:
 
     int type;
 };
+
+}
 
 #endif /* LIGHT_HPP */

@@ -5,6 +5,9 @@
 #include "DropShadow.hpp"
 #include "Shader.hpp"
 
+namespace mode7
+{
+
 class Tree : public Mesh
 {
 public:
@@ -21,5 +24,7 @@ private:
 
     DropShadow shadow;
 };
+
+}
 
 #endif /* TREE_HPP */

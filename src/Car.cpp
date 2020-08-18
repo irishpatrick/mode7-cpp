@@ -8,6 +8,9 @@
 
 using json = nlohmann::json;
 
+namespace mode7
+{
+
 Car::Car() :
     Mesh(),
     traction(0.005f),
@@ -224,4 +227,6 @@ void Car::stun()
     m_inStun = true;
     traction = 0.1;
     ticks = 40;
+}
+
 }

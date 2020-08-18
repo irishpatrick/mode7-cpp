@@ -5,6 +5,9 @@
 #include "RacingLine.hpp"
 #include <cstdint>
 
+namespace mode7
+{
+
 class AI : public Car
 {
 public:
@@ -21,5 +24,7 @@ private:
     int m_currentZone;
     RacingLine* m_racingLine;
 };
+
+}
 
 #endif /* AI_HPP */

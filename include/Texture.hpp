@@ -5,6 +5,9 @@
 #include <string>
 #include <cstdint>
 
+namespace mode7
+{
+
 enum class TexType {DIFFUSE, SPECULAR, NORMAL, BUMP};
 
 class Texture
@@ -26,5 +29,7 @@ private:
     TexType type;
     uint32_t id;
 };
+
+}
 
 #endif /* TEXTURE_HPP */

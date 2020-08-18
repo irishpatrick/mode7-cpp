@@ -8,6 +8,9 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
+namespace mode7
+{
+
 static glm::mat4 matrix;
 
 //std::vector<Mesh> ModelLoader::open(const std::string& fn)
@@ -139,4 +142,6 @@ std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType ty
         out.push_back(TexCache::open(fn, tt));
     }
     return out;
+}
+
 }

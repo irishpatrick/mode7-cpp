@@ -2,6 +2,9 @@
 #include "gl.h"
 #include <iostream>
 
+namespace mode7
+{
+
 AI::AI() :
     Car(),
     m_currentZone(0),
@@ -113,4 +116,6 @@ void AI::update()
     Car::shadow.update();
     Object::update();
     Car::sprite.update();
+}
+
 }

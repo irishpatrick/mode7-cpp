@@ -4,6 +4,9 @@
 #include "Object.hpp"
 #include <glm/glm.hpp>
 
+namespace mode7
+{
+
 class Camera
 {
 public:
@@ -21,5 +24,7 @@ private:
     static glm::mat4 view;
     static glm::mat4 projection;
 };
+
+}
 
 #endif /* CAMERA_HPP */

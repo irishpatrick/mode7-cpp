@@ -5,6 +5,9 @@
 #include "gl.h"
 #include "BBox.hpp"
 
+namespace mode7
+{
+
 class Object
 {
 public:
@@ -73,5 +76,7 @@ private:
 
     std::vector<Object*> children;
 };
+
+}
 
 #endif /* OBJECT_HPP */

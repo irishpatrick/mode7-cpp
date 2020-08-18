@@ -6,6 +6,9 @@
 #include "Mesh.hpp"
 #include "Shader.hpp"
 
+namespace mode7
+{
+
 class Scene : public Object
 {
 public:
@@ -22,5 +25,7 @@ private:
 
     std::vector<std::shared_ptr<Mesh>> meshes;
 };
+
+}
 
 #endif /* SCENE_HPP */

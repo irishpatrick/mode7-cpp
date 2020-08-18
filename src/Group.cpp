@@ -1,6 +1,9 @@
 #include "Group.hpp"
 #include <iostream>
 
+namespace mode7
+{
+
 Group::Group()
 {
 
@@ -31,4 +34,6 @@ void Group::draw(Shader& s)
     {
         mesh->draw(s);
     }
+}
+
 }

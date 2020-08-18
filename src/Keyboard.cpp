@@ -2,6 +2,9 @@
 #include <cstdint>
 #include <cstring>
 
+namespace mode7
+{
+
 static uint8_t states[1000];
 static const uint8_t* keys;
 static int lockVal = 0;
@@ -66,4 +69,6 @@ void Keyboard::unlock()
 bool Keyboard::available(int val)
 {
     return lockVal == val;
+}
+
 }

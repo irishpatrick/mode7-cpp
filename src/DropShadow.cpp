@@ -4,6 +4,9 @@
 #include "gl.h"
 #include "Camera.hpp"
 
+namespace mode7
+{
+
 DropShadow::DropShadow() :
     Mesh(),
     tracked(false)
@@ -66,4 +69,6 @@ void DropShadow::draw(Shader& s)
     glDisable(GL_BLEND);
     glDisable(GL_ALPHA_TEST);
     glEnable(GL_DEPTH_TEST);
+}
+
 }

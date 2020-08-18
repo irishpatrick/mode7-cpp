@@ -1,6 +1,9 @@
 #ifndef LINE_HPP
 #define LINE_HPP
 
+namespace mode7
+{
+
 class Line
 {
 public:
@@ -17,5 +20,7 @@ public:
     float m;
     float b;
 };
+
+}
 
 #endif /* LINE_HPP */

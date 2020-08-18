@@ -7,6 +7,9 @@
 #include <vector>
 #include <assimp/scene.h>
 
+namespace mode7
+{
+
 class ModelLoader
 {
 public:
@@ -19,7 +22,8 @@ public:
 
 private:
 
-
 };
+
+}
 
 #endif /* MODELLOADER_HPP */

@@ -2,6 +2,9 @@
 #include <map>
 #include <iostream>
 
+namespace mode7
+{
+
 static std::map<std::string, Texture> cache;
 
 Texture TexCache::open(const std::string& fn, TexType type)
@@ -18,4 +21,6 @@ Texture TexCache::open(const std::string& fn, TexType type)
     //std::cout << "hit: " << fn << std::endl;
 
     return cache[fn];
+}
+
 }

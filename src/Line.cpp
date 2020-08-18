@@ -1,5 +1,8 @@
 #include "Line.hpp"
 
+namespace mode7
+{
+
 Line::Line() :
     m(0.0f),
     b(0.0f)
@@ -32,4 +35,6 @@ float Line::solve(float x)
 float Line::solveInv(float y)
 {
     return (y - b) / m;
+}
+
 }

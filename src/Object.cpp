@@ -1,6 +1,9 @@
 #include "Object.hpp"
 #include "Util.hpp"
 
+namespace mode7
+{
+
 Object::Object() :
     position(0.0f),
     rx(0, 1, 0, 0),
@@ -185,4 +188,6 @@ void Object::decompose()
 BBox* Object::getBoundingBox()
 {
     return &bbox;
+}
+
 }

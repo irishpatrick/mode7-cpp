@@ -6,6 +6,9 @@
 #include "Shader.hpp"
 #include <vector>
 
+namespace mode7
+{
+
 class DebugPath : public Object
 {
 public:
@@ -25,5 +28,7 @@ private:
     GLuint num_lines;
     Shader shader;
 };
+
+}
 
 #endif /* DEBUGPATH_HPP */

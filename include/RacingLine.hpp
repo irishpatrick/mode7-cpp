@@ -7,6 +7,9 @@
 #include "Line2D.hpp"
 #include "DebugPath.hpp"
 
+namespace mode7
+{
+
 typedef struct _Rect
 {
     Line2D a, b, c, d;
@@ -49,5 +52,7 @@ private:
     std::vector<Line2D> m_lines;
     std::vector<Rect> m_rects;
 };
+
+}
 
 #endif /* RACINGLINE_HPP */

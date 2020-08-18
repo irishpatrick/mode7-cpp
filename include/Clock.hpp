@@ -1,6 +1,9 @@
 #ifndef CLOCK_HPP
 #define CLOCK_HPP
 
+namespace mode7
+{
+
 class Clock
 {
 public:
@@ -12,5 +15,7 @@ public:
     static bool lagging();
     static float extrapolate();
 };
+
+}
 
 #endif /* CLOCK_HPP */

@@ -3,6 +3,9 @@
 
 #include <glm/glm.hpp>
 
+namespace mode7
+{
+
 class BBox
 {
 public:
@@ -16,5 +19,7 @@ public:
     glm::vec3 pos;
     glm::vec3 dim;
 };
+
+}
 
 #endif /* BBOX_HPP */

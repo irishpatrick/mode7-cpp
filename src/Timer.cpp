@@ -1,5 +1,7 @@
 #include "Timer.hpp"
 
+namespace mode7
+{
 
 Timer::Timer() :
     position(0),
@@ -55,4 +57,6 @@ bool Timer::tick()
     }
 
     return false;
+}
+
 }

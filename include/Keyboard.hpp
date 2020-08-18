@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <string>
 
+namespace mode7
+{
+
 class Keyboard
 {
 public:
@@ -18,5 +21,7 @@ public:
     static void unlock();
     static bool available(int);
 };
+
+}
 
 #endif /* KEYBOARD_HPP */

@@ -5,6 +5,9 @@
 #include <iostream>
 #include "gl.h"
 
+namespace mode7
+{
+
 Texture::Texture() :
     type(TexType::DIFFUSE),
     id(0)
@@ -59,4 +62,6 @@ uint32_t Texture::open(const std::string& fn)
     SDL_FreeSurface(s);
 
     return id;
+}
+
 }

@@ -19,6 +19,9 @@
 #define BRAKE_RATE 0.12f
 #define TURN_RATE 0.022f
 
+namespace mode7
+{
+
 class Car : public Mesh
 {
 public:
@@ -71,5 +74,7 @@ protected:
     Animation anim;
     std::vector<Line> velCurve;
 };
+
+}
 
 #endif /* CAR_HPP */

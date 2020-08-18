@@ -6,6 +6,9 @@
 #include "Material.hpp"
 #include "gl.h"
 
+namespace mode7
+{
+
 class Vertex
 {
 public:
@@ -52,5 +55,7 @@ private:
     bool elements;
     int triangles;
 };
+
+}
 
 #endif /* MESH_HPP */

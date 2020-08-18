@@ -3,6 +3,9 @@
 #include "Camera.hpp"
 #include "TexCache.hpp"
 
+namespace mode7
+{
+
 Tree::Tree() :
     Mesh()
 {
@@ -39,4 +42,6 @@ void Tree::draw(Shader& s)
     shadow.draw(*alt);
 
     Mesh::draw(s);
+}
+
 }

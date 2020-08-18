@@ -6,6 +6,9 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+namespace mode7
+{
+
 using json = nlohmann::json;
 
 static Mesh mesh;
@@ -46,4 +49,6 @@ void Track::draw(Shader& s)
 
 void Track::destroy()
 {
+}
+
 }

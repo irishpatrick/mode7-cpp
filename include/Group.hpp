@@ -6,6 +6,9 @@
 #include "Mesh.hpp"
 #include "Shader.hpp"
 
+namespace mode7
+{
+
 class Group : public Object
 {
 public:
@@ -21,5 +24,7 @@ private:
 
     std::vector<Mesh*> meshes;
 };
+
+}
 
 #endif /* GROUP_HPP */

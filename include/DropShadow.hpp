@@ -3,6 +3,9 @@
 
 #include "Mesh.hpp"
 
+namespace mode7
+{
+
 class DropShadow : public Mesh
 {
 public:
@@ -21,5 +24,7 @@ private:
 
     bool tracked;
 };
+
+}
 
 #endif /* DROPSHADOW_HPP */

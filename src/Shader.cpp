@@ -9,6 +9,9 @@
 #define MAT(x) &(x[0][0])
 #define VEC(x) &(x[0])
 
+namespace mode7
+{
+
 std::string openFile(const std::string& fn)
 {
     std::ifstream fp(fn);
@@ -116,6 +119,11 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
     return 0;
 }
 
+void Shader::onlyUse()
+{
+    glUseProgram(id);
+}
+
 void Shader::use()
 {
     glUseProgram(id);
@@ -156,4 +164,6 @@ void Shader::setMaterial(Material& m)
 void Shader::setModel(Object& o)
 {
     glUniformMatrix4fv(model, 1, GL_FALSE, MAT(o.getWorldMatrix()));
+}
+
 }

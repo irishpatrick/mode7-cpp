@@ -4,6 +4,9 @@
 #include <string>
 #include "Shader.hpp"
 
+namespace mode7
+{
+
 class Track
 {
 public:
@@ -13,5 +16,7 @@ public:
     static void draw(Shader&);
     static void destroy();
 };
+
+}
 
 #endif /* TRACK_HPP */

@@ -5,6 +5,9 @@
 #include "Object.hpp"
 #include "gl.h"
 
+namespace mode7
+{
+
 class Collisions
 {
 public:
@@ -19,5 +22,7 @@ private:
 
     std::vector<std::pair<Object*, float>> m_objs;
 };
+
+}
 
 #endif /* COLLISIONS_HPP */

@@ -1,5 +1,8 @@
 #include "Scene.hpp"
 
+namespace mode7
+{
+
 Scene::Scene()
 {
 
@@ -28,4 +31,6 @@ void Scene::draw(Shader& s)
     {
         e->draw(s);
     }
+}
+
 }
