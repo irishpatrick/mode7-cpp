@@ -17,8 +17,8 @@
 #include "AI.hpp"
 #include "Collisions.hpp"
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 1365
+#define HEIGHT 768
 
 SDL_Event e;
 int running;
@@ -79,7 +79,7 @@ void update()
     skybox.update();
     track.update();
     car.update();
-    std::cout << car.getFront().x << "," << car.getFront().z << std::endl;
+    //std::cout << car.getFront().x << "," << car.getFront().z << std::endl;
     aitest.update();
     Camera::updateView();
     //rltest.update(car.position);

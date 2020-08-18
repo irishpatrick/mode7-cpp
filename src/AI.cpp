@@ -26,11 +26,11 @@ void AI::control()
     if (cur >= 0)
     {
         m_currentZone = cur;
-        std::cout << "current zone: " << cur << std::endl;
+        //std::cout << "current zone: " << cur << std::endl;
     }
     else
     {
-        std::cout << "bad zone" << std::endl;
+        //std::cout << "bad zone" << std::endl;
     }
 
     Line2D line = m_racingLine->getLine(m_currentZone);
@@ -66,7 +66,7 @@ void AI::control()
     int left_of_line = distToLine > 0.f;
     int dist_threshold = absDistToLine > 0.5f;
 
-    std::cout <<
+    /*std::cout <<
         getWorldPosition().x << "," <<
         getWorldPosition().z << "\t" <<
 
@@ -82,21 +82,21 @@ void AI::control()
         right_of_line << "," <<
         left_of_line << "," <<
         dist_threshold << "," <<
-        std::endl;
+        std::endl;*/
 
     velocity.z = -1.f * (0.01f + 0.05f * dot_next);
 
     if (right_of_line && moving_right && dist_threshold)
     {
         //Car::turnLeft();
-        std::cout << "turn left" << std::endl;
+        //std::cout << "turn left" << std::endl;
         rotate(0.f, 0.1f, 0.f);
     }
 
     else if (left_of_line && moving_left && dist_threshold)
     {
         //Car::turnRight();
-        std::cout << "turn right" << std::endl;
+        //std::cout << "turn right" << std::endl;
         rotate(0.f, -0.1f, 0.f);
     }
 }
