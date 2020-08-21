@@ -26,7 +26,16 @@ void print_usage()
     printf("usage: ./tasm <file> [output]\n");
 }
 
-Line buffer_get_last()
+vec2 buffer_get_last_pt()
+{
+    vec2 out;
+    float* ptr = buffer + ((num_lines - 1) * 4);
+    out.x = ptr[2];
+    out.y = ptr[3];
+    return out;
+}
+
+Line buffer_get_last_line()
 {
     Line out;
     float* ptr = buffer + ((num_lines - 1) * 4);
@@ -85,10 +94,11 @@ int main(int argc, char** argv)
         {
             char* start = skip(line, 3);
             float x2, y2;
+            last = buffer_get_last_pt();
             sscanf(start, "%f,%f", &x2, &y2);
             buffer_append(last.x, last.y, x2, y2);
-            last.x = x2;
-            last.y = y2;
+            //last.x = x2;
+            //last.y = y2;
         }
         else if (startswith(line, "arc"))
         {
@@ -97,8 +107,9 @@ int main(int argc, char** argv)
             float radius, degs;
             int dir;
             sscanf(start, "%f,%f,%d", &radius, &degs, &dir);
-            
-            Line last_line = buffer_get_last();
+
+            Line last_line = buffer_get_last_line();
+            last = buffer_get_last_pt();
             vec2 norm = vec2_norm(line_normal(last_line));
             float theta_0 = get_angle(last_line);
             if (dir)
@@ -130,10 +141,10 @@ int main(int argc, char** argv)
                 buffer_append(prev.x, prev.y, cur.x, cur.y);
                 prev = cur;
             }
-            last = cur;
+            //last = cur;
         }
     }
-    
+
     fclose(in);
     if (line)
     {
