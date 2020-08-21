@@ -103,16 +103,22 @@ int main(int argc, char** argv)
             float theta_0 = get_angle(last_line);
             if (dir)
             {
-                norm = vec2_scale(-1, norm);
-                theta_0 += M_PI / 2.f;
+                theta_0 += -M_PI / 2.f;
             }
             else
             {
-                theta_0 -= M_PI / 2.f;
+                norm = vec2_scale(-1.f, norm);
+                theta_0 += M_PI / 2.f;
             }
+
+
             vec2 center = vec2_add(last_line.e, vec2_scale(radius, norm));
-            int steps = degs / 5;
+            int steps = degs / 8;
             float part = d2r(degs) / (float)steps;
+            if (!dir)
+            {
+                part *= -1.f;
+            }
             vec2 prev = last;
             vec2 cur;
             for (int i = 0; i < steps + 1; ++i)

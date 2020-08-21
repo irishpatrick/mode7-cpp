@@ -1,4 +1,5 @@
 #include "vec2.h"
+#include "line.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -61,4 +62,21 @@ vec2 vec2_norm(vec2 v)
     out.x = v.x / m;
     out.y = v.y / m;
     return out;
+}
+
+vec2 vec2_proj(vec2 a, vec2 b)
+{
+    float a1 = (1.f / vec2_mag(b)) * vec2_dot(a, b);
+    return vec2_scale(a1, vec2_norm(b));
+}
+
+vec2 vec2_reflect(vec2 v, Line* l)
+{
+    vec2 vp = vec2_sub(v, l->p);
+    float away = line_dist_to(*l, v);
+    float along = vec2_dot(vp, l->p);
+    return vec2_add(
+        vec2_scale(away, line_normal(*l)),
+        vec2_scale(along, vec2_norm(l->p))
+    );
 }

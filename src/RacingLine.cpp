@@ -47,6 +47,7 @@ int RacingLine::load(const std::string& fn)
         sscanf(line.c_str(), "%f,%f,%f,%f", &a, &b, &c, &d);
         
         points.push_back({a, b});
+        points.push_back({c, d});
 
         Line2D segment;
         segment.fromPoints(glm::vec2(a, b), glm::vec2(c, d));
@@ -58,12 +59,12 @@ int RacingLine::load(const std::string& fn)
         assert(n.x != 0.f || n.y != 0.f);
         bot.create(segment.p(), n);
         top.create(segment.e(), n);
-        float w = 30;
+        float w = 20;
         glm::vec2 a, b, c, d;
-        a = top.solve(w);
-        b = top.solve(-w);
-        c = bot.solve(-w);
-        d = bot.solve(w);
+        a = top.solve(w);   // top left
+        b = top.solve(-w);  // top right
+        c = bot.solve(-w);  // bottom right
+        d = bot.solve(w);   // bottom left
 
         Rect r;
         r.a.fromPoints(a, b);
@@ -74,9 +75,11 @@ int RacingLine::load(const std::string& fn)
         m_rects.push_back(r);
     }
 
+    points.push_back(points.back());
     points.push_back(points[0]);
     m_path.createFromPoints(points);
-    m_path.position.y = 1.f;
+    m_path.position.y = 0.5f;
+    //m_path.position.x = -325.f;
     m_path.update();
 
     in.close();
@@ -94,18 +97,24 @@ int RacingLine::getCurrentIndex(glm::vec2 position, int current)
         index = mod(i, m_rects.size());
         Rect* r = &m_rects[index];
 
-        float da = fabsf(r->a.distTo(position));
+        float da = fabsf(r->a.distTo(position));// - 325.f / 2.f;
         float db = fabsf(r->b.distTo(position));
-        float dc = fabsf(r->c.distTo(position));
+        float dc = fabsf(r->c.distTo(position));// - 325.f / 2.f;
         float dd = fabsf(r->d.distTo(position));
-
-        //std::cout << "bounds(" << index << "): " << da << "," << db << "," << dc << "," << dd << std::endl;
 
         float l = r->a.length();
         float w = r->b.length();
-
-        //std::cout << l << "\t" << w << std::endl;
-
+        
+        if ((da <= w) &&  (db <= l) && (dc <= w) && (dd <= l))
+        {
+            std::cout << 
+                i << "\t" << index << "\n" <<
+                position.x << "\t" << position.y << "\t" << l << "\t" << w << "\n" <<
+                da << "\t" << db << "\t" << dc << "\t" << dd << "\n" <<
+                (da <= w) << "\t" << (db <= l) << "\t" << (dc <= w) << "\t" << (dd <= l) << "\n" <<
+                std::endl;
+        }
+        
         if ((da <= w) && (db <= l) && (dc <= w) && (dd <= l))
         {
             return index;

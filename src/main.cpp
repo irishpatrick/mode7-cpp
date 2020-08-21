@@ -153,6 +153,7 @@ int main(int argc, char** argv)
     car.addChild(&Camera::getObject());
     car.setTracked(true);
     car.setAltShader(shadowShader);
+    car.rotate(0.f, -M_PI/2.f, 0.f);
 
     aitest.open("assets/cars/testCar.json");
     aitest.position.y = 1;
@@ -162,6 +163,7 @@ int main(int argc, char** argv)
     aitest.setRacingLine(&rltest);
     //aitest.setTracked(true);
     aitest.setTracked(false);
+    aitest.rotate(0.f, -M_PI/2.f, 0.f);
     aitest.update();
 
     cl.addObject(&car, 2.f);
