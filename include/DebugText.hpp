@@ -3,6 +3,7 @@
 
 #include "gl.h"
 #include "Shader.hpp"
+#include "Texture.hpp"
 #include "Object.hpp"
 #include <string>
 
@@ -30,8 +31,9 @@ public:
 private:
 
     std::string m_text;
-    unsigned int m_texId;
-    unsigned int vao;
+    unsigned int m_textureLoc;
+    unsigned int m_vao;
+    Texture m_texture;
     Shader m_textShader;
 };
 
