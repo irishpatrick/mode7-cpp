@@ -38,6 +38,8 @@ Car::~Car()
 
 void Car::open(const std::string& fn)
 {
+    m_debugText.init();
+
     shadow.create();
     shadow.position.y = -1.f;
     //addChild(&shadow);
@@ -137,6 +139,7 @@ void Car::update()
 
 void Car::updateSprite()
 {
+    m_debugText.setText("hello world");
     sprite.position = Object::position;
     sprite.scale = Object::scale;
     shadow.position = Object::position - glm::vec3(0.f, 1.f, 0.f);
@@ -190,6 +193,8 @@ void Car::draw(Shader& s)
     s.setMaterial(anim);
     s.setModel(sprite);
     Mesh::drawTriangles();
+
+    m_debugText.draw();
 }
 
 void Car::gas()

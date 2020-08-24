@@ -5,6 +5,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "Object.hpp"
+#include "Mesh.hpp"
 #include <string>
 
 namespace mode7
@@ -22,7 +23,7 @@ public:
     inline void setText(const std::string& n)
     {
         m_text = n;
-        renderText();
+        //renderText();
     }
 
     void renderText();
@@ -35,6 +36,7 @@ private:
     unsigned int m_vao;
     Texture m_texture;
     Shader m_textShader;
+    Mesh m_quad;
 };
 
 }

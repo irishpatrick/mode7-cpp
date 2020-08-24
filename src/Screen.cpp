@@ -2,6 +2,7 @@
 #include "Shader.hpp"
 #include "gl.h"
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "Util.hpp"
 #define WMAX 1.f
 
@@ -36,6 +37,9 @@ void mode7::Screen::create(int w, int h)
     height = pair.second;
     RESX = w;
     RESY = h;
+
+    //SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);

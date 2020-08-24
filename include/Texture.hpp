@@ -18,6 +18,7 @@ public:
     ~Texture();
 
     void open(const std::string&, TexType);
+    void fill(void*, int, int);
     uint32_t getId();
     TexType getType();
 

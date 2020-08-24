@@ -163,7 +163,7 @@ int main(int argc, char** argv)
     aitest.setRacingLine(&rltest);
     //aitest.setTracked(true);
     aitest.setTracked(false);
-    aitest.rotate(0.f, -M_PI/2.f, 0.f);
+    aitest.rotate(0.f, -M_PI/2.f + 0.01f, 0.f);
     aitest.update();
 
     cl.addObject(&car, 2.f);

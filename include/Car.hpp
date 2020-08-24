@@ -7,6 +7,7 @@
 #include "Line.hpp"
 #include "DropShadow.hpp"
 #include "Animation.hpp"
+#include "DebugText.hpp"
 #include <string>
 #include <vector>
 
@@ -72,6 +73,7 @@ protected:
 
     Object sprite;
     Animation anim;
+    DebugText m_debugText;
     std::vector<Line> velCurve;
 };
 

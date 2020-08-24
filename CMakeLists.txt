@@ -53,8 +53,8 @@ else ()
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
-	#${SDL2_TTF_INCLUDE_DIRS}
-	#${CAIRO_INCLUDE_DIRS}
+	    ${SDL2_TTF_INCLUDE_DIRS}
+	    #${CAIRO_INCLUDE_DIRS}
 	${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
         ${ASSIMP_INCLUDE_DIRS}
@@ -65,9 +65,9 @@ else ()
         ${libs}
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
-	#${SDL2_TTF_LIBRARIES}
-	${GLEW_LIBRARIES}
-	#${CAIRO_LIBRARIES}
+    	${SDL2_TTF_LIBRARIES}
+	    ${GLEW_LIBRARIES}
+	    #${CAIRO_LIBRARIES}
         ${ASSIMP_LIBRARIES}
         ${BULLET_LIBRARIES}
         m

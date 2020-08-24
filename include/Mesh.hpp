@@ -33,6 +33,7 @@ public:
     void createFromBuffer(const float*, GLuint);
     void createFromArrays(std::vector<Vertex>&, std::vector<unsigned int>&);
     void createFromShape(int);
+    void drawTriangles();
     virtual void draw(Shader&);
 
     void setAltShader(Shader&);
@@ -42,8 +43,6 @@ public:
     static const int PLANE = 0;
 
 protected:
-
-    void drawTriangles();
 
     Shader* alt;
 
