@@ -43,7 +43,7 @@ else ()
 
     pkg_check_modules(SDL2 REQUIRED sdl2)
     pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
-    #pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
+    pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
     #pkg_check_modules(CAIRO REQUIRED cairo)
     pkg_check_modules(GLEW REQUIRED glew)
     pkg_check_modules(ASSIMP REQUIRED assimp)

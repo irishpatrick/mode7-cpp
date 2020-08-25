@@ -73,6 +73,11 @@ void DebugText::renderText()
         std::cout << "bad font: " << TTF_GetError() << std::endl;
         return;
     }
+    font = TTF_OpenFont("/usr/share/fonts/WindowsFonts/consola.ttf", 24);
+    if (!font)
+    {
+        std::cout << "bad backup font" << std::endl;
+    }
     SDL_Surface* surf = TTF_RenderText_Blended_Wrapped(font, m_text.c_str(), {200, 200, 200}, 400);
     if (!surf)
     {
