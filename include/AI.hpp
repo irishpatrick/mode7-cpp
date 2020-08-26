@@ -15,14 +15,12 @@ public:
     AI();
     virtual ~AI();
 
-    void setRacingLine(RacingLine*);
     void control();
     virtual void update();
 
 private:
 
     int m_currentZone;
-    RacingLine* m_racingLine;
 };
 
 }

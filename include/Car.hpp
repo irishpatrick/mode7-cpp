@@ -8,6 +8,7 @@
 #include "DropShadow.hpp"
 #include "Animation.hpp"
 #include "DebugText.hpp"
+#include "RacingLine.hpp"
 #include <string>
 #include <vector>
 
@@ -36,6 +37,11 @@ public:
     virtual void draw(Shader&);
 
     void updateControls();
+
+    inline void setRacingLine(RacingLine* rl)
+    {
+        m_racingLine = rl;
+    }
 
     void gas();
     void brake();
@@ -70,6 +76,8 @@ protected:
     float m_gasPos;
     float m_brakePos;
     float m_brake;
+
+    RacingLine* m_racingLine;
 
     Object sprite;
     Animation anim;

@@ -7,8 +7,7 @@ namespace mode7
 
 AI::AI() :
     Car(),
-    m_currentZone(0),
-    m_racingLine(nullptr)
+    m_currentZone(0)
 {
 
 }
@@ -16,11 +15,6 @@ AI::AI() :
 AI::~AI()
 {
 
-}
-
-void AI::setRacingLine(RacingLine* line)
-{
-    m_racingLine = line;
 }
 
 void AI::control()

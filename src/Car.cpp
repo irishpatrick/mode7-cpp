@@ -27,7 +27,8 @@ Car::Car() :
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(0.02f),
-    topSpeed(1.7f)
+    topSpeed(1.7f),
+    m_racingLine(nullptr)
 {
 
 }
