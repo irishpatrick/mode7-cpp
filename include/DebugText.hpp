@@ -6,6 +6,7 @@
 #include "Texture.hpp"
 #include "Object.hpp"
 #include "Mesh.hpp"
+#include <SDL_ttf.h>
 #include <string>
 
 namespace mode7
@@ -23,7 +24,13 @@ public:
     inline void setText(const std::string& n)
     {
         m_text = n;
-        //renderText();
+        renderText();
+    }
+
+    inline void destroy()
+    {
+        SDL_FreeSurface(m_surf);
+        TTF_CloseFont(m_font);
     }
 
     void renderText();
@@ -34,6 +41,8 @@ private:
     std::string m_text;
     unsigned int m_textureLoc;
     unsigned int m_vao;
+    TTF_Font* m_font;
+    SDL_Surface* m_surf;
     Texture m_texture;
     Shader m_textShader;
     Mesh m_quad;

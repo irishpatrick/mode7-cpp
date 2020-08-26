@@ -1,5 +1,4 @@
 #include "DebugText.hpp"
-#include <SDL_ttf.h>
 #include <iostream>
 
 static float debugtext_quad_data[] = {
@@ -15,7 +14,12 @@ static float debugtext_quad_data[] = {
 namespace mode7
 {
 
-DebugText::DebugText()
+DebugText::DebugText() :
+    Object(),
+    m_textureLoc(0),
+    m_vao(0),
+    m_font(nullptr),
+    m_surf(nullptr)
 {
 
 }
@@ -53,7 +57,20 @@ void DebugText::init()
         (void*)(2 * sizeof(float))
     );
 
-    setText("hello world\nnewline\ndata\ndata\ndata");
+    int size = 72;
+    m_font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", size);
+    if (!m_font)
+    {
+        std::cout << "bad font: " << TTF_GetError() << std::endl;
+        m_font = TTF_OpenFont("/usr/share/fonts/WindowsFonts/consola.ttf", size);
+        if (!m_font)
+        {
+            std::cout << "bad backup font" << std::endl;
+            return;
+        }
+    }
+
+    setText("");
     renderText();
 
     float sc = 0.2f;
@@ -67,29 +84,22 @@ void DebugText::init()
 
 void DebugText::renderText()
 {
-    TTF_Font* font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 24);
-    if (!font)
-    {
-        std::cout << "bad font: " << TTF_GetError() << std::endl;
-        font = TTF_OpenFont("/usr/share/fonts/WindowsFonts/consola.ttf", 24);
-        if (!font)
-        {
-            std::cout << "bad backup font" << std::endl;
-            return;
-        }
-    }
-    SDL_Surface* surf = TTF_RenderText_Blended_Wrapped(font, m_text.c_str(), {200, 200, 200}, 400);
-    if (!surf)
+    m_surf = TTF_RenderText_Blended_Wrapped(m_font, m_text.c_str(), {200, 200, 200}, 1000);
+    if (!m_surf)
     {
         std::cout << "bad surface" << std::endl;
         return;
     }
-    m_texture.fill(surf->pixels, surf->w, surf->h);
-    SDL_FreeSurface(surf);
+    m_texture.fill(m_surf->pixels, m_surf->w, m_surf->h);
+    SDL_FreeSurface(m_surf);
 }
 
 void DebugText::draw()
 {
+    if (m_text.size() < 1)
+    {
+        return;
+    }
     m_textShader.onlyUse();
     m_textShader.setModel(*this);
 

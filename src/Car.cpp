@@ -4,6 +4,7 @@
 #include "TexCache.hpp"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -116,6 +117,9 @@ void Car::updateControls()
 
 void Car::update()
 {
+    std::stringstream ss;
+    ss << position.x << ", " << position.z << "\n" << velocity.x << ", " << velocity.z;
+    m_debugText.setText(ss.str());
     updateControls();
 
     Object::move();
@@ -139,7 +143,6 @@ void Car::update()
 
 void Car::updateSprite()
 {
-    m_debugText.setText("hello world");
     sprite.position = Object::position;
     sprite.scale = Object::scale;
     shadow.position = Object::position - glm::vec3(0.f, 1.f, 0.f);
