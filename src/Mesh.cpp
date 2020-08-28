@@ -39,6 +39,7 @@ Mesh::Mesh() :
 
 Mesh::~Mesh()
 {
+    destroy();
 }
 
 void Mesh::setMaterial(Material& mat)
@@ -140,6 +141,8 @@ void Mesh::createFromArrays(std::vector<Vertex>& vertices, std::vector<unsigned 
 {
     elements = true;
     triangles = indices.size();
+
+    destroy();
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);

@@ -10,16 +10,18 @@ namespace mode7
 
 Texture::Texture() :
     type(TexType::DIFFUSE),
-    id(0)
+    id(-1)
 {
 }
 
 Texture::~Texture()
 {
+    //destroy();
 }
 
 void Texture::open(const std::string& fn, TexType type)
 {
+    destroy();
     this->type = type;
     id = open(fn);
 }
@@ -36,12 +38,15 @@ TexType Texture::getType()
 
 void Texture::fill(void* data, int w, int h)
 {
+    destroy();
+
     this->type = TexType::DIFFUSE;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 uint32_t Texture::open(const std::string& fn)

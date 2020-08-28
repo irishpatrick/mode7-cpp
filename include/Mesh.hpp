@@ -35,8 +35,28 @@ public:
     void createFromShape(int);
     void drawTriangles();
     virtual void draw(Shader&);
-
     void setAltShader(Shader&);
+    
+    inline void destroy()
+    {
+        if (vao > 0)
+        {
+            glDeleteBuffers(1, &vao);
+            vao = 0;
+        }
+        
+        if (vbo > 0)
+        {
+            glDeleteBuffers(1, &vbo);
+            vbo = 0;
+        }
+        
+        if (ebo > 0)
+        {
+            glDeleteBuffers(1, &ebo);
+            ebo = 0; 
+        }
+    }
 
     Material material;
 

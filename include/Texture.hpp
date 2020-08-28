@@ -22,13 +22,22 @@ public:
     uint32_t getId();
     TexType getType();
 
+    inline void destroy()
+    {
+        if (id != -1)
+        {
+            glDeleteTextures(1, &id);
+        }
+        id = -1;
+    }
+
     // static methods
     static unsigned int open(const std::string&);
 
 private:
 
     TexType type;
-    uint32_t id;
+    GLuint id;
 };
 
 }

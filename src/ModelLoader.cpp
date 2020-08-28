@@ -116,7 +116,6 @@ std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scen
     out->setMaterial(mat);
     out->createFromArrays(vertices, indices);
 
-
     return out;
 }
 
