@@ -83,7 +83,7 @@ void AI::control()
     }
 
     //velocity.z = -0.3f * (0.01f + 0.05f * dot_next);
-    velocity.z = 1.5f; 
+    velocity.z = 1.8f; 
 
     if (right_of_line && moving_right && dist_threshold)
     {
