@@ -116,11 +116,66 @@ void Car::updateControls()
     m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;
 }
 
+void Car::updateDebugText()
+{
+    if (!m_racingLine)
+    {
+        return;
+    }
+
+    int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
+    if (cur >= 0)
+    {
+        m_currentZone = cur;
+    }
+    else
+    {
+    }
+
+    Line2D line = m_racingLine->getLine(m_currentZone);
+    Line2D next = m_racingLine->getNext(m_currentZone);
+
+    float distToLine = line.distTo(glm::vec2(position.x, position.z));
+    float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
+    float absDistToLine = fabsf(distToLine);
+    float dot_line = glm::dot(
+        line.v(), 
+        glm::vec2(Car::front.x, Car::front.z)
+    );
+    glm::vec3 cross_line_vec = glm::cross(
+        glm::vec3(line.v().x, 0.f, line.v().y),
+        Car::front
+    );
+    float cross_line = cross_line_vec.y;
+    float dot_next = glm::dot(
+        next.normal(),
+        glm::vec2(Car::front.x, Car::front.z)
+    );
+    glm::vec3 cross_next_vec = glm::cross(
+        glm::vec3(line.normal().x, 0.f, line.normal().y),
+        Car::front
+    );
+    float cross_next = cross_next_vec.y;
+
+    int moving_right = cross_line > 0.f;
+    int moving_left = cross_line < 0.f;
+    int right_of_line = distToLine > 0.f;
+    int left_of_line = distToLine < 0.f;
+    int dist_threshold = absDistToLine > 0.1f;
+
+    std::stringstream ss;
+    ss <<
+        m_currentZone << "\n" <<
+        distToLine << ", " << distToNext << "\n" <<
+        moving_left << ", " << moving_right << "\n" << 
+        left_of_line << ", " << right_of_line << "\n" <<
+        dist_threshold;
+    m_debugText.setText(ss.str());
+}
+
 void Car::update()
 {
-    std::stringstream ss;
-    ss << position.x << ", " << position.z << "\n" << velocity.x << ", " << velocity.z;
-    m_debugText.setText(ss.str());
+    updateDebugText();
     updateControls();
 
     Object::move();

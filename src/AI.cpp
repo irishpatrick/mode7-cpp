@@ -23,7 +23,6 @@ void AI::control()
     if (cur >= 0)
     {
         m_currentZone = cur;
-        //std::cout << "current zone: " << cur << std::endl;
     }
     else
     {
@@ -31,7 +30,7 @@ void AI::control()
 
     Line2D line = m_racingLine->getLine(m_currentZone);
     Line2D next = m_racingLine->getNext(m_currentZone);
-
+    
     float distToLine = line.distTo(Car::position);
     float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
     float absDistToLine = fabsf(distToLine);

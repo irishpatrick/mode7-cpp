@@ -36,7 +36,7 @@ int RacingLine::load(const std::string& fn)
         ++lineNum;
         if (lineNum == 1) // skip first line
         {
-            continue;
+            //continue;
         }
 
         if (line[0] == '#')

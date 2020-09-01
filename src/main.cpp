@@ -154,6 +154,7 @@ int main(int argc, char** argv)
     car.setTracked(true);
     car.setAltShader(shadowShader);
     car.rotate(0.f, -M_PI/2.f, 0.f);
+    car.setRacingLine(&rltest);
 
     aitest.open("assets/cars/testCar.json");
     aitest.position.y = 1;

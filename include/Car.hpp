@@ -33,6 +33,7 @@ public:
 
     virtual void open(const std::string&);
     void updateSprite();
+    void updateDebugText();
     virtual void update();
     virtual void draw(Shader&);
 
@@ -76,6 +77,8 @@ protected:
     float m_gasPos;
     float m_brakePos;
     float m_brake;
+
+    int m_currentZone;
 
     RacingLine* m_racingLine;
 
