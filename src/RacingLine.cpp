@@ -107,12 +107,12 @@ int RacingLine::getCurrentIndex(glm::vec2 position, int current)
         
         if ((da <= w) &&  (db <= l) && (dc <= w) && (dd <= l))
         {
-            std::cout << 
+            /*std::cout << 
                 i << "\t" << index << "\n" <<
                 position.x << "\t" << position.y << "\t" << l << "\t" << w << "\n" <<
                 da << "\t" << db << "\t" << dc << "\t" << dd << "\n" <<
                 (da <= w) << "\t" << (db <= l) << "\t" << (dc <= w) << "\t" << (dd <= l) << "\n" <<
-                std::endl;
+                std::endl;*/
         }
         
         if ((da <= w) && (db <= l) && (dc <= w) && (dd <= l))

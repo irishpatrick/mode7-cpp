@@ -31,7 +31,7 @@ void AI::control()
     Line2D line = m_racingLine->getLine(m_currentZone);
     Line2D next = m_racingLine->getNext(m_currentZone);
     
-    float distToLine = line.distTo(Car::position);
+    float distToLine = line.distTo(glm::vec2(position.x, position.z));
     float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
     float absDistToLine = fabsf(distToLine);
     float dot_line = glm::dot(
@@ -55,15 +55,15 @@ void AI::control()
 
     //std::cout << front.x << "," << front.z << "\t" << line.v().x << "," << line.v().y << std::endl;
 
-    int moving_right = cross_line < 0.f;
-    int moving_left = cross_line > 0.f;
-    int right_of_line = distToLine < 0.f;
-    int left_of_line = distToLine > 0.f;
-    int dist_threshold = absDistToLine > 0.1f;
+    int moving_right = cross_line > 0.f;
+    int moving_left = cross_line < 0.f;
+    int right_of_line = distToLine > 0.f;
+    int left_of_line = distToLine < 0.f;
+    int dist_threshold = absDistToLine > 1.f;
 
-    if (cur >= 0)
+    if (cur >= 0 && false)
     {
-        std::cout <<
+        /*std::cout <<
             getWorldPosition().x << "," <<
             getWorldPosition().z << "\t" <<
 
@@ -79,24 +79,24 @@ void AI::control()
             right_of_line << "," <<
             left_of_line << "," <<
             dist_threshold << "," <<
-            std::endl;
+            std::endl;*/
     }
 
-    //velocity.z = -1.f * (0.01f + 0.05f * dot_next);
-    velocity.z = 0.4f;
+    //velocity.z = -0.3f * (0.01f + 0.05f * dot_next);
+    velocity.z = 1.5f; 
 
     if (right_of_line && moving_right && dist_threshold)
     {
         //Car::turnLeft();
         //std::cout << "turn left" << std::endl;
-        rotate(0.f, -0.1f, 0.f);
+        rotate(0.f, 0.1f, 0.f);
     }
 
     else if (left_of_line && moving_left && dist_threshold)
     {
         //Car::turnRight();
         //std::cout << "turn right" << std::endl;
-        rotate(0.f, 0.1f, 0.f);
+        rotate(0.f, -0.1f, 0.f);
     }
 }
 
