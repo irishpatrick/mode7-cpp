@@ -18,7 +18,7 @@
 #define STUN  3
 #define THROTTLE_RATE 0.1f
 #define COAST_RATE -0.02f
-#define BRAKE_RATE 0.12f
+#define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
 
 namespace mode7

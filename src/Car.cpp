@@ -14,7 +14,7 @@ namespace mode7
 
 Car::Car() :
     Mesh(),
-    traction(0.005f),
+    traction(0.003f),
     state(IDLE),
     ticks(0),
     m_inStun(false),
