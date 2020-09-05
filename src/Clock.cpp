@@ -11,7 +11,7 @@ static long cur = 0;
 static long prev = 0;
 static long elapsed = 0;
 static long lag = 0;
-static float ratio = 0.5f;
+//static float ratio = 0.5f;
 
 void Clock::start()
 {

@@ -6,6 +6,7 @@
 #include "gl.h"
 #include "Line2D.hpp"
 #include "DebugPath.hpp"
+#include <cassert>
 
 namespace mode7
 {
@@ -38,7 +39,11 @@ public:
 
     inline Line2D getNext(int index)
     {
-        return m_lines[mod(index + 1, m_lines.size())];
+        //return m_lines[mod(index + 1, m_lines.size())];
+        assert(index >= 0);
+        int next = (index + 1) % m_lines.size();
+        assert(next >= 0);
+        return m_lines[next];
     }
 
     inline DebugPath* getDebugPath()

@@ -48,12 +48,10 @@ void AI::control()
         glm::vec2(Car::front.x, Car::front.z)
     );
     glm::vec3 cross_next_vec = glm::cross(
-        glm::vec3(line.normal().x, 0.f, line.normal().y),
+        glm::vec3(line.v().x, 0.f, line.v().y),
         Car::front
     );
     float cross_next = cross_next_vec.y;
-
-    //std::cout << front.x << "," << front.z << "\t" << line.v().x << "," << line.v().y << std::endl;
 
     int moving_right = cross_line > 0.f;
     int moving_left = cross_line < 0.f;
@@ -83,7 +81,7 @@ void AI::control()
     }
 
     //velocity.z = -0.3f * (0.01f + 0.05f * dot_next);
-    velocity.z = 1.7f; 
+    //velocity.z = 1.5f; 
 
     if (right_of_line && moving_right && dist_threshold)
     {
@@ -98,6 +96,18 @@ void AI::control()
         //std::cout << "turn right" << std::endl;
         rotate(0.f, -0.1f, 0.f);
     }
+
+    //if (absDistToLine > 1.f)
+    if (fabsf(cross_next) / distToNext > 0.05f)
+    {
+        brake();
+        //velocity.z = 1.0f;
+    }
+    else
+    {
+        gas();
+        //velocity.z = 2.0f;
+    }
 }
 
 void AI::update()
@@ -106,8 +116,22 @@ void AI::update()
     {
         control();
     }
+
+    Car::updateControls();
     
     Object::move();
+    
+    float sign = 0.f;
+    if (velocity.z < -0.01f || velocity.z > 0.01f)
+    {
+        sign = velocity.z / fabs(velocity.z);
+    }
+
+    velocity.z += m_power - (velocity.z * (0.005f + m_brake));
+    velocity.x += drift - (velocity.x * 0.05f);
+    //velocity.x += drift - (velocity.x * 0.005f);
+    drift = 0.0f;
+
     Car::updateSprite();
     Car::shadow.update();
     Object::update();

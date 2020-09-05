@@ -80,19 +80,15 @@ void update()
     skybox.update();
     track.update();
     car.update();
-    //std::cout << car.getFront().x << "," << car.getFront().z << std::endl;
     aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
 
     cl.update();
-    //std::cout << glm::to_string(rltest.getTarget()) << "\t" << glm::to_string(car.position) << std::endl;
-    //std::cout << glm::to_string(car.position) << std::endl;
 }
 
 void draw()
 {
-    //Screen::clear();
     Screen::beginRender();
 
     skybox.draw(spriteShader);
@@ -163,7 +159,6 @@ int main(int argc, char** argv)
     aitest.setAltShader(shadowShader);
     aitest.setRacingLine(&rltest);
     //aitest.setTracked(true);
-    aitest.setTracked(false);
     aitest.rotate(0.f, -M_PI/2.f + 0.03f, 0.f);
     aitest.update();
 

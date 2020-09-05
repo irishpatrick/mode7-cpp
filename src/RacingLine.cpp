@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
+#include <cstdint>
 #include <cassert>
 
 namespace mode7
@@ -92,7 +93,7 @@ int RacingLine::getCurrentIndex(glm::vec2 position, int current)
     //int start = current - 1;
     int index;
     //for (int i = start; i < start + 3; ++i)
-    for (int i = 0; i < m_rects.size(); ++i)
+    for (uint32_t i = 0; i < m_rects.size(); ++i)
     {
         index = mod(i, m_rects.size());
         Rect* r = &m_rects[index];

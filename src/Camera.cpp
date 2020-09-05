@@ -19,7 +19,7 @@ void Camera::updateView()
 
 void Camera::lookAt(glm::vec3 eye, glm::vec3 target)
 {
-    object.matrix = glm::lookAt(eye, target, glm::vec3(0, 1, 0));
+    object.matrix = glm::inverse(glm::lookAt(eye, target, glm::vec3(0, 1, 0)));
     object.accumulate();
     object.decompose();
 }

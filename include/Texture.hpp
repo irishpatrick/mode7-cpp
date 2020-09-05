@@ -24,7 +24,7 @@ public:
 
     inline void destroy()
     {
-        if (id != -1)
+        if ((GLint)id != -1)
         {
             glDeleteTextures(1, &id);
         }

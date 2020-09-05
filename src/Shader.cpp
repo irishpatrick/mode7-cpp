@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdint>
 
 #define MAT(x) &(x[0][0])
 #define VEC(x) &(x[0])
@@ -139,7 +140,7 @@ void Shader::setMaterial(Material& m)
     glUniform1i(uv_tile, m.tile);
 
     std::stringstream ss;   
-    for (int i = 0; i < m.numMaps(); ++i)
+    for (uint32_t i = 0; i < m.numMaps(); ++i)
     {
         Texture t = m.getMap(i);
         std::string typePrefix = "diffuse";

@@ -14,7 +14,7 @@ namespace mode7
 
 Car::Car() :
     Mesh(),
-    traction(0.003f),
+    traction(0.005f),
     state(IDLE),
     ticks(0),
     m_inStun(false),
@@ -132,15 +132,18 @@ void Car::updateDebugText()
     {
     }
 
+    glm::vec2 front_2d = glm::vec2(front.x, front.z);
+    glm::vec2 pos_2d = glm::vec2(position.x, position.z);
+
     Line2D line = m_racingLine->getLine(m_currentZone);
     Line2D next = m_racingLine->getNext(m_currentZone);
 
-    float distToLine = line.distTo(glm::vec2(position.x, position.z));
-    float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
+    float distToLine = line.distTo(pos_2d);
+    float distToNext = glm::length((next.p() - pos_2d));
     float absDistToLine = fabsf(distToLine);
     float dot_line = glm::dot(
         line.v(), 
-        glm::vec2(Car::front.x, Car::front.z)
+        front_2d
     );
     glm::vec3 cross_line_vec = glm::cross(
         glm::vec3(line.v().x, 0.f, line.v().y),
@@ -148,11 +151,12 @@ void Car::updateDebugText()
     );
     float cross_line = cross_line_vec.y;
     float dot_next = glm::dot(
-        next.normal(),
-        glm::vec2(Car::front.x, Car::front.z)
+        next.v(),
+        front_2d
     );
     glm::vec3 cross_next_vec = glm::cross(
-        glm::vec3(line.normal().x, 0.f, line.normal().y),
+        //glm::vec3(line.normal().x, 0.f, line.normal().y),
+        glm::vec3(line.v().x, 0.f, line.v().y),
         Car::front
     );
     float cross_next = cross_next_vec.y;
@@ -169,7 +173,8 @@ void Car::updateDebugText()
         distToLine << ", " << distToNext << "\n" <<
         moving_left << ", " << moving_right << "\n" << 
         left_of_line << ", " << right_of_line << "\n" <<
-        dist_threshold;
+        dist_threshold << "\n" << 
+        cross_next << ", " << distToNext << ", " << fabsf(cross_next) / distToNext << "\n";
     m_debugText.setText(ss.str());
 }
 

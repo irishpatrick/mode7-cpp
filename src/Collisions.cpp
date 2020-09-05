@@ -1,6 +1,7 @@
 #include "Collisions.hpp"
 #include "Car.hpp"
 #include <iostream>
+#include <cstdint>
 
 namespace mode7
 {
@@ -22,9 +23,9 @@ void Collisions::addObject(Object* m, float radius)
 
 void Collisions::update()
 {
-    for (int i = 0; i < m_objs.size() - 1; ++i)
+    for (uint32_t i = 0; i < m_objs.size() - 1; ++i)
     {
-        for (int j = i + 1; j < m_objs.size(); ++j)
+        for (uint32_t j = i + 1; j < m_objs.size(); ++j)
         {
             auto& a = m_objs[i];
             auto& b = m_objs[j];
