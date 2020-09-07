@@ -19,8 +19,10 @@ public:
     virtual void update();
 
 private:
-
+        
+    int m_actionCooldown;
     int m_currentZone;
+    int m_lastAction;
 };
 
 }
