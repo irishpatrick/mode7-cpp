@@ -27,7 +27,10 @@ void AI::control()
     }
     else
     {
-        int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
+        int cur = m_racingLine->getCurrentIndex(
+            glm::vec2(position.x, position.z),
+            m_currentZone);
+
         if (cur >= 0)
         {
             m_currentZone = cur;
@@ -38,12 +41,13 @@ void AI::control()
 
         Line2D line = m_racingLine->getLine(m_currentZone);
         Line2D next = m_racingLine->getNext(m_currentZone);
-        
+
         float distToLine = line.distTo(glm::vec2(position.x, position.z));
-        float distToNext = (next.p() - glm::vec2(position.x, position.z)).length();
+        float distToNext = glm::length(
+            (next.p() - glm::vec2(position.x, position.z)));
         float absDistToLine = fabsf(distToLine);
         float dot_line = glm::dot(
-            line.v(), 
+            line.v(),
             glm::vec2(Car::front.x, Car::front.z)
         );
         glm::vec3 cross_line_vec = glm::cross(
@@ -82,7 +86,7 @@ void AI::control()
         }
 
         //if (absDistToLine > 1.f)
-        if (fabsf(cross_next) / distToNext > 0.04f)
+        if (fabsf(cross_next) > 0.01 && distToNext < 20.f)
         {
             m_lastAction = 1;
             if (velocity.z < 0.4)
@@ -97,7 +101,7 @@ void AI::control()
             //velocity.z = 2.0f;
         }
 
-        m_actionCooldown = 10;
+        m_actionCooldown = 1;
     }
 
     if (m_lastAction == 0)
@@ -118,9 +122,9 @@ void AI::update()
     }
 
     Car::updateControls();
-    
+
     Object::move();
-    
+
     float sign = 0.f;
     if (velocity.z < -0.01f || velocity.z > 0.01f)
     {
