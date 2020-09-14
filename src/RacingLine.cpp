@@ -8,7 +8,8 @@
 namespace mode7
 {
 
-RacingLine::RacingLine()
+RacingLine::RacingLine() :
+    m_queuedAction(0)
 {
 
 }
@@ -45,6 +46,13 @@ int RacingLine::load(const std::string& fn)
             continue;
         }
 
+        if (line[0] == '!')
+        {
+            size_t loc = line.find(" ");
+            sscanf(line.substr(loc + 1).c_str(), "%d", &m_queuedAction);
+            continue;
+        }
+
         sscanf(line.c_str(), "%f,%f,%f,%f", &a, &b, &c, &d);
         
         points.push_back({a, b});
@@ -53,7 +61,8 @@ int RacingLine::load(const std::string& fn)
         Line2D segment;
         segment.fromPoints(glm::vec2(a, b), glm::vec2(c, d));
         assert(segment.v().x != 0.f || segment.v().y != 0.f);
-        m_lines.push_back(segment);
+        m_lines.push_back(std::pair<Line2D, int>(segment, m_queuedAction));
+        m_queuedAction = 0;
 
         Line2D top, bot;
         glm::vec2 n = segment.normal();
@@ -73,7 +82,29 @@ int RacingLine::load(const std::string& fn)
         r.c.fromPoints(c, d);
         r.d.fromPoints(d, a);
 
+        float templ = r.b.length();
         m_rects.push_back(r);
+        
+        w = 10.f;
+        a = top.solve(w);   // top left
+        b = top.solve(-w);  // top right
+        c = bot.solve(-w);  // bottom right
+        d = bot.solve(w);   // bottom left
+
+        glm::vec2 h = glm::normalize(b - c);
+        float bias = 10.f;
+        a += bias * h;
+        b += bias * h;
+        c += -bias * h;
+        d += -bias * h;
+
+        r.a.fromPoints(a, b);
+        r.b.fromPoints(b, c);
+        r.c.fromPoints(c, d);
+        r.d.fromPoints(d, a);
+        //std::cout << templ << " < " << r.b.length() << std::endl;
+        //assert(r.b.length() > templ);
+        m_bounds.push_back(r);
     }
 
     points.push_back(points.back());
@@ -105,16 +136,6 @@ int RacingLine::getCurrentIndex(glm::vec2 position, int current)
 
         float l = r->a.length();
         float w = r->b.length();
-        
-        if ((da <= w) &&  (db <= l) && (dc <= w) && (dd <= l))
-        {
-            /*std::cout << 
-                i << "\t" << index << "\n" <<
-                position.x << "\t" << position.y << "\t" << l << "\t" << w << "\n" <<
-                da << "\t" << db << "\t" << dc << "\t" << dd << "\n" <<
-                (da <= w) << "\t" << (db <= l) << "\t" << (dc <= w) << "\t" << (dd <= l) << "\n" <<
-                std::endl;*/
-        }
         
         if ((da <= w) && (db <= l) && (dc <= w) && (dd <= l))
         {

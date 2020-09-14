@@ -167,6 +167,14 @@ void Car::updateDebugText()
     int left_of_line = distToLine < 0.f;
     int dist_threshold = absDistToLine > 0.1f;
 
+    Rect r = m_racingLine->getRect(m_currentZone);
+    Rect rp = m_racingLine->getRect(m_racingLine->getPrevIndex(m_currentZone));
+    Rect rn = m_racingLine->getRect(m_racingLine->getNextIndex(m_currentZone));
+    if (!r.checkIntersect(pos_2d) && !rn.checkIntersect(pos_2d))
+    {
+        drift = 0.03f;
+    }
+
     std::stringstream ss;
     ss <<
         m_currentZone << "\n" <<

@@ -30,6 +30,9 @@ class v2:
     def scale(self, a):
         return v2(self.x * a, self.y * a)
 
+    def __str__(self):
+        return "<{}, {}>".format(self.x, self.y)
+
 class Line:
     
     def __init__(self, ):

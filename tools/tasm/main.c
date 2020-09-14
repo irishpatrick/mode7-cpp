@@ -78,6 +78,10 @@ int main(int argc, char** argv)
     buffer_size = 100 * 4 * sizeof(float);
     buffer = (float*)malloc(buffer_size);
 
+    int* actions = (int*)malloc(100 * 4 * sizeof(int));
+    memset(actions, 0, 400 * sizeof(int));
+    int* action_p = actions;
+
 
     char* line = NULL;
     size_t len = 0;
@@ -96,7 +100,8 @@ int main(int argc, char** argv)
             float x2, y2;
             last = buffer_get_last_pt();
             sscanf(start, "%f,%f", &x2, &y2);
-            buffer_append(last.x, last.y, x2, y2);
+            buffer_append(last.x, last.y, x2, y2);   
+            ++action_p;
             //last.x = x2;
             //last.y = y2;
         }
@@ -132,7 +137,7 @@ int main(int argc, char** argv)
             }
             vec2 prev = last;
             vec2 cur;
-            for (int i = 0; i < steps + 1; ++i)
+            for (int i = 1; i < steps + 1; ++i)
             {
                 float theta = theta_0 + part * (float)i;
                 cur.x = radius * cosf(theta);
@@ -140,8 +145,29 @@ int main(int argc, char** argv)
                 cur = vec2_add(center, cur);
                 buffer_append(prev.x, prev.y, cur.x, cur.y);
                 prev = cur;
+                ++action_p;
             }
-            //last = cur;
+        }
+        
+        else if (startswith(line, "tur"))
+        {
+            int code = 0;
+            char dir[10];
+            char* start = skip(line, 3);
+            sscanf(start, "%s", dir);
+            if (startswith(dir, "l"))
+            {
+                code = 1;
+            }
+            else if (startswith(dir, "s"))
+            {
+                code = 2;
+            }
+            else if (startswith(dir, "r"))
+            {
+                code = 3;
+            }
+            *action_p = code;
         }
     }
 
@@ -162,6 +188,12 @@ int main(int argc, char** argv)
     }
     for (int i = 0; i < num_lines * 4; i += 4)
     {
+        int j = i / 4;
+        if (actions[j] != 0)
+        {
+            fprintf(out, "!turn %d\n", actions[j]);
+        }
+
         fprintf(out, "%f,%f,%f,%f\n",
             buffer[i + 0],
             buffer[i + 1],
@@ -169,7 +201,11 @@ int main(int argc, char** argv)
             buffer[i + 3]
         );
     }
+
     fclose(out);
+
+    free(buffer);
+    free(actions);
 
     return 0;
 }
