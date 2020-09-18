@@ -54,33 +54,14 @@ void update()
         running = 0;
     }
 
-    int left = Keyboard::isDown("left");
-    int right = Keyboard::isDown("right");
-
-    if (Keyboard::isDown("c"))
-    {
-        car.gas();
-    }
-    if (Keyboard::isDown("x"))
-    {
-        car.brake();
-    }
-    if (left)
-    {
-        car.turnLeft();
-    }
-    if (right)
-    {
-        car.turnRight();
-    }
-
+    car.input();
     skybox.position = car.position;
 
     tree.update();
     skybox.update();
     track.update();
     car.update();
-    aitest.update();
+    //aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
 

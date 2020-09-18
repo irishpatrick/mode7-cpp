@@ -17,7 +17,7 @@
 #define ACCEL 1
 #define BRAKE 2
 #define STUN  3
-#define THROTTLE_RATE 0.1f
+#define THROTTLE_RATE 0.4f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
@@ -45,6 +45,7 @@ public:
         m_racingLine = rl;
     }
 
+    void input();
     void gas();
     void brake();
     void turnLeft();

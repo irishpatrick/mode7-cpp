@@ -2,6 +2,7 @@
 #include "Camera.hpp"
 #include "Texture.hpp"
 #include "TexCache.hpp"
+#include "Keyboard.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -26,8 +27,8 @@ Car::Car() :
     m_brakePos(0.f),
     m_power(0.f),
     m_brake(0.f),
-    m_maxPower(0.02f),
-    topSpeed(1.7f),
+    m_maxPower(3.f),
+    topSpeed(5.f),
     m_change(false),
     m_racingLine(nullptr)
 {
@@ -81,10 +82,12 @@ void Car::updateControls()
         {
             if (m_change)
             {
+                std::cout << "back on power" << std::endl;
                 m_change = false;
-                m_gasPos = m_vCurve.getX(velocity.z);
+                m_gasPos = m_vCurve.getX(velocity.z / topSpeed * 100.f);
             }
             m_gasPos += THROTTLE_RATE;
+            std::cout << m_gasPos << std::endl;
             m_brakePos = 0.f;
         }
         else if (state == BRAKE)
@@ -99,12 +102,10 @@ void Car::updateControls()
         }
 
         if (m_gasPos < 0.0f) m_gasPos = 0.0f;
-        if (m_gasPos > 10.0f) m_gasPos = 100.0f;
+        if (m_gasPos > 100.f) m_gasPos = 100.0f;
         if (m_brakePos < 0.f) m_brakePos = 0.f;
         if (m_brakePos > 10.0f) m_brakePos = 10.0f;
     }
-
-    state = IDLE;
 
     /*int pt = (int)fminf(9, floorf(m_gasPos));
     float output = velCurve[pt].solve(m_gasPos);
@@ -114,11 +115,34 @@ void Car::updateControls()
     float v;
     if (state == ACCEL)
     {
-        velocity.z = (m_vCurve.getY(m_gasPos) / 100.f) * m_maxPower;
+        velocity.z = (m_vCurve.getY(m_gasPos) / 100.f) * topSpeed;
+    }
+    else if (state == BRAKE)
+    {
+        float sign = 0.f;
+        if (velocity.z < -0.01f || velocity.z > 0.01f)
+        {
+            sign = velocity.z / fabs(velocity.z);
+        }
+
+        velocity.z += -sign * 0.05f;
     }
     else if (state == IDLE)
     {
-        // decrease vel
+        float sign = 0.f;
+        if (velocity.z < -0.01f || velocity.z > 0.01f)
+        {
+            sign = velocity.z / fabs(velocity.z);
+        }
+
+        if (fabsf(velocity.z) > 0.001f)
+        {
+            velocity.z += -sign * 0.003f;
+        }
+        else
+        {
+            velocity.z = 0;
+        }
     }
 }
 
@@ -272,15 +296,45 @@ void Car::draw(Shader& s)
     m_debugText.draw();
 }
 
+void Car::input()
+{
+
+    int left = Keyboard::isDown("left");
+    int right = Keyboard::isDown("right");
+
+    if (Keyboard::isDown("c"))
+    {
+        if (state != ACCEL)
+        {
+            m_change = true;
+        }
+        state = ACCEL;
+    }
+    else if (Keyboard::isDown("x"))
+    {
+        state = BRAKE;
+    }
+    else
+    {
+        state = IDLE;
+    }
+
+    if (left)
+    {
+        turnLeft();
+    }
+    if (right)
+    {
+        turnRight();
+    }
+}
+
 void Car::gas()
 {
-    m_change = true;
-    state = ACCEL;
 }
 
 void Car::brake()
 {
-    state = BRAKE;
 }
 
 void Car::turnLeft()
