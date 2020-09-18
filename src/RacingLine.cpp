@@ -102,8 +102,6 @@ int RacingLine::load(const std::string& fn)
         r.b.fromPoints(b, c);
         r.c.fromPoints(c, d);
         r.d.fromPoints(d, a);
-        //std::cout << templ << " < " << r.b.length() << std::endl;
-        //assert(r.b.length() > templ);
         m_bounds.push_back(r);
     }
 

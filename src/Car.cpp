@@ -41,6 +41,7 @@ Car::~Car()
 void Car::open(const std::string& fn)
 {
     m_debugText.init();
+    m_vCurve.open("assets/cars/vctest.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
@@ -127,9 +128,6 @@ void Car::updateDebugText()
     if (cur >= 0)
     {
         m_currentZone = cur;
-    }
-    else
-    {
     }
 
     glm::vec2 front_2d = glm::vec2(front.x, front.z);
