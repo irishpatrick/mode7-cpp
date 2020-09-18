@@ -28,6 +28,7 @@ Car::Car() :
     m_brake(0.f),
     m_maxPower(0.02f),
     topSpeed(1.7f),
+    m_change(false),
     m_racingLine(nullptr)
 {
 
@@ -61,17 +62,6 @@ void Car::open(const std::string& fn)
     json o;
     in >> o;
     in.close();
-
-    // parse velocity curve;
-    auto& vc = o["velocityCurve"];
-    for (int i = 0; i < vc["numPoints"].get<int>() - 1; ++i)
-    {
-        int a = vc["data"][i].get<int>();
-        int b = vc["data"][i + 1].get<int>();
-        Line l;
-        l.create(i, a, i + 1, b);
-        velCurve.push_back(l);
-    }
 }
 
 void Car::updateControls()
@@ -89,6 +79,11 @@ void Car::updateControls()
     {
         if (state == ACCEL)
         {
+            if (m_change)
+            {
+                m_change = false;
+                m_gasPos = m_vCurve.getX(velocity.z);
+            }
             m_gasPos += THROTTLE_RATE;
             m_brakePos = 0.f;
         }
@@ -104,17 +99,27 @@ void Car::updateControls()
         }
 
         if (m_gasPos < 0.0f) m_gasPos = 0.0f;
-        if (m_gasPos > 10.0f) m_gasPos = 10.0f;
+        if (m_gasPos > 10.0f) m_gasPos = 100.0f;
         if (m_brakePos < 0.f) m_brakePos = 0.f;
         if (m_brakePos > 10.0f) m_brakePos = 10.0f;
     }
 
     state = IDLE;
 
-    int pt = (int)fminf(9, floorf(m_gasPos));
+    /*int pt = (int)fminf(9, floorf(m_gasPos));
     float output = velCurve[pt].solve(m_gasPos);
     m_power = m_maxPower * output / 10.f;
-    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;
+    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;*/
+
+    float v;
+    if (state == ACCEL)
+    {
+        velocity.z = (m_vCurve.getY(m_gasPos) / 100.f) * m_maxPower;
+    }
+    else if (state == IDLE)
+    {
+        // decrease vel
+    }
 }
 
 void Car::updateDebugText()
@@ -197,8 +202,8 @@ void Car::update()
         sign = velocity.z / fabs(velocity.z);
     }
 
-    velocity.z += m_power - (velocity.z * (0.005f + m_brake));
-    velocity.x += drift - (velocity.x * 0.05f);
+    //velocity.z += m_power - (velocity.z * (0.005f + m_brake));
+    //velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
     drift = 0.0f;
 
@@ -269,6 +274,7 @@ void Car::draw(Shader& s)
 
 void Car::gas()
 {
+    m_change = true;
     state = ACCEL;
 }
 

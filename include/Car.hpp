@@ -81,6 +81,8 @@ protected:
 
     int m_currentZone;
 
+    bool m_change;
+
     RacingLine* m_racingLine;
 
     Object sprite;
