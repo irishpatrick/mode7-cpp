@@ -1,4 +1,4 @@
-#include "VCurve.hpp"
+#include "ResponseCurve.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
@@ -8,15 +8,15 @@
 namespace mode7
 {
 
-VCurve::VCurve()
+ResponseCurve::ResponseCurve()
 {
 }
 
-VCurve::~VCurve()
+ResponseCurve::~ResponseCurve()
 {
 }
 
-void VCurve::open(const std::string& fn)
+void ResponseCurve::open(const std::string& fn)
 {
     std::ifstream in(fn);
     if (!in)
@@ -49,7 +49,7 @@ void VCurve::open(const std::string& fn)
     }
 }
 
-float VCurve::getY(float x)
+float ResponseCurve::getY(float x)
 {
     Point* p;
     Line* l;
@@ -67,7 +67,7 @@ float VCurve::getY(float x)
     return 0.f;
 }
 
-float VCurve::getX(float y)
+float ResponseCurve::getX(float y)
 {
     Point* p;
     Line* l;

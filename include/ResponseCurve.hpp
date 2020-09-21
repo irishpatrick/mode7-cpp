@@ -14,12 +14,12 @@ typedef struct _Point
     uint32_t y;
 } Point;
 
-class VCurve
+class ResponseCurve
 {
 public:
 
-    VCurve();
-    ~VCurve();
+    ResponseCurve();
+    ~ResponseCurve();
 
     void open(const std::string&);
     float getX(float);

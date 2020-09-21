@@ -9,7 +9,7 @@
 #include "Animation.hpp"
 #include "DebugText.hpp"
 #include "RacingLine.hpp"
-#include "VCurve.hpp"
+#include "ResponseCurve.hpp"
 #include <string>
 #include <vector>
 
@@ -90,7 +90,7 @@ protected:
     Animation anim;
     DebugText m_debugText;
     std::vector<Line> velCurve;
-    VCurve m_vCurve;
+    ResponseCurve m_vCurve;
 };
 
 }

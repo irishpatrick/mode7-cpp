@@ -62,10 +62,10 @@ public:
         return m_lines[next].first;
     }
 
-    inline bool checkBounds(int index)
+    /*inline bool checkBounds(int index)
     {
         Rect* r = &m_rects[index];
-    }
+    }*/
 
     inline DebugPath* getDebugPath()
     {

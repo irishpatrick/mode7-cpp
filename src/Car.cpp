@@ -28,7 +28,7 @@ Car::Car() :
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
-    topSpeed(5.f),
+    topSpeed(4.5f),
     m_change(false),
     m_racingLine(nullptr)
 {
@@ -82,12 +82,10 @@ void Car::updateControls()
         {
             if (m_change)
             {
-                std::cout << "back on power" << std::endl;
                 m_change = false;
                 m_gasPos = m_vCurve.getX(velocity.z / topSpeed * 100.f);
             }
             m_gasPos += THROTTLE_RATE;
-            std::cout << m_gasPos << std::endl;
             m_brakePos = 0.f;
         }
         else if (state == BRAKE)
@@ -101,8 +99,14 @@ void Car::updateControls()
             m_brakePos = 0.f;
         }
 
-        if (m_gasPos < 0.0f) m_gasPos = 0.0f;
-        if (m_gasPos > 100.f) m_gasPos = 100.0f;
+        if (m_gasPos < 0.0f)
+        {
+            m_gasPos = 0.0f;
+        }
+        else if (m_gasPos > 100.f)
+        {
+            m_gasPos = 100.0f;
+        }
         if (m_brakePos < 0.f) m_brakePos = 0.f;
         if (m_brakePos > 10.0f) m_brakePos = 10.0f;
     }
@@ -125,7 +129,7 @@ void Car::updateControls()
             sign = velocity.z / fabs(velocity.z);
         }
 
-        velocity.z += -sign * 0.05f;
+        velocity.z += -sign * 0.03f;
     }
     else if (state == IDLE)
     {

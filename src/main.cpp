@@ -150,13 +150,13 @@ int main(int argc, char** argv)
     Clock::start();
     while (running)
     {
+        draw();
         Clock::tick();
         while (Clock::lagging())
         {
             update();
             Clock::lagTick();
         }
-        draw();
     }
 
     Screen::destroy();
