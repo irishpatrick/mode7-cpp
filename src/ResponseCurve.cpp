@@ -27,6 +27,8 @@ void ResponseCurve::open(const std::string& fn)
     std::vector<std::string> parts;
     uint32_t px = 0;
     uint32_t py = 0;
+    std::cout << "throttle curve:" << std::endl;
+    std::cout << "0,0" << std::endl;
     while (std::getline(in, line))
     {
         boost::split(parts, line, boost::is_any_of(","));
@@ -41,6 +43,7 @@ void ResponseCurve::open(const std::string& fn)
             uint32_t x, y;
             x = boost::lexical_cast<uint32_t>(parts[0]);
             y = boost::lexical_cast<uint32_t>(parts[1]);
+            std::cout << x << "," << y << std::endl;
             l.create(px, py, x, y);
             p.x = px;
             p.y = py;

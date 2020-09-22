@@ -43,7 +43,8 @@ Car::~Car()
 void Car::open(const std::string& fn)
 {
     m_debugText.init();
-    m_vCurve.open("assets/cars/vctest.txt");
+    m_vCurve.open("assets/cars/higha.txt");
+    //m_vCurve.open("assets/cars/vctest.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
