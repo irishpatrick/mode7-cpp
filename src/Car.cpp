@@ -28,7 +28,7 @@ Car::Car() :
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
-    topSpeed(4.5f),
+    topSpeed(2.5f),
     m_change(false),
     m_racingLine(nullptr)
 {
@@ -83,6 +83,7 @@ void Car::updateControls()
             if (m_change)
             {
                 m_change = false;
+                //std::cout << "start at " << velocity.z / topSpeed * 100.f << std::endl;
                 m_gasPos = m_vCurve.getX(velocity.z / topSpeed * 100.f);
             }
             m_gasPos += THROTTLE_RATE;
@@ -119,7 +120,8 @@ void Car::updateControls()
     float v;
     if (state == ACCEL)
     {
-        velocity.z = (m_vCurve.getY(m_gasPos) / 100.f) * topSpeed;
+        velocity.z = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
+        //std::cout << "gas: " <<  m_gasPos << "\t" << m_vCurve.getY(m_gasPos) << "\t" << velocity.z << std::endl;
     }
     else if (state == BRAKE)
     {

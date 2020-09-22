@@ -53,8 +53,9 @@ float ResponseCurve::getY(float x)
 {
     Point* p;
     Line* l;
-    for (auto& e : m_segments)
+    for (int i = m_segments.size() - 1; i >= 0; --i)
     {
+        auto& e = m_segments[i];
         p = &e.first;
         l = &e.second;
 
@@ -71,8 +72,9 @@ float ResponseCurve::getX(float y)
 {
     Point* p;
     Line* l;
-    for(auto& e : m_segments)
+    for (int i = m_segments.size() - 1; i >= 0; --i)
     {
+        auto& e = m_segments[i];
         p = &e.first;
         l = &e.second;
 
