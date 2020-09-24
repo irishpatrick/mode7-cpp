@@ -17,10 +17,13 @@
 #define ACCEL 1
 #define BRAKE 2
 #define STUN  3
+#define LEFT  4
+#define RIGHT 5
 #define THROTTLE_RATE 0.4f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
+#define WHEEL_RATE 10.f
 
 namespace mode7
 {
@@ -65,6 +68,7 @@ protected:
     DropShadow shadow;
 
     int state;
+    int m_wheelState;
     int ticks;
     bool m_inStun;
 
@@ -78,6 +82,7 @@ protected:
     float m_maxPower;
     float m_gasPos;
     float m_brakePos;
+    float m_wheelPos;
     float m_brake;
 
     int m_currentZone;
@@ -91,6 +96,7 @@ protected:
     DebugText m_debugText;
     std::vector<Line> velCurve;
     ResponseCurve m_vCurve;
+    ResponseCurve m_wheelCurve;
 };
 
 }

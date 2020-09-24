@@ -27,7 +27,7 @@ public:
 
 private:
 
-    std::vector<std::pair<Point, Line>> m_segments;
+    std::vector<Line> m_segments;
 };
 
 }

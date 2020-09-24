@@ -4,6 +4,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <utility>
+#include <iostream>
 
 namespace mode7
 {
@@ -25,10 +26,11 @@ void ResponseCurve::open(const std::string& fn)
     }
     std::string line;
     std::vector<std::string> parts;
-    uint32_t px = 0;
-    uint32_t py = 0;
+    int32_t px = 0;
+    int32_t py = 0;
+    bool first = true;
+    Line l;
     std::cout << "throttle curve:" << std::endl;
-    std::cout << "0,0" << std::endl;
     while (std::getline(in, line))
     {
         boost::split(parts, line, boost::is_any_of(","));
@@ -38,32 +40,37 @@ void ResponseCurve::open(const std::string& fn)
         }
         else
         {
-            Line l;
-            Point p;
-            uint32_t x, y;
-            x = boost::lexical_cast<uint32_t>(parts[0]);
-            y = boost::lexical_cast<uint32_t>(parts[1]);
+            int32_t x, y;
+            x = boost::lexical_cast<int32_t>(parts[0]);
+            y = boost::lexical_cast<int32_t>(parts[1]);
             std::cout << x << "," << y << std::endl;
+            if (x == px)
+            {
+                px = x;
+                py = y;
+                if (first) continue;
+            }
             l.create(px, py, x, y);
-            p.x = px;
-            p.y = py;
-            m_segments.push_back(std::pair<Point, Line>(p, l));
+            std::cout << l.str() << std::endl;
+            m_segments.push_back(l);
+            first = false;
+            px = x;
+            py = y;
         }
     }
 }
 
 float ResponseCurve::getY(float x)
 {
-    Point* p;
     Line* l;
     for (int i = m_segments.size() - 1; i >= 0; --i)
     {
-        auto& e = m_segments[i];
-        p = &e.first;
-        l = &e.second;
-
-        if (x >= (float)p->x)
+        l = &m_segments[i];
+        
+        //if (x >= (float)p->x)
+        if (x >= l->x0 && x <= l->x1)
         {
+            std::cout << l->x0 << " <= " << x << " <= " << l->x1 << "\t" << l->solve(x) << std::endl;
             return l->solve(x);
         }
     }
@@ -73,15 +80,12 @@ float ResponseCurve::getY(float x)
 
 float ResponseCurve::getX(float y)
 {
-    Point* p;
     Line* l;
     for (int i = m_segments.size() - 1; i >= 0; --i)
     {
-        auto& e = m_segments[i];
-        p = &e.first;
-        l = &e.second;
-
-        if (y >= (float)p->y)
+        l = &m_segments[i];
+        
+        if (y >= l->y0 && y <= l->y1) 
         {
             return l->solveInv(y);
         }

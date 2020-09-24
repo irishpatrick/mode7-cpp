@@ -23,6 +23,10 @@ void Line::create(float m, float b)
 
 void Line::create(float x1, float y1, float x2, float y2)
 {
+    this->x0 = x1;
+    this->x1 = x2;
+    this->y0 = y1;
+    this->y1 = y2;
     m = (y2 - y1) / (x2 - x1);
     b = y1 - (m * x1);
 }

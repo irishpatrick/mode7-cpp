@@ -17,6 +17,7 @@ Car::Car() :
     Mesh(),
     traction(0.005f),
     state(IDLE),
+    m_wheelState(IDLE),
     ticks(0),
     m_inStun(false),
     tracked(false),
@@ -25,6 +26,7 @@ Car::Car() :
     throttle(0.0f),
     m_gasPos(0.f),
     m_brakePos(0.f),
+    m_wheelPos(50.f),
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
@@ -43,8 +45,9 @@ Car::~Car()
 void Car::open(const std::string& fn)
 {
     m_debugText.init();
-    m_vCurve.open("assets/cars/higha.txt");
-    //m_vCurve.open("assets/cars/vctest.txt");
+    //m_vCurve.open("assets/cars/higha.txt");
+    m_vCurve.open("assets/cars/vctest.txt");
+    m_wheelCurve.open("assets/cars/wheel_response.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
@@ -118,7 +121,42 @@ void Car::updateControls()
     m_power = m_maxPower * output / 10.f;
     m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;*/
 
-    float v;
+    if (m_wheelState == LEFT)
+    {
+        m_wheelPos -= WHEEL_RATE;
+    }
+    else if (m_wheelState == RIGHT)
+    {
+        m_wheelPos += WHEEL_RATE;
+    }
+    else if (m_wheelState == IDLE)
+    {
+        float dot = m_wheelPos - 50.f;
+        if (dot < 0.f)
+        {
+            m_wheelPos += WHEEL_RATE;
+        }
+        else if (dot > 0.f)
+        {
+            m_wheelPos -= WHEEL_RATE;
+        }
+
+        if (fabsf(m_wheelPos - 50.f) < 0.1f)
+        {
+            m_wheelPos = 50.f;
+        }
+    }
+
+    // bounds checking
+    if (m_wheelPos <= 0.f) m_wheelPos = 0.f;
+    if (m_wheelPos >= 100.f) m_wheelPos = 100.f;
+    
+    //std::cout << m_wheelPos << "," << m_wheelCurve.getY(m_wheelPos) << std::endl;
+    
+    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * TURN_RATE;
+    rotate(0, -turn_rate * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
+    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
+
     if (state == ACCEL)
     {
         velocity.z = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
@@ -227,16 +265,16 @@ void Car::update()
 
     Object::move();
 
-    float sign = 0.f;
+    /*float sign = 0.f;
     if (velocity.z < -0.01f || velocity.z > 0.01f)
     {
         sign = velocity.z / fabs(velocity.z);
-    }
+    }*/
 
     //velocity.z += m_power - (velocity.z * (0.005f + m_brake));
     //velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
-    drift = 0.0f;
+    //drift = 0.0f;
 
     updateSprite();
     shadow.update();
@@ -328,11 +366,17 @@ void Car::input()
 
     if (left)
     {
-        turnLeft();
+        m_wheelState = LEFT;        
+        //turnLeft();
     }
     if (right)
     {
-        turnRight();
+        m_wheelState = RIGHT;
+        //turnRight();
+    }
+    if (!left && !right)
+    {
+        m_wheelState = IDLE;
     }
 }
 
