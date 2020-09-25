@@ -30,7 +30,7 @@ void ResponseCurve::open(const std::string& fn)
     int32_t py = 0;
     bool first = true;
     Line l;
-    std::cout << "throttle curve:" << std::endl;
+    //std::cout << "throttle curve:" << std::endl;
     while (std::getline(in, line))
     {
         boost::split(parts, line, boost::is_any_of(","));
@@ -43,7 +43,7 @@ void ResponseCurve::open(const std::string& fn)
             int32_t x, y;
             x = boost::lexical_cast<int32_t>(parts[0]);
             y = boost::lexical_cast<int32_t>(parts[1]);
-            std::cout << x << "," << y << std::endl;
+            //std::cout << x << "," << y << std::endl;
             if (x == px)
             {
                 px = x;
@@ -51,7 +51,7 @@ void ResponseCurve::open(const std::string& fn)
                 if (first) continue;
             }
             l.create(px, py, x, y);
-            std::cout << l.str() << std::endl;
+            //std::cout << l.str() << std::endl;
             m_segments.push_back(l);
             first = false;
             px = x;
@@ -70,7 +70,7 @@ float ResponseCurve::getY(float x)
         //if (x >= (float)p->x)
         if (x >= l->x0 && x <= l->x1)
         {
-            std::cout << l->x0 << " <= " << x << " <= " << l->x1 << "\t" << l->solve(x) << std::endl;
+            //std::cout << l->x0 << " <= " << x << " <= " << l->x1 << "\t" << l->solve(x) << std::endl;
             return l->solve(x);
         }
     }
