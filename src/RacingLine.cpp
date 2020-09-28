@@ -82,7 +82,7 @@ int RacingLine::load(const std::string& fn)
         r.c.fromPoints(c, d);
         r.d.fromPoints(d, a);
 
-        float templ = r.b.length();
+        //float templ = r.b.length();
         m_rects.push_back(r);
         
         w = 10.f;

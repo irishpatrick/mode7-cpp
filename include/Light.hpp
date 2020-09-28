@@ -3,6 +3,8 @@
 
 #include "Object.hpp"
 #include "gl.h"
+#include <string>
+#include <sstream>
 
 namespace mode7
 {

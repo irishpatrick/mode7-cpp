@@ -9,7 +9,7 @@
 #include "Animation.hpp"
 #include "DebugText.hpp"
 #include "RacingLine.hpp"
-#include "VCurve.hpp"
+#include "ResponseCurve.hpp"
 #include <string>
 #include <vector>
 
@@ -17,10 +17,13 @@
 #define ACCEL 1
 #define BRAKE 2
 #define STUN  3
-#define THROTTLE_RATE 0.1f
+#define LEFT  4
+#define RIGHT 5
+#define THROTTLE_RATE 0.4f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
+#define WHEEL_RATE 9.f
 
 namespace mode7
 {
@@ -45,6 +48,7 @@ public:
         m_racingLine = rl;
     }
 
+    void input();
     void gas();
     void brake();
     void turnLeft();
@@ -64,6 +68,7 @@ protected:
     DropShadow shadow;
 
     int state;
+    int m_wheelState;
     int ticks;
     bool m_inStun;
 
@@ -77,9 +82,12 @@ protected:
     float m_maxPower;
     float m_gasPos;
     float m_brakePos;
+    float m_wheelPos;
     float m_brake;
 
     int m_currentZone;
+
+    bool m_change;
 
     RacingLine* m_racingLine;
 
@@ -87,7 +95,8 @@ protected:
     Animation anim;
     DebugText m_debugText;
     std::vector<Line> velCurve;
-    VCurve m_vCurve;
+    ResponseCurve m_vCurve;
+    ResponseCurve m_wheelCurve;
 };
 
 }

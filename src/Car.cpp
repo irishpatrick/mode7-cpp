@@ -2,6 +2,7 @@
 #include "Camera.hpp"
 #include "Texture.hpp"
 #include "TexCache.hpp"
+#include "Keyboard.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,6 +17,7 @@ Car::Car() :
     Mesh(),
     traction(0.005f),
     state(IDLE),
+    m_wheelState(IDLE),
     ticks(0),
     m_inStun(false),
     tracked(false),
@@ -24,10 +26,12 @@ Car::Car() :
     throttle(0.0f),
     m_gasPos(0.f),
     m_brakePos(0.f),
+    m_wheelPos(50.f),
     m_power(0.f),
     m_brake(0.f),
-    m_maxPower(0.02f),
-    topSpeed(1.7f),
+    m_maxPower(3.f),
+    topSpeed(2.5f),
+    m_change(false),
     m_racingLine(nullptr)
 {
 
@@ -41,7 +45,9 @@ Car::~Car()
 void Car::open(const std::string& fn)
 {
     m_debugText.init();
+    //m_vCurve.open("assets/cars/higha.txt");
     m_vCurve.open("assets/cars/vctest.txt");
+    m_wheelCurve.open("assets/cars/wheel_response.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
@@ -61,17 +67,6 @@ void Car::open(const std::string& fn)
     json o;
     in >> o;
     in.close();
-
-    // parse velocity curve;
-    auto& vc = o["velocityCurve"];
-    for (int i = 0; i < vc["numPoints"].get<int>() - 1; ++i)
-    {
-        int a = vc["data"][i].get<int>();
-        int b = vc["data"][i + 1].get<int>();
-        Line l;
-        l.create(i, a, i + 1, b);
-        velCurve.push_back(l);
-    }
 }
 
 void Car::updateControls()
@@ -89,6 +84,12 @@ void Car::updateControls()
     {
         if (state == ACCEL)
         {
+            if (m_change)
+            {
+                m_change = false;
+                //std::cout << "start at " << velocity.z / topSpeed * 100.f << std::endl;
+                m_gasPos = m_vCurve.getX(velocity.z / topSpeed * 100.f);
+            }
             m_gasPos += THROTTLE_RATE;
             m_brakePos = 0.f;
         }
@@ -103,18 +104,91 @@ void Car::updateControls()
             m_brakePos = 0.f;
         }
 
-        if (m_gasPos < 0.0f) m_gasPos = 0.0f;
-        if (m_gasPos > 10.0f) m_gasPos = 10.0f;
+        if (m_gasPos < 0.0f)
+        {
+            m_gasPos = 0.0f;
+        }
+        else if (m_gasPos > 100.f)
+        {
+            m_gasPos = 100.0f;
+        }
         if (m_brakePos < 0.f) m_brakePos = 0.f;
         if (m_brakePos > 10.0f) m_brakePos = 10.0f;
     }
 
-    state = IDLE;
-
-    int pt = (int)fminf(9, floorf(m_gasPos));
+    /*int pt = (int)fminf(9, floorf(m_gasPos));
     float output = velCurve[pt].solve(m_gasPos);
     m_power = m_maxPower * output / 10.f;
-    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;
+    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;*/
+
+    if (m_wheelState == LEFT)
+    {
+        m_wheelPos -= WHEEL_RATE;
+    }
+    else if (m_wheelState == RIGHT)
+    {
+        m_wheelPos += WHEEL_RATE;
+    }
+    else if (m_wheelState == IDLE)
+    {
+        float dot = m_wheelPos - 50.f;
+        if (dot < 0.f)
+        {
+            m_wheelPos += WHEEL_RATE;
+        }
+        else if (dot > 0.f)
+        {
+            m_wheelPos -= WHEEL_RATE;
+        }
+
+        if (fabsf(m_wheelPos - 50.f) < 0.1f)
+        {
+            m_wheelPos = 50.f;
+        }
+    }
+
+    // bounds checking
+    if (m_wheelPos <= 0.f) m_wheelPos = 0.f;
+    if (m_wheelPos >= 100.f) m_wheelPos = 100.f;
+    
+    //std::cout << m_wheelPos << "," << m_wheelCurve.getY(m_wheelPos) << std::endl;
+    
+    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * TURN_RATE;
+    rotate(0, -turn_rate * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
+    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
+
+    if (state == ACCEL)
+    {
+        velocity.z = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
+        //std::cout << "gas: " <<  m_gasPos << "\t" << m_vCurve.getY(m_gasPos) << "\t" << velocity.z << std::endl;
+    }
+    else if (state == BRAKE)
+    {
+        float sign = 0.f;
+        if (velocity.z < -0.01f || velocity.z > 0.01f)
+        {
+            sign = velocity.z / fabs(velocity.z);
+        }
+
+        velocity.z += -sign * 0.03f;
+    }
+    else if (state == IDLE)
+    {
+        float sign = 0.f;
+        if (velocity.z < -0.01f || velocity.z > 0.01f)
+        {
+            sign = velocity.z / fabs(velocity.z);
+        }
+
+        if (fabsf(velocity.z) > 0.001f)
+        {
+            velocity.z += -sign * 0.006f;
+        }
+        else
+        {
+            velocity.z = 0;
+        }
+    }
 }
 
 void Car::updateDebugText()
@@ -191,16 +265,16 @@ void Car::update()
 
     Object::move();
 
-    float sign = 0.f;
+    /*float sign = 0.f;
     if (velocity.z < -0.01f || velocity.z > 0.01f)
     {
         sign = velocity.z / fabs(velocity.z);
-    }
+    }*/
 
-    velocity.z += m_power - (velocity.z * (0.005f + m_brake));
-    velocity.x += drift - (velocity.x * 0.05f);
+    //velocity.z += m_power - (velocity.z * (0.005f + m_brake));
+    //velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
-    drift = 0.0f;
+    //drift = 0.0f;
 
     updateSprite();
     shadow.update();
@@ -267,14 +341,51 @@ void Car::draw(Shader& s)
     m_debugText.draw();
 }
 
+void Car::input()
+{
+
+    int left = Keyboard::isDown("left");
+    int right = Keyboard::isDown("right");
+
+    if (Keyboard::isDown("c"))
+    {
+        if (state != ACCEL)
+        {
+            m_change = true;
+        }
+        state = ACCEL;
+    }
+    else if (Keyboard::isDown("x"))
+    {
+        state = BRAKE;
+    }
+    else
+    {
+        state = IDLE;
+    }
+
+    if (left)
+    {
+        m_wheelState = LEFT;        
+        //turnLeft();
+    }
+    if (right)
+    {
+        m_wheelState = RIGHT;
+        //turnRight();
+    }
+    if (!left && !right)
+    {
+        m_wheelState = IDLE;
+    }
+}
+
 void Car::gas()
 {
-    state = ACCEL;
 }
 
 void Car::brake()
 {
-    state = BRAKE;
 }
 
 void Car::turnLeft()
