@@ -23,7 +23,7 @@
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
-#define WHEEL_RATE 10.f
+#define WHEEL_RATE 9.f
 
 namespace mode7
 {

@@ -182,7 +182,7 @@ void Car::updateControls()
 
         if (fabsf(velocity.z) > 0.001f)
         {
-            velocity.z += -sign * 0.003f;
+            velocity.z += -sign * 0.006f;
         }
         else
         {
