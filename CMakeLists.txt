@@ -18,7 +18,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 
     find_package(SDL2 CONFIG REQUIRED)
     find_package(sdl2-image CONFIG REQUIRED)
-    #find_package(sdl2-ttf CONFIG REQUIRED)
+    find_package(sdl2-ttf CONFIG REQUIRED)
     find_package(GLEW CONFIG REQUIRED)
     find_package(assimp CONFIG REQUIRED)
     find_package(Bullet CONFIG REQUIRED)
@@ -28,7 +28,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         SDL2::SDL2
         SDL2::SDL2main
         SDL2::SDL2_image
-	#SDL2::SDL2_ttf
+	    SDL2::SDL2_ttf
         GLEW::GLEW
         assimp::assimp
         LinearMath
@@ -89,6 +89,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
 
-add_subdirectory(./tools/sim)
-add_subdirectory(./tools/editor)
-add_subdirectory(./tools/tasm)
+#add_subdirectory(./tools/sim)
+#add_subdirectory(./tools/editor)
+#add_subdirectory(./tools/tasm)
