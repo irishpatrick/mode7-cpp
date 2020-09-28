@@ -29,8 +29,14 @@ public:
 
     inline void destroy()
     {
-        SDL_FreeSurface(m_surf);
-        TTF_CloseFont(m_font);
+        if (m_surf)
+        {
+            SDL_FreeSurface(m_surf);
+        }
+        if (m_font)
+        {
+            TTF_CloseFont(m_font);
+        }
     }
 
     void renderText();

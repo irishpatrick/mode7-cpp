@@ -84,6 +84,10 @@ void DebugText::init()
 
 void DebugText::renderText()
 {
+    if (m_font == nullptr)
+    {
+        return;
+    }
     m_surf = TTF_RenderText_Blended_Wrapped(m_font, m_text.c_str(), {200, 200, 200}, 1000);
     if (!m_surf)
     {
@@ -96,6 +100,10 @@ void DebugText::renderText()
 
 void DebugText::draw()
 {
+    if (!m_font)
+    {
+        return;
+    }
     if (m_text.size() < 1)
     {
         return;
