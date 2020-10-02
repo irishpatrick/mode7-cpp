@@ -58,7 +58,7 @@ void mode7::Screen::create(int w, int h)
         "title",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         width, height,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP
+        SDL_WINDOW_OPENGL// | SDL_WINDOW_FULLSCREEN_DESKTOP
     );
     ctx = SDL_GL_CreateContext(window);
 
@@ -157,14 +157,14 @@ void mode7::Screen::flip()
     glActiveTexture(GL_TEXTURE0);
     glUniform1ui(texture_loc, fb_tex);
     glBindTexture(GL_TEXTURE_2D, fb_tex);
-    
+
     glBindVertexArray(vao);
     glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    
+
     glActiveTexture(0);
     glBindVertexArray(0);
-    
+
     SDL_GL_SwapWindow(window);
 }
 
