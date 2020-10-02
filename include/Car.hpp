@@ -42,6 +42,7 @@ public:
     virtual void draw(Shader&);
 
     void updateControls();
+    void move();
 
     inline void setRacingLine(RacingLine* rl)
     {
@@ -49,10 +50,6 @@ public:
     }
 
     void input();
-    void gas();
-    void brake();
-    void turnLeft();
-    void turnRight();
     void stun();
 
     void setTracked(bool);
@@ -62,8 +59,6 @@ public:
 protected:
 
     float speed;
-
-protected:
 
     DropShadow shadow;
 

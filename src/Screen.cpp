@@ -35,10 +35,10 @@ void mode7::Screen::create(int w, int h)
     auto pair = Util::getMonitorRes();
     width = pair.first;
     height = pair.second;
+    std::cout << "monitor: (" << width << "," << height << ")" << std::endl;
     RESX = w;
     RESY = h;
 
-    //SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);

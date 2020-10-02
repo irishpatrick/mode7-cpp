@@ -15,7 +15,7 @@ namespace mode7
 
 Car::Car() :
     Mesh(),
-    traction(0.005f),
+    traction(0.5f),
     state(IDLE),
     m_wheelState(IDLE),
     ticks(0),
@@ -77,7 +77,7 @@ void Car::updateControls()
         if (ticks == 0)
         {
             m_inStun = false;
-            traction = 0.005;
+            traction = 2000000.f;
         }
     }
     else
@@ -132,35 +132,37 @@ void Car::updateControls()
     else if (m_wheelState == IDLE)
     {
         float dot = m_wheelPos - 50.f;
-        if (dot < 0.f)
+        if (fabsf(m_wheelPos - 50.f) < WHEEL_RATE / 2)
+        {
+            m_wheelPos = 50.f;
+        }
+        else if (dot < 0.f)
         {
             m_wheelPos += WHEEL_RATE;
+            drift += 0.1f;
         }
         else if (dot > 0.f)
         {
             m_wheelPos -= WHEEL_RATE;
-        }
-
-        if (fabsf(m_wheelPos - 50.f) < 0.1f)
-        {
-            m_wheelPos = 50.f;
+            drift -= 0.1f;
         }
     }
 
     // bounds checking
     if (m_wheelPos <= 0.f) m_wheelPos = 0.f;
     if (m_wheelPos >= 100.f) m_wheelPos = 100.f;
-    
-    //std::cout << m_wheelPos << "," << m_wheelCurve.getY(m_wheelPos) << std::endl;
-    
+
+    // turning
     float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * TURN_RATE;
     rotate(0, -turn_rate * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
+    //drift += -(m_wheelPos - 50.f) / 100.f * traction * sqrtf(velocity.z);// *fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
+    drift += copysign(logf(fabs(drift + 1)) / 10.f, -velocity.x);
+    std::cout << drift << std::endl;
+    velocity.x = drift;
 
     if (state == ACCEL)
     {
         velocity.z = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
-        //std::cout << "gas: " <<  m_gasPos << "\t" << m_vCurve.getY(m_gasPos) << "\t" << velocity.z << std::endl;
     }
     else if (state == BRAKE)
     {
@@ -244,7 +246,7 @@ void Car::updateDebugText()
     Rect rn = m_racingLine->getRect(m_racingLine->getNextIndex(m_currentZone));
     if (!r.checkIntersect(pos_2d) && !rn.checkIntersect(pos_2d))
     {
-        drift = 0.03f;
+        //drift = 0.03f;
     }
 
     std::stringstream ss;
@@ -264,17 +266,6 @@ void Car::update()
     updateControls();
 
     Object::move();
-
-    /*float sign = 0.f;
-    if (velocity.z < -0.01f || velocity.z > 0.01f)
-    {
-        sign = velocity.z / fabs(velocity.z);
-    }*/
-
-    //velocity.z += m_power - (velocity.z * (0.005f + m_brake));
-    //velocity.x += drift - (velocity.x * 0.05f);
-    //velocity.x += drift - (velocity.x * 0.005f);
-    //drift = 0.0f;
 
     updateSprite();
     shadow.update();
@@ -367,37 +358,15 @@ void Car::input()
     if (left)
     {
         m_wheelState = LEFT;        
-        //turnLeft();
     }
     if (right)
     {
         m_wheelState = RIGHT;
-        //turnRight();
     }
     if (!left && !right)
     {
         m_wheelState = IDLE;
     }
-}
-
-void Car::gas()
-{
-}
-
-void Car::brake()
-{
-}
-
-void Car::turnLeft()
-{
-    rotate(0, TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
-}
-
-void Car::turnRight()
-{
-    rotate(0, -TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = -traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)
