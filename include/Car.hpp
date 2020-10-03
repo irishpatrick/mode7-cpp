@@ -20,6 +20,7 @@
 #define LEFT  4
 #define RIGHT 5
 #define THROTTLE_RATE 0.4f
+#define DRIFT_RATE 0.2f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
@@ -42,7 +43,6 @@ public:
     virtual void draw(Shader&);
 
     void updateControls();
-    void move();
 
     inline void setRacingLine(RacingLine* rl)
     {
@@ -58,8 +58,6 @@ public:
 
 protected:
 
-    float speed;
-
     DropShadow shadow;
 
     int state;
@@ -69,7 +67,9 @@ protected:
 
     bool tracked;
 
+    float speed;
     float drift;
+
     float throttle;
     float topSpeed;
 
@@ -92,6 +92,7 @@ protected:
     std::vector<Line> velCurve;
     ResponseCurve m_vCurve;
     ResponseCurve m_wheelCurve;
+    ResponseCurve m_tractionCurve;
 };
 
 }
