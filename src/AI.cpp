@@ -125,12 +125,6 @@ void AI::update()
 
     Object::move();
 
-    float sign = 0.f;
-    if (velocity.z < -0.01f || velocity.z > 0.01f)
-    {
-        sign = velocity.z / fabs(velocity.z);
-    }
-
     velocity.z += m_power - (velocity.z * (0.005f + m_brake));
     velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
