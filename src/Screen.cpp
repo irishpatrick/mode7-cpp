@@ -58,7 +58,7 @@ void mode7::Screen::create(int w, int h)
         "title",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         width, height,
-        SDL_WINDOW_OPENGL// | SDL_WINDOW_FULLSCREEN_DESKTOP
+        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP
     );
     ctx = SDL_GL_CreateContext(window);
 

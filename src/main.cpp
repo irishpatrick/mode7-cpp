@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 
     rltest.load("assets/track_data/oval2.line");
 
-    car.open("assets/cars/testCar.json");
+    car.open("assets/cars/testcar");
     car.position.y = 1;
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
     car.rotate(0.f, -M_PI/2.f, 0.f);
     car.setRacingLine(&rltest);
 
-    aitest.open("assets/cars/testCar.json");
+    aitest.open("assets/cars/testcar");
     aitest.position.y = 1;
     aitest.position.x = 1;
     //aitest.addChild(&Camera::getObject());

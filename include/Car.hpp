@@ -19,15 +19,36 @@
 #define STUN  3
 #define LEFT  4
 #define RIGHT 5
-#define THROTTLE_RATE 0.4f
-#define DRIFT_RATE 0.2f
+/*#define THROTTLE_RATE 0.4f
+#define DRIFT_RATE 3.0f
+//#define DRIFT_RATE 0.2f
+//#define MAX_DRIFT 0.125f
+#define MAX_DRIFT 0.6f
+#define MIN_DRIFT 0.005f
+//#define MIN_DRIFT 0.05f
 #define COAST_RATE -0.02f
 #define BRAKE_RATE 0.08f
 #define TURN_RATE 0.022f
-#define WHEEL_RATE 9.f
+#define WHEEL_RATE 9.f*/
 
 namespace mode7
 {
+
+typedef struct _car_properties
+{
+    float THROTTLE_RATE;
+    float DRIFT_NORM_RATE;
+    float DRIFT_LOSS_RATE;
+    float DRIFT_NORM_RET;
+    float DRIFT_LOSS_RET;
+    float COAST_RATE;
+    float BRAKE_RATE;
+    float TURN_RATE;
+    float WHEEL_RATE;
+    float DRIFT_BASE;
+    float DRIFT_NORM;
+    float DRIFT_LOSS;
+} car_properties;
 
 class Car : public Mesh
 {
@@ -36,6 +57,7 @@ public:
     Car();
     virtual ~Car();
 
+    void parseConfig(const std::string&);
     virtual void open(const std::string&);
     void updateSprite();
     void updateDebugText();
@@ -78,6 +100,7 @@ protected:
     float m_gasPos;
     float m_brakePos;
     float m_wheelPos;
+    float m_driftPos;
     float m_brake;
 
     int m_currentZone;
@@ -93,6 +116,7 @@ protected:
     ResponseCurve m_vCurve;
     ResponseCurve m_wheelCurve;
     ResponseCurve m_tractionCurve;
+    car_properties m_props;
 };
 
 }

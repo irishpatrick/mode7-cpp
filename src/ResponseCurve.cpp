@@ -22,6 +22,7 @@ void ResponseCurve::open(const std::string& fn)
     std::ifstream in(fn);
     if (!in)
     {
+        std::cout << "cannot open " << fn << std::endl;
         return;
     }
     std::string line;

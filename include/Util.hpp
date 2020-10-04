@@ -22,6 +22,13 @@ public:
     static glm::mat4 fromAi(const aiMatrix4x4&);
     static std::pair<int, int> getMonitorRes();
 
+    static inline float constrain(float val, float min, float max)
+    {
+        if (val <= min) val = min;
+        if (val >= max) val = max;
+        return val;
+    }
+
 private:
 
 

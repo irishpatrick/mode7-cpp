@@ -3,7 +3,10 @@
 #include "Texture.hpp"
 #include "TexCache.hpp"
 #include "Keyboard.hpp"
+#include "Util.hpp"
 #include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
@@ -27,6 +30,7 @@ Car::Car() :
     m_gasPos(0.f),
     m_brakePos(0.f),
     m_wheelPos(50.f),
+    m_driftPos(50.f),
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
@@ -42,13 +46,99 @@ Car::~Car()
 
 }
 
+void Car::parseConfig(const std::string& fn)
+{
+    std::cout << "load car config" << std::endl;
+    std::ifstream in(fn);
+    if (!in)
+    {
+        std::cout << "couldn't open " << fn << std::endl;
+        return;
+    }
+
+    std::string line;
+    std::vector<std::string> parts;
+    while (std::getline(in, line))
+    {
+        boost::split(parts, line, boost::is_any_of("="));
+        if (parts.size() < 2)
+        {
+            std::cout << "bad line: " << line << std::endl;
+            continue;
+        }
+
+        if (parts[0] == "THROTTLE_RATE")
+        {
+            m_props.THROTTLE_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_BASE")
+        {
+            m_props.DRIFT_BASE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM")
+        {
+            std::cout << line << std::endl;
+            m_props.DRIFT_NORM = atof(parts[1].c_str()); 
+        } 
+        else if (parts[0] == "DRIFT_LOSS")
+        {
+            m_props.DRIFT_LOSS = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM_RET")
+        {
+            m_props.DRIFT_NORM_RET = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_LOSS_RET")
+        {
+            m_props.DRIFT_LOSS_RET = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM_RATE")
+        {
+            m_props.DRIFT_NORM_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_LOSS_RATE")
+        {
+            m_props.DRIFT_LOSS_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "TURN_RATE")
+        {
+            m_props.TURN_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "WHEEL_RATE")
+        {
+            m_props.WHEEL_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "BRAKE_RATE")
+        {
+            m_props.BRAKE_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "COAST_RATE")
+        {
+            m_props.COAST_RATE = atof(parts[1].c_str());
+        }
+        else
+        {
+            std::cout << "fatal at line " << line << std::endl;
+            assert(1 == 0);
+        }
+        
+    }
+
+    std::cout << m_props.DRIFT_NORM << std::endl;
+    assert(m_props.DRIFT_NORM > 0);
+    assert(m_props.DRIFT_NORM_RATE > 0);
+}
+
 void Car::open(const std::string& fn)
 {
+    parseConfig("assets/cars/config.txt");
+    std::stringstream ss;
+    ss << fn << "/";
     m_debugText.init();
     //m_vCurve.open("assets/cars/higha.txt");
-    m_vCurve.open("assets/cars/vctest.txt");
-    m_wheelCurve.open("assets/cars/wheel_response.txt");
-    m_tractionCurve.open("assets/cars/traction.txt");
+    m_vCurve.open(ss.str() + "gas.txt");
+    m_wheelCurve.open(ss.str() + "wheel.txt");
+    m_tractionCurve.open(ss.str() + "drift.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
@@ -57,17 +147,6 @@ void Car::open(const std::string& fn)
     anim.open("assets/animations/test_anim.json");
     //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
-
-    std::ifstream in(fn);
-    if (!in)
-    {
-        std::cout << "cannot open file " << fn << std::endl;
-        return;
-    }
-
-    json o;
-    in >> o;
-    in.close();
 }
 
 void Car::updateControls()
@@ -88,15 +167,14 @@ void Car::updateControls()
             if (m_change)
             {
                 m_change = false;
-                //std::cout << "start at " << velocity.z / topSpeed * 100.f << std::endl;
                 m_gasPos = m_vCurve.getX(speed / topSpeed * 100.f);
             }
-            m_gasPos += THROTTLE_RATE;
+            m_gasPos += m_props.THROTTLE_RATE;
             m_brakePos = 0.f;
         }
         else if (state == BRAKE)
         {
-            m_brakePos += BRAKE_RATE;
+            m_brakePos += m_props.BRAKE_RATE;
             m_gasPos = 0.f;
         }
         else if (state == IDLE)
@@ -105,16 +183,8 @@ void Car::updateControls()
             m_brakePos = 0.f;
         }
 
-        if (m_gasPos < 0.0f)
-        {
-            m_gasPos = 0.0f;
-        }
-        else if (m_gasPos > 100.f)
-        {
-            m_gasPos = 100.0f;
-        }
-        if (m_brakePos < 0.f) m_brakePos = 0.f;
-        if (m_brakePos > 10.0f) m_brakePos = 10.0f;
+        m_gasPos = Util::constrain(m_gasPos, 0.f, 100.f);
+        m_brakePos = Util::constrain(m_brakePos, 0.f, 10.f);
     }
 
     /*int pt = (int)fminf(9, floorf(m_gasPos));
@@ -124,42 +194,55 @@ void Car::updateControls()
 
     if (m_wheelState == LEFT)
     {
-        m_wheelPos -= WHEEL_RATE;
+        m_wheelPos -= m_props.WHEEL_RATE;
+        m_driftPos -= m_props.DRIFT_NORM_RATE;
     }
     else if (m_wheelState == RIGHT)
     {
-        m_wheelPos += WHEEL_RATE;
+        m_wheelPos += m_props.WHEEL_RATE;
+        m_driftPos += m_props.DRIFT_NORM_RATE;
     }
     else if (m_wheelState == IDLE)
     {
         float dot = m_wheelPos - 50.f;
-        if (fabsf(m_wheelPos - 50.f) < WHEEL_RATE / 2)
+        if (fabsf(m_wheelPos - 50.f) < m_props.WHEEL_RATE / 2.f)
         {
             m_wheelPos = 50.f;
         }
         else if (dot < 0.f)
         {
-            m_wheelPos += WHEEL_RATE;
-            //drift += 0.1f;
+            m_wheelPos += m_props.WHEEL_RATE;
         }
         else if (dot > 0.f)
         {
-            m_wheelPos -= WHEEL_RATE;
-            //drift -= 0.1f;
+            m_wheelPos -= m_props.WHEEL_RATE;
+        }
+        
+        dot = m_driftPos - 50.f;
+        if (fabsf(m_driftPos - 50.f) < m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET / 2.f)
+        {
+            m_driftPos = 50.f;
+        }
+        else if (dot < 0.f)
+        {
+            m_driftPos += m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
+        }
+        else if (dot > 0.f)
+        {
+            m_driftPos -= m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
         }
     }
 
     // bounds checking
-    if (m_wheelPos <= 0.f) m_wheelPos = 0.f;
-    if (m_wheelPos >= 100.f) m_wheelPos = 100.f;
+    m_wheelPos = Util::constrain(m_wheelPos, 0.f, 100.f);
+    m_driftPos = Util::constrain(m_driftPos, 0.f, 100.f);
 
     // turning
-    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * TURN_RATE;
+    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * m_props.TURN_RATE;
     rotate(0, -turn_rate * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
-    //drift += -(m_wheelPos - 50.f) / 100.f * traction * sqrtf(velocity.z);// *fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
-    //drift += copysign(logf(fabs(drift + 1)) / 10.f, -velocity.x);
-    //std::cout << drift << std::endl;
     
+    // drifting
+    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + m_props.DRIFT_BASE); 
 
     if (state == ACCEL)
     {
@@ -181,6 +264,7 @@ void Car::updateControls()
         }
     }
 
+    // apply speed and drift to velocity
     velocity.x = drift;
     velocity.z = speed;
 }
