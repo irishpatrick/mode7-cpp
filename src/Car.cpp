@@ -242,7 +242,7 @@ void Car::updateControls()
     rotate(0, -turn_rate * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
     
     // drifting
-    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + m_props.DRIFT_BASE); 
+    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + (float)(speed > 0.f) * m_props.DRIFT_BASE); 
 
     if (state == ACCEL)
     {
