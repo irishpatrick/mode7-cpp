@@ -17,8 +17,8 @@
 #include "AI.hpp"
 #include "Collisions.hpp"
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 1280
+#define HEIGHT 720
 
 using namespace mode7;
 
