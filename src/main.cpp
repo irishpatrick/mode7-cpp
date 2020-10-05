@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <SDL.h>
 #include "Camera.hpp"
 #include "Screen.hpp"
@@ -16,6 +16,7 @@
 #include "RacingLine.hpp"
 #include "AI.hpp"
 #include "Collisions.hpp"
+#include "HUD.hpp"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -33,8 +34,8 @@ Car car;
 Scene track;
 AI aitest;
 Collisions cl;
-
 RacingLine rltest;
+HUD hud;
 
 void update()
 {
@@ -85,18 +86,8 @@ void draw()
 
 int main(int argc, char** argv)
 {
-    printf("hello world!\n");
-
-    //Screen::create(3840, 2160);
-    //Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
-    //Screen::create(1920, 1080);
-    //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
-    //Screen::create(1600, 900);
-    //Camera::create(1600.f, 900.f, 80.f, 1.0f, 2000.f);
     Screen::create(WIDTH, HEIGHT, false);
     Camera::create(WIDTH, HEIGHT, 70.f, 1.0f, 1500.f);
-    //Screen::create(1720 * 2, 968 * 2);
-    //Camera::create(1720.f * 2, 968.f * 2, 70.f, 1.0f, 2000.f);
 
     Keyboard::attach();
 
@@ -133,6 +124,9 @@ int main(int argc, char** argv)
     car.setAltShader(shadowShader);
     car.rotate(0.f, -M_PI/2.f, 0.f);
     car.setRacingLine(&rltest);
+
+    hud.setCar(&car);
+    hud.init();
 
     aitest.open("assets/cars/testcar");
     aitest.position.y = 1;
