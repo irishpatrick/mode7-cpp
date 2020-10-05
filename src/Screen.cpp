@@ -30,16 +30,23 @@ static float screen_quad_data[] = {
     -1.0f, -1.0f,  0.f,  0.f
 };
 
-void mode7::Screen::create(int w, int h)
+void mode7::Screen::create(int w, int h, bool fullscreen)
 {
     auto pair = Util::getMonitorRes();
-    width = pair.first;
-    height = pair.second;
-    std::cout << "monitor: (" << width << "," << height << ")" << std::endl;
     RESX = w;
     RESY = h;
-    width = w;
-    height = h;
+    if (fullscreen)
+    { 
+        width = pair.first;
+        height = pair.second;
+    }
+    else
+    {
+        int sc = Util::getMonitorScale();
+        std::cout << sc << std::endl;
+        width = w * sc;
+        height = h * sc;
+    }
 
     TTF_Init();
 
@@ -56,11 +63,16 @@ void mode7::Screen::create(int w, int h)
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetSwapInterval(0);
 
+    unsigned int flags = 0;
+    if (fullscreen)
+    {
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
     window = SDL_CreateWindow(
         "title",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         width, height,
-        SDL_WINDOW_OPENGL// | SDL_WINDOW_FULLSCREEN_DESKTOP
+        SDL_WINDOW_OPENGL | flags
     );
     ctx = SDL_GL_CreateContext(window);
 

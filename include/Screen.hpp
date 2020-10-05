@@ -8,7 +8,7 @@ class Screen
 {
 public:
 
-    static void create(int, int);
+    static void create(int, int, bool);
     static void clear();
     static void beginRender();
     static void flip();

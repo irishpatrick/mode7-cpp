@@ -85,3 +85,17 @@ std::pair<int, int> Util::getMonitorRes()
 
     return out;
 }
+
+int Util::getMonitorScale()
+{
+    int h;
+#ifdef _WIN32
+    h = GetSystemMetrics(SM_CYSCREEN);
+#elif defined __linux__
+    Display* d = XOpenDisplay(NULL);
+    Screen* s = DefaultScreenOfDisplay(d);
+    h = s->height;
+#endif
+
+    return h / 1080;
+}
