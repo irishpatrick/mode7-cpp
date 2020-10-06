@@ -68,6 +68,8 @@ void update()
     //rltest.update(car.position);
 
     cl.update();
+
+    hud.update();
 }
 
 void draw()
@@ -80,6 +82,7 @@ void draw()
     aitest.draw(spriteShader);
     car.draw(spriteShader);
     rltest.getDebugPath()->draw();
+    hud.draw();
 
     Screen::flip();
 }

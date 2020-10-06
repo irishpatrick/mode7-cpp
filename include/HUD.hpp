@@ -4,6 +4,7 @@
 #include "Car.hpp"
 #include "Mesh.hpp"
 #include "Shader.hpp"
+#include "Scene.hpp"
 
 namespace mode7
 {
@@ -11,7 +12,7 @@ namespace mode7
 class HUD
 {
 public:
-    
+
     HUD();
     ~HUD();
 
@@ -29,12 +30,13 @@ private:
     Car* m_car;
 
     Mesh m_health;
-    Mesh m_healthBar;
+    Mesh* m_healthBar;
     Mesh m_gasGauge;
     Mesh m_gas;
     Mesh m_brakeGauge;
     Mesh m_brake;
     Shader m_shader;
+    Scene scene;
 };
 
 }
