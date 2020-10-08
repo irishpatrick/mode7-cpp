@@ -34,7 +34,7 @@ Car::Car() :
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
-    topSpeed(2.5f),
+    topSpeed(2.0f),
     m_change(false),
     m_racingLine(nullptr)
 {
@@ -77,9 +77,8 @@ void Car::parseConfig(const std::string& fn)
         }
         else if (parts[0] == "DRIFT_NORM")
         {
-            std::cout << line << std::endl;
-            m_props.DRIFT_NORM = atof(parts[1].c_str()); 
-        } 
+            m_props.DRIFT_NORM = atof(parts[1].c_str());
+        }
         else if (parts[0] == "DRIFT_LOSS")
         {
             m_props.DRIFT_LOSS = atof(parts[1].c_str());
@@ -121,10 +120,9 @@ void Car::parseConfig(const std::string& fn)
             std::cout << "fatal at line " << line << std::endl;
             assert(1 == 0);
         }
-        
+
     }
 
-    std::cout << m_props.DRIFT_NORM << std::endl;
     assert(m_props.DRIFT_NORM > 0);
     assert(m_props.DRIFT_NORM_RATE > 0);
 }
@@ -217,7 +215,7 @@ void Car::updateControls()
         {
             m_wheelPos -= m_props.WHEEL_RATE;
         }
-        
+
         dot = m_driftPos - 50.f;
         if (fabsf(m_driftPos - 50.f) < m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET / 2.f)
         {
@@ -240,9 +238,9 @@ void Car::updateControls()
     // turning
     float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * m_props.TURN_RATE;
     rotate(0, -turn_rate * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
-    
+
     // drifting
-    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + (float)(speed > 0.f) * m_props.DRIFT_BASE); 
+    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + (float)(speed > 0.f) * m_props.DRIFT_BASE);
 
     if (state == ACCEL)
     {
@@ -250,13 +248,20 @@ void Car::updateControls()
     }
     else if (state == BRAKE)
     {
-        speed += copysignf(0.03f, -speed);
+        if (fabsf(speed) > 0.03f)
+        {
+            speed += copysignf(0.03f, -speed);
+        }
+        else
+        {
+            speed = 0;
+        }
     }
     else if (state == IDLE)
     {
-        if (fabsf(speed) > 0.001f)
+        if (fabsf(speed) > m_props.COAST_RATE)
         {
-            speed += copysignf(0.006f, -speed);
+            speed += copysignf(m_props.COAST_RATE, -speed);
         }
         else
         {
@@ -271,6 +276,11 @@ void Car::updateControls()
 
 void Car::update()
 {
+    if (tracked)
+    {
+        Camera::setFOV(70 + 5 * (velocity.z / topSpeed));
+    }
+
     updateDebugText();
     updateControls();
 
@@ -380,7 +390,7 @@ void Car::input()
 
     if (left)
     {
-        m_wheelState = LEFT;        
+        m_wheelState = LEFT;
     }
     if (right)
     {

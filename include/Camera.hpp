@@ -17,6 +17,7 @@ public:
     static glm::mat4 getProjection();
     static glm::mat4 getView();
     static Object& getObject();
+    static void setFOV(float);
 
 private:
 

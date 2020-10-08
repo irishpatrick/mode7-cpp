@@ -63,7 +63,7 @@ void update()
     skybox.update();
     track.update();
     car.update();
-    //aitest.update();
+    aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
 
