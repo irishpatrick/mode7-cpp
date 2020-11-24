@@ -97,5 +97,10 @@ int Util::getMonitorScale()
     h = s->height;
 #endif
 
-    return h / 1080;
+    int sc = h / 1080;
+    if (sc < 1)
+    {
+        sc = 1;
+    }
+    return sc;
 }
