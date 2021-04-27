@@ -1,0 +1,23 @@
+# Ignore objects and archives.
+*.[oa]
+# Ignore expat programs
+expat/gennmtab/gennmtab
+expat/sample/elements
+# Ignore test programs
+test/tread
+test/trbuild
+test/tcbuild
+test/tdel
+test/tcook
+mgrx/rsvg
+mgrx/gsvg
+mgrx/rsvg2
+# Ignore graphics files from test programs
+test/msvgt1.svg
+test/msvgt2a.svg
+test/msvgt2b.svg
+test/msvgt3.svg
+mgrx/tgsvg.svg
+# Others
+svgexpls
+.directory

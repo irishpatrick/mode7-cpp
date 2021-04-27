@@ -4,8 +4,8 @@ project(svg2track C)
 
 file(GLOB sources ./src/*)
 
-find_library(LIBMSVG_L libmsvg.a REQUIRED)
-find_path(LIBMSVG_I msvg.h REQUIRED)
+find_library(LIBMSVG_L libmsvg.a REQUIRED PATHS ${CMAKE_SOURCE_DIR}/3rdparty/libmsvg/src)
+find_path(LIBMSVG_I msvg.h REQUIRED PATHS ${CMAKE_SOURCE_DIR}/3rdparty/libmsvg/src)
 
 set(cflags -D_GNU_SOURCE -g -Wall)
 set(incl ${LIBMSVG_I})
