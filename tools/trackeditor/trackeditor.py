@@ -14,20 +14,42 @@ class Piece:
         self.limits = []
         self.verts = []
         self.joints = []
+        self.bbox = (0, 0, 0, 0)
 
-    def load(self, fn):
-        pass
+    @staticmethod
+    def load(fn):
+        fp = open(fn, "wb")
+        return pickle.load(fp)
 
     def assemble(self, fn):
         fp = open(fn, "r")
         for line in fp:
             line = line[:-1]
-            parts = re.split(",| |\t", line)
+            parts = re.split(",| |\t", line) # split by space, comma, tab
             if line.startswith("name"):
                 self.name = parts[1]
             elif line.startswith("v"):
                 val = [int(i) for i in parts[1:]]
                 self.verts.append((val[0], val[1]))
+
+        self.compute_bbox()
+
+    def compute_bbox(self):
+        mx = 0
+        my = 0
+        for v in self.virts:
+            min_x = math.min(min_x, v[0])
+            min_y = math.min(min_y, v[1])
+            max_x = math.max(max_x, v[0])
+            max_y = math.max(max_y, v[1])
+
+        self.bbox = (min_x, min_y, max_x - min_x, max_y - min_y)
+
+    def check_intersect(self, x, y):
+        return x < bbox[1] + bbox[3] and \
+                x + 1 > bbox[1] and \
+                y < box[2] + bbox[4] and \
+                y + 1 > bbox[2] \
 
     def draw(self, canvas, origin):
         pass
@@ -38,8 +60,24 @@ class Track:
         self.pieces = []
         self.origin = [0, 0]
 
+    @staticmethod
+    def load(fn):
+        fp = open(fn, "rb")
+        return pickle.load(fp)
+
+    def get_piece_at_pt(self, x, y):
+        for p in pieces:
+            if p.check_intersect(x, y):
+                return p
+
+        return None
+
     def draw(self):
         pass
+
+    def save(self):
+        fp = open("{}.trk".format(self.name), "wb")
+        pickle.dump(self, fp)
 
 class TrackCreator:
     def __init__(self, master):
@@ -98,11 +136,19 @@ class App(tk.Frame):
         self.current_track.name = w.value
 
     def open_track(self):
-        pass
+        fn = filedialog.askopenfilename(
+            initialdir="./", title="Open Track",
+            filetypes=(
+                ("Tracks", "*.trk"),
+                ("All Files", "*")))
+
+        if len(fn) == 0:
+            return
+
+        self.current_track = Track.load(fn)
 
     def save_track(self):
-        fp = open("{}.trk".format(self.current_track.name), "wb")
-        pickle.dump(self.current_track, fp)
+        current_track.save()
 
     def import_piece(self):
         fn = filedialog.askopenfilename(
@@ -111,7 +157,7 @@ class App(tk.Frame):
                 ("Track Pieces", "*.tp"),
                 ("All Files", "*")))
 
-        if fn == "":
+        if len(fn) == 0:
             return
 
         p = Piece()
@@ -121,7 +167,10 @@ class App(tk.Frame):
         
 
     def leftclick_cb(self, event):
-        pass
+        if self.current_track == None:
+            return
+        
+        sel = self.current_track.get_piece_at_pt(event.x, event.y)
 
     def rightclick_cb(self, event):
         pass
