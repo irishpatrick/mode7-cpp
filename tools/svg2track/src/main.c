@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <msvg.h>
+#include <assert.h>
 
 #include "mesh.h"
 #include "bezier.h"
+#include "track.h"
+
+static track cur_track;
 
 static void print_usage(void)
 {
@@ -19,6 +23,7 @@ static void parse_path(MsvgElement* el)
     double head[2];
     char cur_cmd;
     bezier* cur_curve = NULL;
+    line* cur_line = NULL;
     int repeat_counter = 0;
 
     for (int i = 0; i < sp->npoints; ++i)
@@ -33,7 +38,27 @@ static void parse_path(MsvgElement* el)
             break;
 
             case 'L': // linear
+                cur_cmd = pt->cmd;
+                if (cur_line)
+                {
+                    track_add_line(&cur_track, cur_line);
+                    cur_line = NULL;
+                }
 
+                assert(cur_line == NULL);
+                cur_line = malloc(sizeof(line));
+                if (cur_line == NULL)
+                {
+                    exit(1);
+                    // todo improve
+                }
+
+                line_connect(cur_line, head[0], head[1], pt->x, pt->y);
+                
+                // move head
+                head[0] = pt->x;
+                head[1] = pt->y;
+                
             break;
 
             case 'C': // cubic bezier
@@ -41,8 +66,11 @@ static void parse_path(MsvgElement* el)
                 cur_cmd = pt->cmd;
                 if (cur_curve) // save curve
                 {
-                    
+                    track_add_bezier(&cur_track, cur_curve);
+                    cur_curve = NULL;   
                 }
+
+                assert(cur_curve == NULL);
                 cur_curve = malloc(sizeof(bezier));
                 if (cur_curve == NULL)
                 {
@@ -57,6 +85,7 @@ static void parse_path(MsvgElement* el)
             case ' ': // extra points
                 if (cur_cmd == 'C')
                 {
+                    assert(cur_curve != NULL);
                     ++repeat_counter;
                     if (repeat_counter == 1)
                     {
@@ -79,6 +108,17 @@ static void parse_path(MsvgElement* el)
 
             break;
         }
+    }
+    if (cur_curve) // check again if curve needs to be saved
+    {
+        track_add_bezier(&cur_track, cur_curve);
+        cur_curve = NULL;  
+    }
+    
+    if (cur_line)
+    {
+        track_add_line(&cur_track, cur_line);
+        cur_line = NULL;
     }
 }
 
@@ -143,8 +183,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    //MsvgPrintRawElementTree(stdout, root, 0);
-
     int result;
     result = MsvgRaw2CookedTree(root);
     if (result < 1)
@@ -152,8 +190,15 @@ int main(int argc, char** argv)
         fprintf(stderr, "parsing err\n");
         return 1;
     }
+
+    track_init(&cur_track, 100);
     
     MsvgSerCookedTree(root, my_parser);
+
+    printf("Beziers extracted: %d\n", cur_track.n_beziers);
+    printf("Lines extracted: %d\n", cur_track.n_lines);
+
+    track_destroy(&cur_track);
 
     return 0;
 }
