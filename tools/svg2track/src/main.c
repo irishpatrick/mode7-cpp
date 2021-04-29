@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <msvg.h>
 #include <assert.h>
+#include <string.h>
 
 #include "mesh.h"
 #include "bezier.h"
@@ -29,7 +30,7 @@ static void parse_path(MsvgElement* el)
     for (int i = 0; i < sp->npoints; ++i)
     {
         pt = &(sp->spp[i]);
-        printf("%c, %f, %f\n", pt->cmd, pt->x, pt->y);
+        //printf("%c, %f, %f\n", pt->cmd, pt->x, pt->y);
         switch (pt->cmd)
         {
             case 'M': // move to
@@ -169,12 +170,28 @@ int main(int argc, char** argv)
 {
     MsvgElement* root;
     int err;
+    char stock_fn[100];
+    mesh stock;
 
     if (argc < 2)
     {
         print_usage();
         return 1;
     }
+
+    memset(stock_fn, 0, 100);
+
+    for (int i = 3; i < argc; ++i)
+    {
+        // parse flags
+    }
+
+    if (strlen(stock_fn) < 1)
+    {
+        strcpy(stock_fn, "default.obj");
+    }
+
+    mesh_load(&stock, stock_fn);
 
     root = MsvgReadSvgFile(argv[1], &err);
     if (root == NULL)
@@ -197,6 +214,10 @@ int main(int argc, char** argv)
 
     printf("Beziers extracted: %d\n", cur_track.n_beziers);
     printf("Lines extracted: %d\n", cur_track.n_lines);
+
+    mesh out;
+    mesh_init(&out, 100);
+    track_meshify(&cur_track, &out, &stock);
 
     track_destroy(&cur_track);
 

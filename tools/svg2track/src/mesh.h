@@ -19,6 +19,7 @@ typedef struct _mesh
 } mesh;
 
 void mesh_init(mesh*, uint32_t);
+void mesh_load(mesh*, const char*);
 void mesh_destroy(mesh*);
 void mesh_add_vertex(mesh*, vertex);
 void mesh_add_color(mesh*, color);

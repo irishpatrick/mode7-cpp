@@ -8,6 +8,10 @@
 void mesh_init(mesh* m, uint32_t n_vertices)
 {
 
+}
+
+void mesh_load(mesh* m, const char* fn)
+{
 
 }
 
