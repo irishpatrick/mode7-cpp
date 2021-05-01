@@ -3,10 +3,12 @@
 #include <msvg.h>
 #include <assert.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "mesh.h"
 #include "bezier.h"
 #include "track.h"
+#include "wavefront.h"
 
 static track cur_track;
 
@@ -27,15 +29,26 @@ static void parse_path(MsvgElement* el)
     line* cur_line = NULL;
     int repeat_counter = 0;
 
+    bool origin_set = false;
+    float ox;
+    float oy;
+
     for (int i = 0; i < sp->npoints; ++i)
     {
         pt = &(sp->spp[i]);
-        //printf("%c, %f, %f\n", pt->cmd, pt->x, pt->y);
+        printf("%c, %f, %f\n", pt->cmd, pt->x, pt->y);
         switch (pt->cmd)
         {
             case 'M': // move to
                 head[0] = pt->x;
                 head[1] = pt->y;
+                if (!origin_set)
+                {
+                    origin_set = true;
+                    ox = pt->x;
+                    oy = pt->y;
+                    printf("origin: %f,%f\n", ox, oy);
+                }
             break;
 
             case 'L': // linear
@@ -54,7 +67,8 @@ static void parse_path(MsvgElement* el)
                     // todo improve
                 }
 
-                line_connect(cur_line, head[0], head[1], pt->x, pt->y);
+                assert(origin_set);
+                line_connect(cur_line, head[0] - ox, head[1] - oy, pt->x - ox, pt->y - oy);
                 
                 // move head
                 head[0] = pt->x;
@@ -79,8 +93,8 @@ static void parse_path(MsvgElement* el)
                 }
                 bezier_init(cur_curve, 100);
 
-                bezier_set_endpt(cur_curve, 0, head[0], head[1]);
-                bezier_set_ctrlpt(cur_curve, 0, pt->x, pt->y);
+                bezier_set_endpt(cur_curve, 0, head[0] - ox, head[1] - oy);
+                bezier_set_ctrlpt(cur_curve, 0, pt->x - ox, pt->y - oy);
                 break;
 
             case ' ': // extra points
@@ -90,11 +104,11 @@ static void parse_path(MsvgElement* el)
                     ++repeat_counter;
                     if (repeat_counter == 1)
                     {
-                        bezier_set_ctrlpt(cur_curve, 1, pt->x, pt->y);
+                        bezier_set_ctrlpt(cur_curve, 1, pt->x - ox, pt->y - oy);
                     }
                     else if (repeat_counter == 2)
                     {
-                        bezier_set_endpt(cur_curve, 1, pt->x, pt->y);
+                        bezier_set_endpt(cur_curve, 1, pt->x - ox, pt->y - oy);
                         head[0] = pt->x;
                         head[1] = pt->y;
                     }
@@ -136,30 +150,37 @@ static void my_parser(MsvgElement* el, MsvgPaintCtx* pctx)
     switch (newel->eid)
     {
         case EID_RECT:
+        printf("eid rect\n");
         //YourDrawRectElement(newel);
         break;
 
         case EID_CIRCLE:
+        printf("eid circ\n");
         //YourDrawCircleElement(newel);
         break;
 
         case EID_ELLIPSE:
+        printf("eid ellipse\n");
         //YourDrawEllipseElement(newel);
         break;
 
         case EID_LINE:
+        printf("eid line\n");
         //YourDrawLineElement(newel);
         break;
 
         case EID_POLYLINE:
+        printf("eid polyline\n");
         //YourDrawPolylineElement(newel);
         break;
 
         case EID_POLYGON:
+        printf("eid polygon\n");
         //YourDrawPolygonElement(newel);
         break;
 
         case EID_PATH:
+        printf("eid_path\n");
         parse_path(newel);
         default:
         break;
@@ -171,7 +192,7 @@ int main(int argc, char** argv)
     MsvgElement* root;
     int err;
     char stock_fn[100];
-    mesh stock;
+    mesh* stock = NULL;
 
     if (argc < 2)
     {
@@ -188,10 +209,20 @@ int main(int argc, char** argv)
 
     if (strlen(stock_fn) < 1)
     {
-        strcpy(stock_fn, "default.obj");
+        strcpy(stock_fn, "../default.obj");
     }
 
-    mesh_load(&stock, stock_fn);
+    int n_meshes = wavefront_load(&stock, stock_fn);
+    if (n_meshes == 0 || n_meshes > 1)
+    {
+        printf("bad stock piece");
+        for (int i = 0; i < n_meshes; ++i)
+        {
+            mesh_destroy(stock + i);
+        }
+        if (stock) free(stock);
+        exit(1);
+    }
 
     root = MsvgReadSvgFile(argv[1], &err);
     if (root == NULL)
@@ -216,10 +247,16 @@ int main(int argc, char** argv)
     printf("Lines extracted: %d\n", cur_track.n_lines);
 
     mesh out;
-    mesh_init(&out, 100);
-    track_meshify(&cur_track, &out, &stock);
+    mesh_init(&out);
+    track_meshify(&cur_track, &out, &stock[0]);
 
     track_destroy(&cur_track);
+
+    for (int i = 0; i < n_meshes; ++i)
+    {
+        mesh_destroy(stock + i);
+    }
+    if (stock) free(stock);
 
     return 0;
 }

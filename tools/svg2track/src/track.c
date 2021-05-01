@@ -1,10 +1,12 @@
 #include "track.h"
 #include "matrix.h"
+#include "wavefront.h"
 
 #include <math.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 static void resize_arrays(track* tr, float factor)
 {
@@ -94,6 +96,9 @@ void track_add_bezier(track* tr, bezier* bz)
 {
     assert(tr->beziers);
 
+    tr->lookup[tr->n_segments] = SEG_BEZIER;
+    ++tr->n_segments;
+
     tr->beziers[tr->n_beziers] = bz;
     ++tr->n_beziers;
     if (tr->n_beziers >= tr->max_segments * 0.9)
@@ -106,6 +111,9 @@ void track_add_line(track* tr, line* ln)
 {
     assert(tr->lines);
 
+    tr->lookup[tr->n_segments] = SEG_LINE;
+    ++tr->n_segments;
+
     tr->lines[tr->n_lines] = ln;
     ++tr->n_lines;
     if (tr->n_lines >= tr->max_segments * 0.9)
@@ -114,21 +122,43 @@ void track_add_line(track* tr, line* ln)
     }
 }
 
-static int interpolate_line(float* start, line* ln)
+static int interpolate_line(float* start, line* ln, int n_points)
 {
-    return 20;
+    float step = 1.f / (float)n_points;
+    float t;
+
+    for (int i = 0; i < n_points; ++i)
+    {
+        t = (float)i * step;
+        line_solve(ln, t, start);
+        printf("(%f,%f)\n", start[0], start[1]);
+        start += 2; // move head to next point
+    }
+
+    return n_points;
 }
 
-static int interpolate_bezier(float* start, bezier* ln)
+static int interpolate_bezier(float* start, bezier* ln, int n_points)
 {
-    return 20;
+    float step = 1.f / (float)n_points;
+    float t;
+
+    for (int i = 0; i < n_points; ++i)
+    {
+        t = (float)i * step;
+        bezier_cubic(ln, t, start);
+        start += 2; // move head to next point
+    }
+
+    return n_points;
 }
 
 void track_meshify(track* tr, mesh* out, mesh* stock)
 {
     printf("start meshify...\n");
     // start with 100 pairs allocated
-    int max_points = 100;
+    int n_inter_pts = 40;
+    int max_points = 1000;
     int n_points = 0;
     float* points = malloc(max_points * 2 * sizeof(float));
     if (points == NULL)
@@ -145,18 +175,20 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     {
         int added = 0;
         segment_t type = tr->lookup[i];
+        //printf("seg type: %d\n", type);
         switch (type)
         {
             case SEG_LINE:
-                added = interpolate_line(points + (n_points * 2), *lines_head);
+                added = interpolate_line(points + (n_points * 2), *lines_head, n_inter_pts);
                 n_points += added;
                 ++lines_head;
                 assert(lines_head - tr->lines <= tr->n_lines);
                 break;
 
             case SEG_BEZIER:
-                added = interpolate_bezier(points + (n_points * 2), *beziers_head);
+                added = interpolate_bezier(points + (n_points * 2), *beziers_head, n_inter_pts);
                 n_points += added;
+                ++beziers_head;
                 assert(beziers_head - tr->beziers <= tr->n_beziers);
                 break;
         }
@@ -168,12 +200,15 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
             newp = realloc(points, max_points * 2 * sizeof(float));
             if (!newp)
             {
+                printf("oom\n");
                 free(points);
                 return;
             }
             points = newp;
         }
     }
+
+    assert(n_points > 0);
 
     // compute all lines
     printf("gen lines...\n");
@@ -186,7 +221,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
         return;
     }
 
-    float track_width = 3.f; // todo change
+    float track_width = 10.f; // todo change
 
     float* a;
     float* b;
@@ -195,11 +230,11 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     float v[2];
     float mag;
     float tmp;
-    for (int i = 0; i < n_points - 1; ++i)
+    for (int i = 0; i < n_lines; ++i)
     {
-        // fetch current and next point
-        a = points + ((i + 0) * 2);
-        b = points + ((i + 1) * 2);
+        // fetch current and next point, loop back to first if necessary
+        a = points + (((i + 0) % n_points) * 2);
+        b = points + (((i + 1) % n_points) * 2);
 
         // compute vector from a to b
         d[0] = b[0] - a[0];
@@ -220,6 +255,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
         v[1] = a[1] + d[1] * track_width;
 
         line_connect(&lines[i], u[0], u[1], v[0], v[1]);
+        //line_print(&lines[i]);
     }
 
     free(points);
@@ -227,7 +263,52 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     // transform all stock pieces
     printf("compute transforms...\n");
 
+    mesh* meshes = malloc(n_lines * sizeof(mesh));
+    if (meshes == NULL)
+    {
+        return;
+    }
+
+    line* front;
+    line* back;
+    mesh* cur;
+    float fbuf[2];
+    for (int i = 0; i < n_lines - 1; ++i)
+    {
+        front = &lines[i];
+        back = &lines[i + 1];
+
+        //for (int j = 0; j < n_lines; ++j)
+        {
+            cur = &meshes[i];
+            mesh_copy(cur, stock);
+            for (int k = 0; k < cur->n_vertices; ++k)
+            {
+                float* v = &cur->vertices[k * 3];
+                // snap vertices to line
+                
+                v[2] += 4.5; // adjust to midpoint;
+                float t = v[2] / 4.5; // for line calculation
+                assert (t >= -1.f && t <= 1.f);
+                // back vertices
+                if (v[0] == 0.0f)
+                {
+                    line_solve(back, t, fbuf);
+                    //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
+                }
+                // front vertices
+                else if (v[0] == 1.0f)
+                {
+                    line_solve(front, t, fbuf);
+                    //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
+                }
+                v[0] = fbuf[0];
+                v[2] = fbuf[1];
+            }
+        }
+    }
+
     // write to single mesh
     printf("saving...\n");
-
+    wavefront_save(meshes, "out.obj", n_lines);
 }

@@ -3,7 +3,7 @@
 
 #include "mesh.h"
 
-void wavefront_save(mesh*, const char*);
-void wavefront_load(mesh*, const char*);
+void wavefront_save(mesh*, const char*, int);
+int wavefront_load(mesh**, const char*);
 
 #endif /* WAVEFRONT */
