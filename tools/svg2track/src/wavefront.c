@@ -179,9 +179,6 @@ void wavefront_save(mesh* m, const char* fn, int n_meshes)
         return;
     }
 
-    uint32_t vctr = 0;
-    uint32_t nctr = 0;
-    uint32_t tctr = 0;
     uint32_t vstart = 0;
     uint32_t nstart = 0;
     uint32_t tstart = 0;

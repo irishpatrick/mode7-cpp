@@ -124,6 +124,7 @@ void track_add_line(track* tr, line* ln)
 
 static int interpolate_line(float* start, line* ln, int n_points)
 {
+    printf("line\n");
     float step = 1.f / (float)n_points;
     float t;
 
@@ -140,6 +141,7 @@ static int interpolate_line(float* start, line* ln, int n_points)
 
 static int interpolate_bezier(float* start, bezier* ln, int n_points)
 {
+    printf("bezeir\n");
     float step = 1.f / (float)n_points;
     float t;
 
@@ -147,6 +149,7 @@ static int interpolate_bezier(float* start, bezier* ln, int n_points)
     {
         t = (float)i * step;
         bezier_cubic(ln, t, start);
+        printf("(%f,%f)\n", start[0], start[1]);
         start += 2; // move head to next point
     }
 
@@ -175,7 +178,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     {
         int added = 0;
         segment_t type = tr->lookup[i];
-        //printf("seg type: %d\n", type);
+        printf("seg type: %d\n", type);
         switch (type)
         {
             case SEG_LINE:
@@ -221,7 +224,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
         return;
     }
 
-    float track_width = 10.f; // todo change
+    float track_width = 5.f; // todo change
 
     float* a;
     float* b;
@@ -263,7 +266,8 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     // transform all stock pieces
     printf("compute transforms...\n");
 
-    mesh* meshes = malloc(n_lines * sizeof(mesh));
+    int n_meshes = n_lines + 1;
+    mesh* meshes = malloc(n_meshes * sizeof(mesh));
     if (meshes == NULL)
     {
         return;
@@ -273,10 +277,12 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     line* back;
     mesh* cur;
     float fbuf[2];
-    for (int i = 0; i < n_lines - 1; ++i)
+    for (int i = 0; i < n_meshes; ++i)
     {
-        front = &lines[i];
-        back = &lines[i + 1];
+        int a = (i + 0) % n_lines;
+        int b = (i + 1) % n_lines;
+        front = &lines[a];
+        back = &lines[b];
 
         //for (int j = 0; j < n_lines; ++j)
         {
@@ -310,5 +316,5 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
 
     // write to single mesh
     printf("saving...\n");
-    wavefront_save(meshes, "out.obj", n_lines);
+    wavefront_save(meshes, "out.obj", n_meshes);
 }

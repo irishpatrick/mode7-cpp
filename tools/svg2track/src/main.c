@@ -30,8 +30,8 @@ static void parse_path(MsvgElement* el)
     int repeat_counter = 0;
 
     bool origin_set = false;
-    float ox;
-    float oy;
+    float ox = 0.f;
+    float oy = 0.f;
 
     for (int i = 0; i < sp->npoints; ++i)
     {
@@ -45,13 +45,15 @@ static void parse_path(MsvgElement* el)
                 if (!origin_set)
                 {
                     origin_set = true;
-                    ox = pt->x;
-                    oy = pt->y;
+                    //ox = pt->x;
+                    //oy = pt->y;
                     printf("origin: %f,%f\n", ox, oy);
                 }
-            break;
+                break;
+
 
             case 'L': // linear
+                printf("process %d\n", cur_track.n_segments);
                 cur_cmd = pt->cmd;
                 if (cur_line)
                 {
@@ -63,8 +65,14 @@ static void parse_path(MsvgElement* el)
                 cur_line = malloc(sizeof(line));
                 if (cur_line == NULL)
                 {
+                    printf("fatal\n");
                     exit(1);
                     // todo improve
+                }
+                if (cur_curve) // save curve
+                {
+                    track_add_bezier(&cur_track, cur_curve);
+                    cur_curve = NULL;   
                 }
 
                 assert(origin_set);
@@ -74,11 +82,17 @@ static void parse_path(MsvgElement* el)
                 head[0] = pt->x;
                 head[1] = pt->y;
                 
-            break;
+                break;
 
             case 'C': // cubic bezier
+                printf("process %d\n", cur_track.n_segments);
                 repeat_counter = 0;
                 cur_cmd = pt->cmd;
+                if (cur_line)
+                {
+                    track_add_line(&cur_track, cur_line);
+                    cur_line = NULL;
+                }
                 if (cur_curve) // save curve
                 {
                     track_add_bezier(&cur_track, cur_curve);

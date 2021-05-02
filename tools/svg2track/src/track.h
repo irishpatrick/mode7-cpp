@@ -5,7 +5,7 @@
 #include "bezier.h"
 #include "mesh.h"
 
-typedef enum {SEG_LINE, SEG_BEZIER} segment_t;
+typedef enum {SEG_LINE = 0, SEG_BEZIER = 1} segment_t;
 
 typedef struct _track
 {
