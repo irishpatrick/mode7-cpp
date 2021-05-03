@@ -34,7 +34,7 @@ void mesh_destroy(mesh*);
 void mesh_add_vertex(mesh*, vertex);
 void mesh_add_color(mesh*, color);
 void mesh_add_normal(mesh*, vertex);
-void mesh_add_uv(mesh*, uv);
+void mesh_add_uv(mesh*, float*);
 void mesh_add_index(mesh*, uint32_t, uint32_t, uint32_t);
 void mesh_connect(mesh*);
 

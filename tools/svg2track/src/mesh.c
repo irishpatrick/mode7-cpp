@@ -101,7 +101,6 @@ void mesh_copy(mesh* dest, mesh* src)
     dest->vertices = malloc(dest->n_vertices * sizeof(vertex));
     memcpy(dest->vertices, src->vertices, dest->n_vertices * sizeof(vertex));
 
-
     dest->n_normals = src->n_normals;
     dest->max_normals = src->max_normals;
     dest->normals = malloc(dest->n_normals * sizeof(vertex));
@@ -171,7 +170,7 @@ void mesh_add_color(mesh* m, color v)
 
 }
 
-void mesh_add_uv(mesh* m, uv v)
+void mesh_add_uv(mesh* m, float* v)
 {
     if (m->n_uvs >= 0.9 * m->max_uvs)
     {
@@ -186,7 +185,7 @@ void mesh_add_uv(mesh* m, uv v)
     }
 
     m->uvs[m->n_uvs * 2 + 0] = v[0];
-    m->uvs[m->n_uvs * 2 + 0] = v[1];
+    m->uvs[m->n_uvs * 2 + 1] = v[1];
     m->n_uvs += 1;
 }
 

@@ -14,7 +14,7 @@ static track cur_track;
 
 static void print_usage(void)
 {
-    printf("usage: svg2track <.svg file>\n");
+    printf("usage: svg2track <.svg input> <.obj output> [flags]\n");
 }
 
 static void parse_path(MsvgElement* el)
@@ -208,7 +208,7 @@ int main(int argc, char** argv)
     char stock_fn[100];
     mesh* stock = NULL;
 
-    if (argc < 2)
+    if (argc < 3)
     {
         print_usage();
         return 1;
@@ -262,7 +262,8 @@ int main(int argc, char** argv)
 
     mesh out;
     mesh_init(&out);
-    track_meshify(&cur_track, &out, &stock[0]);
+
+    track_meshify(&cur_track, &out, &stock[0], argv[2]);
 
     track_destroy(&cur_track);
 

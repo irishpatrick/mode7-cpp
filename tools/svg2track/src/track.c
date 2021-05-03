@@ -156,11 +156,11 @@ static int interpolate_bezier(float* start, bezier* ln, int n_points)
     return n_points;
 }
 
-void track_meshify(track* tr, mesh* out, mesh* stock)
+void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
 {
     printf("start meshify...\n");
     // start with 100 pairs allocated
-    int n_inter_pts = 40;
+    int n_inter_pts = 30;
     int max_points = 1000;
     int n_points = 0;
     float* points = malloc(max_points * 2 * sizeof(float));
@@ -224,7 +224,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
         return;
     }
 
-    float track_width = 5.f; // todo change
+    float track_width = 2.f; // todo change
 
     float* a;
     float* b;
@@ -315,6 +315,6 @@ void track_meshify(track* tr, mesh* out, mesh* stock)
     }
 
     // write to single mesh
-    printf("saving...\n");
-    wavefront_save(meshes, "out.obj", n_meshes);
+    printf("saving to %s...\n", out_fn);
+    wavefront_save(meshes, out_fn, n_meshes);
 }

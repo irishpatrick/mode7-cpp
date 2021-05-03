@@ -130,6 +130,7 @@ int wavefront_load(mesh** m, const char* fn)
                 printf("bad uv!\n");
                 continue;
             }
+            printf("%d %f,%f\n", ne, fbuf[0], fbuf[1]);
             mesh_add_uv(cur, fbuf);
         }
         else if (strncmp(line, "vn ", 3) == 0)
@@ -197,6 +198,14 @@ void wavefront_save(mesh* m, const char* fn, int n_meshes)
                 cur->vertices[st + 2]);
         }
 
+        for (int n = 0; n < cur->n_uvs; ++n)
+        {
+            int st = n * 2;
+            fprintf(fp, "vt %f %f\n",
+                cur->uvs[st + 0],
+                cur->uvs[st + 1]);
+        }
+
         for (int n = 0; n < cur->n_normals; ++n)
         {
             int st = n * 3;
@@ -206,15 +215,7 @@ void wavefront_save(mesh* m, const char* fn, int n_meshes)
                 cur->normals[st + 2]);
         }
 
-        for (int n = 0; n < cur->n_uvs; ++n)
-        {
-            int st = n * 2;
-            fprintf(fp, "vt %f %f\n",
-                cur->normals[st + 0],
-                cur->normals[st + 1]);
-        }
-
-        fprintf(fp, "usemtl None\ns off\n");
+        fprintf(fp, "usemtl Material.001\ns off\n");
 
         for (int n = 0; n < cur->n_indices; ++n)
         {

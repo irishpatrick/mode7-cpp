@@ -106,9 +106,11 @@ int main(int argc, char** argv)
     skybox = ModelLoader::open("assets/models/skybox.dae");
     skybox.scale = glm::vec3(500.f);
     //track = ModelLoader::open("assets/models/oval2.dae");
-    track = ModelLoader::open("assets/models/oval_small.dae");
-    track.scale = glm::vec3(2.f);
+    //track = ModelLoader::open("assets/models/oval_small.dae");
+    track = ModelLoader::open("assets/blender/newtrack.dae");
+    track.scale = glm::vec3(1.f);
     track.position.y = -track.scale.y;
+    track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
     //track.position.y = 1 * -1.1f;
 
