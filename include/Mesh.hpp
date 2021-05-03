@@ -59,6 +59,7 @@ public:
     }
 
     Material material;
+    bool visible;
 
     static const int PLANE = 0;
 
