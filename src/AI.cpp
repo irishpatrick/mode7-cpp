@@ -73,15 +73,15 @@ void AI::control()
 
         if (right_of_line && moving_right && dist_threshold)
         {
-            //Car::turnLeft();
             //std::cout << "turn left" << std::endl;
+            //Car::m_wheelState = LEFT;
             rotate(0.f, 0.1f, 0.f);
         }
 
         else if (left_of_line && moving_left && dist_threshold)
         {
-            //Car::turnRight();
             //std::cout << "turn right" << std::endl;
+            //Car::m_wheelState = RIGHT;
             rotate(0.f, -0.1f, 0.f);
         }
 
@@ -106,11 +106,11 @@ void AI::control()
 
     if (m_lastAction == 0)
     {
-        gas();
+        Car::state = ACCEL;
     }
     else if (m_lastAction == 1)
     {
-        brake();
+        Car::state = BRAKE;
     }
 }
 
@@ -124,12 +124,6 @@ void AI::update()
     Car::updateControls();
 
     Object::move();
-
-    float sign = 0.f;
-    if (velocity.z < -0.01f || velocity.z > 0.01f)
-    {
-        sign = velocity.z / fabs(velocity.z);
-    }
 
     velocity.z += m_power - (velocity.z * (0.005f + m_brake));
     velocity.x += drift - (velocity.x * 0.05f);

@@ -1,3 +1,7 @@
+CMakeSettings.json
+
+*.*#
+
 *.swp
 *.swo
 build/
@@ -36,3 +40,4 @@ out/
 *.exe
 *.out
 *.app
+*.trk

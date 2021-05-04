@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <SDL.h>
 #include "Camera.hpp"
 #include "Screen.hpp"
@@ -16,9 +16,11 @@
 #include "RacingLine.hpp"
 #include "AI.hpp"
 #include "Collisions.hpp"
+#include "HUD.hpp"
 
 #define WIDTH 1280
 #define HEIGHT 720
+
 using namespace mode7;
 
 SDL_Event e;
@@ -32,8 +34,8 @@ Car car;
 Scene track;
 AI aitest;
 Collisions cl;
-
 RacingLine rltest;
+HUD hud;
 
 void update()
 {
@@ -61,11 +63,13 @@ void update()
     skybox.update();
     track.update();
     car.update();
-    //aitest.update();
+    aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
 
     cl.update();
+
+    hud.update();
 }
 
 void draw()
@@ -78,24 +82,15 @@ void draw()
     aitest.draw(spriteShader);
     car.draw(spriteShader);
     rltest.getDebugPath()->draw();
+    hud.draw();
 
     Screen::flip();
 }
 
 int main(int argc, char** argv)
 {
-    printf("hello world!\n");
-
-    //Screen::create(3840, 2160);
-    //Camera::create(3840.f, 2160.f, 80.0f, 0.1f, 1000.0f);
-    //Screen::create(1920, 1080);
-    //Camera::create(1920.f, 1080.f, 80.f, 0.1f, 1000.f);
-    //Screen::create(1600, 900);
-    //Camera::create(1600.f, 900.f, 80.f, 1.0f, 2000.f);
-    Screen::create(WIDTH, HEIGHT);
+    Screen::create(WIDTH, HEIGHT, false);
     Camera::create(WIDTH, HEIGHT, 70.f, 1.0f, 1500.f);
-    //Screen::create(1720 * 2, 968 * 2);
-    //Camera::create(1720.f * 2, 968.f * 2, 70.f, 1.0f, 2000.f);
 
     Keyboard::attach();
 
@@ -109,10 +104,19 @@ int main(int argc, char** argv)
     );
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
-    skybox.scale = glm::vec3(500.f);
-    track = ModelLoader::open("assets/models/oval2.dae");
+    skybox.scale = glm::vec3(1200.f);
+    //skybox.getMesh(0)->visible = false;
+    //track = ModelLoader::open("assets/models/oval2.dae");
+    //track = ModelLoader::open("assets/models/oval_small.dae");
+    //track = ModelLoader::open("assets/blender/newtrack.dae");
+    track = ModelLoader::open("assets/track_data/track1.dae");
+    //track.scale = glm::vec3(1.f);
+    track.scale = glm::vec3(20.f);
+    track.position.y = track.scale.y - track.scale.y * 0.125;
+    //track.position.y = -track.scale.y;
+    //track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
-    track.position.y = 1 * -1.1f;
+    //track.position.y = 1 * -1.1f;
 
     tree.init();
     tree.position.x = 3;
@@ -122,7 +126,7 @@ int main(int argc, char** argv)
 
     rltest.load("assets/track_data/oval2.line");
 
-    car.open("assets/cars/testCar.json");
+    car.open("assets/cars/testcar");
     car.position.y = 1;
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);
@@ -133,7 +137,10 @@ int main(int argc, char** argv)
     car.rotate(0.f, -M_PI/2.f, 0.f);
     car.setRacingLine(&rltest);
 
-    aitest.open("assets/cars/testCar.json");
+    hud.setCar(&car);
+    hud.init();
+
+    aitest.open("assets/cars/testcar");
     aitest.position.y = 1;
     aitest.position.x = 1;
     //aitest.addChild(&Camera::getObject());

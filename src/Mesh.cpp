@@ -33,7 +33,8 @@ Mesh::Mesh() :
     ebo(0),
     elements(false),
     triangles(0),
-    alt(nullptr)
+    alt(nullptr),
+    visible(true)
 {
 }
 
@@ -203,6 +204,11 @@ void Mesh::drawTriangles()
 
 void Mesh::draw(Shader& s)
 {
+    if (!visible)
+    {
+        return;
+    }
+
     s.use();
 
     s.setMaterial(material);

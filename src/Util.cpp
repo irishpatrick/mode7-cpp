@@ -2,6 +2,9 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#ifdef _WIN32
+#include <WinUser.h>
+#endif /* _WIN32 */
 
 static glm::vec3 ax = { 1, 0, 0 };
 static glm::vec3 ay = { 0, 1, 0 };
@@ -71,7 +74,8 @@ std::pair<int, int> Util::getMonitorRes()
 {
     std::pair<int, int> out;
 #ifdef _WIN32
-    // win32 size
+    out.first = GetSystemMetrics(SM_CXSCREEN);
+    out.second = GetSystemMetrics(SM_CYSCREEN);
 #elif defined __linux__
     Display* d = XOpenDisplay(NULL);
     Screen* s = DefaultScreenOfDisplay(d);
@@ -80,4 +84,23 @@ std::pair<int, int> Util::getMonitorRes()
 #endif
 
     return out;
+}
+
+int Util::getMonitorScale()
+{
+    int h;
+#ifdef _WIN32
+    h = GetSystemMetrics(SM_CYSCREEN);
+#elif defined __linux__
+    Display* d = XOpenDisplay(NULL);
+    Screen* s = DefaultScreenOfDisplay(d);
+    h = s->height;
+#endif
+
+    int sc = h / 1080;
+    if (sc < 1)
+    {
+        sc = 1;
+    }
+    return sc;
 }

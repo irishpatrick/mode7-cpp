@@ -1,0 +1,6 @@
+[submodule "3rdparty/libmsvg"]
+	path = 3rdparty/libmsvg
+	url = https://github.com/malfer/libmsvg.git
+[submodule "tools/svg2track/3rdparty/libmsvg"]
+	path = tools/svg2track/3rdparty/libmsvg
+	url = https://github.com/malfer/libmsvg.git

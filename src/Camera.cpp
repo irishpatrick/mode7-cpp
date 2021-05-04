@@ -7,9 +7,15 @@ glm::mat4 Camera::view(1.0f);
 glm::mat4 Camera::projection(1.0f);
 Object Camera::object;
 
+static float m_w, m_h, m_n, m_f;
+
 void Camera::create(float w, float h, float fov, float n, float f)
 {
     projection = glm::perspective(glm::radians(fov), w / h, n, f);
+    m_w = w;
+    m_h = h;
+    m_n = n;
+    m_f = f;
 }
 
 void Camera::updateView()
@@ -37,6 +43,11 @@ glm::mat4 Camera::getView()
 Object& Camera::getObject()
 {
     return object;
+}
+
+void Camera::setFOV(float fov)
+{
+    projection = glm::perspective(glm::radians(fov), m_w / m_h, m_n, m_f);
 }
 
 }

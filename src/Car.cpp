@@ -3,7 +3,10 @@
 #include "Texture.hpp"
 #include "TexCache.hpp"
 #include "Keyboard.hpp"
+#include "Util.hpp"
 #include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
@@ -15,7 +18,7 @@ namespace mode7
 
 Car::Car() :
     Mesh(),
-    traction(0.005f),
+    traction(0.5f),
     state(IDLE),
     m_wheelState(IDLE),
     ticks(0),
@@ -27,10 +30,11 @@ Car::Car() :
     m_gasPos(0.f),
     m_brakePos(0.f),
     m_wheelPos(50.f),
+    m_driftPos(50.f),
     m_power(0.f),
     m_brake(0.f),
     m_maxPower(3.f),
-    topSpeed(2.5f),
+    topSpeed(2.0f),
     m_change(false),
     m_racingLine(nullptr)
 {
@@ -42,12 +46,97 @@ Car::~Car()
 
 }
 
+void Car::parseConfig(const std::string& fn)
+{
+    std::cout << "load car config" << std::endl;
+    std::ifstream in(fn);
+    if (!in)
+    {
+        std::cout << "couldn't open " << fn << std::endl;
+        return;
+    }
+
+    std::string line;
+    std::vector<std::string> parts;
+    while (std::getline(in, line))
+    {
+        boost::split(parts, line, boost::is_any_of("="));
+        if (parts.size() < 2)
+        {
+            std::cout << "bad line: " << line << std::endl;
+            continue;
+        }
+
+        if (parts[0] == "THROTTLE_RATE")
+        {
+            m_props.THROTTLE_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_BASE")
+        {
+            m_props.DRIFT_BASE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM")
+        {
+            m_props.DRIFT_NORM = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_LOSS")
+        {
+            m_props.DRIFT_LOSS = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM_RET")
+        {
+            m_props.DRIFT_NORM_RET = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_LOSS_RET")
+        {
+            m_props.DRIFT_LOSS_RET = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_NORM_RATE")
+        {
+            m_props.DRIFT_NORM_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "DRIFT_LOSS_RATE")
+        {
+            m_props.DRIFT_LOSS_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "TURN_RATE")
+        {
+            m_props.TURN_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "WHEEL_RATE")
+        {
+            m_props.WHEEL_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "BRAKE_RATE")
+        {
+            m_props.BRAKE_RATE = atof(parts[1].c_str());
+        }
+        else if (parts[0] == "COAST_RATE")
+        {
+            m_props.COAST_RATE = atof(parts[1].c_str());
+        }
+        else
+        {
+            std::cout << "fatal at line " << line << std::endl;
+            assert(1 == 0);
+        }
+
+    }
+
+    assert(m_props.DRIFT_NORM > 0);
+    assert(m_props.DRIFT_NORM_RATE > 0);
+}
+
 void Car::open(const std::string& fn)
 {
+    parseConfig("assets/cars/config.txt");
+    std::stringstream ss;
+    ss << fn << "/";
     m_debugText.init();
     //m_vCurve.open("assets/cars/higha.txt");
-    m_vCurve.open("assets/cars/vctest.txt");
-    m_wheelCurve.open("assets/cars/wheel_response.txt");
+    m_vCurve.open(ss.str() + "gas.txt");
+    m_wheelCurve.open(ss.str() + "wheel.txt");
+    m_tractionCurve.open(ss.str() + "drift.txt");
 
     shadow.create();
     shadow.position.y = -1.f;
@@ -56,17 +145,14 @@ void Car::open(const std::string& fn)
     anim.open("assets/animations/test_anim.json");
     //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
+}
 
-    std::ifstream in(fn);
-    if (!in)
-    {
-        std::cout << "cannot open file " << fn << std::endl;
-        return;
-    }
-
-    json o;
-    in >> o;
-    in.close();
+void Car::openMaps(const std::string& amap_fn, const std::string& bmap_fn, const std::string& dmap_fn, const std::string& tmap_fn)
+{
+    m_accelMap.open(amap_fn);
+    m_brakeMap.open(bmap_fn);
+    m_driftMap.open(dmap_fn);
+    m_turnMap.open(tmap_fn);
 }
 
 void Car::updateControls()
@@ -77,7 +163,7 @@ void Car::updateControls()
         if (ticks == 0)
         {
             m_inStun = false;
-            traction = 0.005;
+            traction = 2.f;
         }
     }
     else
@@ -87,15 +173,14 @@ void Car::updateControls()
             if (m_change)
             {
                 m_change = false;
-                //std::cout << "start at " << velocity.z / topSpeed * 100.f << std::endl;
-                m_gasPos = m_vCurve.getX(velocity.z / topSpeed * 100.f);
+                m_gasPos = m_vCurve.getX(speed / topSpeed * 100.f);
             }
-            m_gasPos += THROTTLE_RATE;
+            m_gasPos += m_props.THROTTLE_RATE;
             m_brakePos = 0.f;
         }
         else if (state == BRAKE)
         {
-            m_brakePos += BRAKE_RATE;
+            m_brakePos += m_props.BRAKE_RATE;
             m_gasPos = 0.f;
         }
         else if (state == IDLE)
@@ -104,16 +189,8 @@ void Car::updateControls()
             m_brakePos = 0.f;
         }
 
-        if (m_gasPos < 0.0f)
-        {
-            m_gasPos = 0.0f;
-        }
-        else if (m_gasPos > 100.f)
-        {
-            m_gasPos = 100.0f;
-        }
-        if (m_brakePos < 0.f) m_brakePos = 0.f;
-        if (m_brakePos > 10.0f) m_brakePos = 10.0f;
+        m_gasPos = Util::constrain(m_gasPos, 0.f, 100.f);
+        m_brakePos = Util::constrain(m_brakePos, 0.f, 10.f);
     }
 
     /*int pt = (int)fminf(9, floorf(m_gasPos));
@@ -123,158 +200,113 @@ void Car::updateControls()
 
     if (m_wheelState == LEFT)
     {
-        m_wheelPos -= WHEEL_RATE;
+        m_wheelPos -= m_props.WHEEL_RATE;
+        m_driftPos -= m_props.DRIFT_NORM_RATE;
     }
     else if (m_wheelState == RIGHT)
     {
-        m_wheelPos += WHEEL_RATE;
+        m_wheelPos += m_props.WHEEL_RATE;
+        m_driftPos += m_props.DRIFT_NORM_RATE;
     }
     else if (m_wheelState == IDLE)
     {
         float dot = m_wheelPos - 50.f;
-        if (dot < 0.f)
+        if (fabsf(m_wheelPos - 50.f) < m_props.WHEEL_RATE / 2.f)
         {
-            m_wheelPos += WHEEL_RATE;
+            m_wheelPos = 50.f;
+        }
+        else if (dot < 0.f)
+        {
+            m_wheelPos += m_props.WHEEL_RATE;
         }
         else if (dot > 0.f)
         {
-            m_wheelPos -= WHEEL_RATE;
+            m_wheelPos -= m_props.WHEEL_RATE;
         }
 
-        if (fabsf(m_wheelPos - 50.f) < 0.1f)
+        dot = m_driftPos - 50.f;
+        if (fabsf(m_driftPos - 50.f) < m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET / 2.f)
         {
-            m_wheelPos = 50.f;
+            m_driftPos = 50.f;
+        }
+        else if (dot < 0.f)
+        {
+            m_driftPos += m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
+        }
+        else if (dot > 0.f)
+        {
+            m_driftPos -= m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
         }
     }
 
     // bounds checking
-    if (m_wheelPos <= 0.f) m_wheelPos = 0.f;
-    if (m_wheelPos >= 100.f) m_wheelPos = 100.f;
-    
-    //std::cout << m_wheelPos << "," << m_wheelCurve.getY(m_wheelPos) << std::endl;
-    
-    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * TURN_RATE;
-    rotate(0, -turn_rate * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
+    m_wheelPos = Util::constrain(m_wheelPos, 0.f, 100.f);
+    m_driftPos = Util::constrain(m_driftPos, 0.f, 100.f);
+
+    // turning
+    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * m_props.TURN_RATE;
+    rotate(0, -turn_rate * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
+
+    // drifting
+    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + (float)(speed > 0.f) * m_props.DRIFT_BASE);
 
     if (state == ACCEL)
     {
-        velocity.z = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
-        //std::cout << "gas: " <<  m_gasPos << "\t" << m_vCurve.getY(m_gasPos) << "\t" << velocity.z << std::endl;
+        speed = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
     }
     else if (state == BRAKE)
     {
-        float sign = 0.f;
-        if (velocity.z < -0.01f || velocity.z > 0.01f)
+        if (fabsf(speed) > 0.03f)
         {
-            sign = velocity.z / fabs(velocity.z);
-        }
-
-        velocity.z += -sign * 0.03f;
-    }
-    else if (state == IDLE)
-    {
-        float sign = 0.f;
-        if (velocity.z < -0.01f || velocity.z > 0.01f)
-        {
-            sign = velocity.z / fabs(velocity.z);
-        }
-
-        if (fabsf(velocity.z) > 0.001f)
-        {
-            velocity.z += -sign * 0.006f;
+            speed += copysignf(0.03f, -speed);
         }
         else
         {
-            velocity.z = 0;
+            speed = 0;
         }
     }
+    else if (state == IDLE)
+    {
+        if (fabsf(speed) > m_props.COAST_RATE)
+        {
+            speed += copysignf(m_props.COAST_RATE, -speed);
+        }
+        else
+        {
+            speed = 0;
+        }
+    }
+
+    // apply speed and drift to velocity
+    velocity.x = drift;
+    velocity.z = speed;
 }
 
-void Car::updateDebugText()
+void Car::update()
 {
-    if (!m_racingLine)
+    if (tracked)
     {
-        return;
+        Camera::setFOV(70 + 5 * (velocity.z / topSpeed));
     }
+
+    updateDebugText();
+    updateControls();
 
     int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
     if (cur >= 0)
     {
         m_currentZone = cur;
     }
-
-    glm::vec2 front_2d = glm::vec2(front.x, front.z);
     glm::vec2 pos_2d = glm::vec2(position.x, position.z);
-
-    Line2D line = m_racingLine->getLine(m_currentZone);
-    Line2D next = m_racingLine->getNext(m_currentZone);
-
-    float distToLine = line.distTo(pos_2d);
-    float distToNext = glm::length((next.p() - pos_2d));
-    float absDistToLine = fabsf(distToLine);
-    float dot_line = glm::dot(
-        line.v(), 
-        front_2d
-    );
-    glm::vec3 cross_line_vec = glm::cross(
-        glm::vec3(line.v().x, 0.f, line.v().y),
-        Car::front
-    );
-    float cross_line = cross_line_vec.y;
-    float dot_next = glm::dot(
-        next.v(),
-        front_2d
-    );
-    glm::vec3 cross_next_vec = glm::cross(
-        //glm::vec3(line.normal().x, 0.f, line.normal().y),
-        glm::vec3(line.v().x, 0.f, line.v().y),
-        Car::front
-    );
-    float cross_next = cross_next_vec.y;
-
-    int moving_right = cross_line > 0.f;
-    int moving_left = cross_line < 0.f;
-    int right_of_line = distToLine > 0.f;
-    int left_of_line = distToLine < 0.f;
-    int dist_threshold = absDistToLine > 0.1f;
-
     Rect r = m_racingLine->getRect(m_currentZone);
     Rect rp = m_racingLine->getRect(m_racingLine->getPrevIndex(m_currentZone));
     Rect rn = m_racingLine->getRect(m_racingLine->getNextIndex(m_currentZone));
     if (!r.checkIntersect(pos_2d) && !rn.checkIntersect(pos_2d))
     {
-        drift = 0.03f;
+        //drift = 0.03f;
     }
 
-    std::stringstream ss;
-    ss <<
-        m_currentZone << "\n" <<
-        distToLine << ", " << distToNext << "\n" <<
-        moving_left << ", " << moving_right << "\n" << 
-        left_of_line << ", " << right_of_line << "\n" <<
-        dist_threshold << "\n" << 
-        cross_next << ", " << distToNext << ", " << fabsf(cross_next) / distToNext << "\n";
-    m_debugText.setText(ss.str());
-}
-
-void Car::update()
-{
-    updateDebugText();
-    updateControls();
-
     Object::move();
-
-    /*float sign = 0.f;
-    if (velocity.z < -0.01f || velocity.z > 0.01f)
-    {
-        sign = velocity.z / fabs(velocity.z);
-    }*/
-
-    //velocity.z += m_power - (velocity.z * (0.005f + m_brake));
-    //velocity.x += drift - (velocity.x * 0.05f);
-    //velocity.x += drift - (velocity.x * 0.005f);
-    //drift = 0.0f;
 
     updateSprite();
     shadow.update();
@@ -366,38 +398,16 @@ void Car::input()
 
     if (left)
     {
-        m_wheelState = LEFT;        
-        //turnLeft();
+        m_wheelState = LEFT;
     }
     if (right)
     {
         m_wheelState = RIGHT;
-        //turnRight();
     }
     if (!left && !right)
     {
         m_wheelState = IDLE;
     }
-}
-
-void Car::gas()
-{
-}
-
-void Car::brake()
-{
-}
-
-void Car::turnLeft()
-{
-    rotate(0, TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
-}
-
-void Car::turnRight()
-{
-    rotate(0, -TURN_RATE * fminf(1.0f, (velocity.z / (topSpeed * 0.1f))), 0);
-    drift = -traction * velocity.z * fminf(1.0f, (velocity.z / (topSpeed * 0.1f)));
 }
 
 void Car::setTracked(bool val)
@@ -413,6 +423,65 @@ void Car::stun()
     m_inStun = true;
     traction = 0.1;
     ticks = 40;
+}
+
+void Car::updateDebugText()
+{
+    if (!m_racingLine)
+    {
+        return;
+    }
+
+    int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
+    if (cur >= 0)
+    {
+        m_currentZone = cur;
+    }
+
+    glm::vec2 front_2d = glm::vec2(front.x, front.z);
+    glm::vec2 pos_2d = glm::vec2(position.x, position.z);
+
+    Line2D line = m_racingLine->getLine(m_currentZone);
+    Line2D next = m_racingLine->getNext(m_currentZone);
+
+    float distToLine = line.distTo(pos_2d);
+    float distToNext = glm::length((next.p() - pos_2d));
+    float absDistToLine = fabsf(distToLine);
+    float dot_line = glm::dot(
+        line.v(),
+        front_2d
+    );
+    glm::vec3 cross_line_vec = glm::cross(
+        glm::vec3(line.v().x, 0.f, line.v().y),
+        Car::front
+    );
+    float cross_line = cross_line_vec.y;
+    float dot_next = glm::dot(
+        next.v(),
+        front_2d
+    );
+    glm::vec3 cross_next_vec = glm::cross(
+        //glm::vec3(line.normal().x, 0.f, line.normal().y),
+        glm::vec3(line.v().x, 0.f, line.v().y),
+        Car::front
+    );
+    float cross_next = cross_next_vec.y;
+
+    int moving_right = cross_line > 0.f;
+    int moving_left = cross_line < 0.f;
+    int right_of_line = distToLine > 0.f;
+    int left_of_line = distToLine < 0.f;
+    int dist_threshold = absDistToLine > 0.1f;
+
+    std::stringstream ss;
+    ss <<
+        m_currentZone << "\n" <<
+        distToLine << ", " << distToNext << "\n" <<
+        moving_left << ", " << moving_right << "\n" <<
+        left_of_line << ", " << right_of_line << "\n" <<
+        dist_threshold << "\n" <<
+        cross_next << ", " << distToNext << ", " << fabsf(cross_next) / distToNext << "\n";
+    m_debugText.setText(ss.str());
 }
 
 }
