@@ -1,7 +1,11 @@
 #include "bezier.h"
 
+#include "line.h"
+
 #include <stdlib.h>
 #include <assert.h>
+#include <stdint.h>
+#include <math.h>
 
 int bezier_init(bezier* b, int deg)
 {
@@ -68,6 +72,30 @@ void bezier_cubic(bezier* b, float t, float out[2])
             (3 * minus * minus * t) * c1[1] + 
             (3 * minus * t * t) * c2[1] +
             (t * t * t) * b->p2[1];
+}
+
+float bezier_estimate_distance(bezier* bz, float stepsize)
+{
+    uint32_t n_steps = 1.0f / stepsize;
+    line seg;
+    float a[2];
+    float b[2];
+    float tc;
+    float tn;
+    float sum = 0;
+
+    for (int i = 0 ; i <= n_steps; ++i)
+    {
+        tc = stepsize * i;
+        tn = stepsize * (i + 1);
+       
+        bezier_cubic(bz, tc, a);
+        bezier_cubic(bz, tn, b); 
+        line_connect(&seg, a[0], a[1], b[0], b[1]);
+        sum += line_calc_distance(&seg);
+    }
+
+    return sum;
 }
 
 void bezier_destroy(bezier* b)

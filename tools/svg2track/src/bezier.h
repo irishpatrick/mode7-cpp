@@ -13,6 +13,7 @@ void bezier_set_endpt(bezier*, int, float, float);
 void bezier_set_ctrlpt(bezier*, int, float, float);
 void bezier_quadratic(bezier* b, float t, float out[2]);
 void bezier_cubic(bezier*, float, float[2]);
+float bezier_estimate_distance(bezier*, float);
 void bezier_destroy(bezier*);
 
 #endif /* BEZIER_H */

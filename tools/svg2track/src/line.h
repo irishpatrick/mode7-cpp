@@ -9,6 +9,7 @@ typedef struct _line
 
 void line_connect(line*, float, float, float, float);
 void line_solve(line*, float, float[2]);
+float line_calc_distance(line*);
 void line_print(line*);
 
 #endif /* LINE_H */

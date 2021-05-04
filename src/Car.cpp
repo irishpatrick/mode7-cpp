@@ -147,6 +147,14 @@ void Car::open(const std::string& fn)
     Mesh::createFromShape(Mesh::PLANE);
 }
 
+void Car::openMaps(const std::string& amap_fn, const std::string& bmap_fn, const std::string& dmap_fn, const std::string& tmap_fn)
+{
+    m_accelMap.open(amap_fn);
+    m_brakeMap.open(bmap_fn);
+    m_driftMap.open(dmap_fn);
+    m_turnMap.open(tmap_fn);
+}
+
 void Car::updateControls()
 {
     if (m_inStun)

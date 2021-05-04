@@ -10,6 +10,7 @@
 #include "DebugText.hpp"
 #include "RacingLine.hpp"
 #include "ResponseCurve.hpp"
+#include "ControlMap.hpp"
 #include <string>
 #include <vector>
 
@@ -59,6 +60,7 @@ public:
 
     void parseConfig(const std::string&);
     virtual void open(const std::string&);
+    void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
     void updateSprite();
     void updateDebugText();
     virtual void update();
@@ -117,6 +119,10 @@ protected:
     ResponseCurve m_wheelCurve;
     ResponseCurve m_tractionCurve;
     car_properties m_props;
+    ControlMap m_accelMap;
+    ControlMap m_brakeMap;
+    ControlMap m_driftMap;
+    ControlMap m_turnMap;
 };
 
 }

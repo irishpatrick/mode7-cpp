@@ -18,7 +18,7 @@
 #include "Collisions.hpp"
 #include "HUD.hpp"
 
-#define WIDTH 960
+#define WIDTH 1280
 #define HEIGHT 720
 
 using namespace mode7;

@@ -160,7 +160,6 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
 {
     printf("start meshify...\n");
     // start with 100 pairs allocated
-    int n_inter_pts = 30;
     int max_points = 1000;
     int n_points = 0;
     float* points = malloc(max_points * 2 * sizeof(float));
@@ -172,6 +171,9 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     line** lines_head = tr->lines;
     bezier** beziers_head = tr->beziers;
 
+    float seg_len;
+    float inter_len = 2.f;
+
     // place all points
     printf("gen points...\n");
     for (int i = 0; i < tr->n_segments; ++i)
@@ -182,14 +184,18 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         switch (type)
         {
             case SEG_LINE:
-                added = interpolate_line(points + (n_points * 2), *lines_head, n_inter_pts);
+                seg_len = line_calc_distance(*lines_head);
+                //added = interpolate_line(points + (n_points * 2), *lines_head, n_inter_pts);
+                added = interpolate_line(points + (n_points * 2), *lines_head, seg_len / inter_len);
                 n_points += added;
                 ++lines_head;
                 assert(lines_head - tr->lines <= tr->n_lines);
                 break;
 
             case SEG_BEZIER:
-                added = interpolate_bezier(points + (n_points * 2), *beziers_head, n_inter_pts);
+                seg_len = bezier_estimate_distance(*beziers_head, 0.1f);
+                //added = interpolate_bezier(points + (n_points * 2), *beziers_head, n_inter_pts);
+                added = interpolate_bezier(points + (n_points * 2), *beziers_head, seg_len / inter_len);
                 n_points += added;
                 ++beziers_head;
                 assert(beziers_head - tr->beziers <= tr->n_beziers);
@@ -284,33 +290,30 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         front = &lines[a];
         back = &lines[b];
 
-        //for (int j = 0; j < n_lines; ++j)
+        cur = &meshes[i];
+        mesh_copy(cur, stock);
+        for (int k = 0; k < cur->n_vertices; ++k)
         {
-            cur = &meshes[i];
-            mesh_copy(cur, stock);
-            for (int k = 0; k < cur->n_vertices; ++k)
+            float* v = &cur->vertices[k * 3];
+            // snap vertices to line
+            
+            v[2] += 4.5; // adjust to midpoint;
+            float t = v[2] / 4.5; // for line calculation
+            assert (t >= -1.f && t <= 1.f);
+            // back vertices
+            if (v[0] == 0.0f)
             {
-                float* v = &cur->vertices[k * 3];
-                // snap vertices to line
-                
-                v[2] += 4.5; // adjust to midpoint;
-                float t = v[2] / 4.5; // for line calculation
-                assert (t >= -1.f && t <= 1.f);
-                // back vertices
-                if (v[0] == 0.0f)
-                {
-                    line_solve(back, t, fbuf);
-                    //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
-                }
-                // front vertices
-                else if (v[0] == 1.0f)
-                {
-                    line_solve(front, t, fbuf);
-                    //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
-                }
-                v[0] = fbuf[0];
-                v[2] = fbuf[1];
+                line_solve(back, t, fbuf);
+                //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
             }
+            // front vertices
+            else if (v[0] == 1.0f)
+            {
+                line_solve(front, t, fbuf);
+                //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
+            }
+            v[0] = fbuf[0];
+            v[2] = fbuf[1];
         }
     }
 

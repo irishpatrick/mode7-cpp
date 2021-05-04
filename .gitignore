@@ -1,5 +1,7 @@
 CMakeSettings.json
 
+*.*#
+
 *.swp
 *.swo
 build/
