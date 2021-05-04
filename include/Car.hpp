@@ -11,6 +11,7 @@
 #include "RacingLine.hpp"
 #include "ResponseCurve.hpp"
 #include "ControlMap.hpp"
+#include "ControlSlider.hpp"
 #include <string>
 #include <vector>
 
