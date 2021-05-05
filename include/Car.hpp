@@ -120,10 +120,15 @@ protected:
     ResponseCurve m_wheelCurve;
     ResponseCurve m_tractionCurve;
     car_properties m_props;
+    
+    // controls
     ControlMap m_accelMap;
     ControlMap m_brakeMap;
     ControlMap m_driftMap;
     ControlMap m_turnMap;
+    ControlSlider thr;
+    ControlSlider brake;
+    ControlSlider wheel;
 };
 
 }

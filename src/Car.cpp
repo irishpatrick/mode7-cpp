@@ -155,7 +155,7 @@ void Car::openMaps(const std::string& amap_fn, const std::string& bmap_fn, const
     m_turnMap.open(tmap_fn);
 }
 
-void Car::updateControls()
+/*void Car::updateControls()
 {
     if (m_inStun)
     {
@@ -193,10 +193,6 @@ void Car::updateControls()
         m_brakePos = Util::constrain(m_brakePos, 0.f, 10.f);
     }
 
-    /*int pt = (int)fminf(9, floorf(m_gasPos));
-    float output = velCurve[pt].solve(m_gasPos);
-    m_power = m_maxPower * output / 10.f;
-    m_brake = (m_brakePos / ((m_brakePos * m_brakePos / 10.f) + 1.f)) * 0.02f;*/
 
     if (m_wheelState == LEFT)
     {
@@ -280,6 +276,20 @@ void Car::updateControls()
     // apply speed and drift to velocity
     velocity.x = drift;
     velocity.z = speed;
+}*/
+
+void Car::updateControls()
+{
+    float vel_percent;
+
+    thr.update();
+    brake.update();
+    wheel.update();
+
+    float vel_percent = m_accelMap.calculate(turn_amt, thr.getPosition());
+    float turn_amt = m_turnMap.calculate(vel_percent, wheel.getPosition());
+    float drift_amt = m_driftMap.calculate(turn_amt, vel_percent);
+    float brake_amt = m_brakeMap.calculate(vel_percent, brake.getPosition());
 }
 
 void Car::update()
