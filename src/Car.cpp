@@ -319,7 +319,8 @@ void Car::updateControls()
     float last_vx = velocity.x;
 
     velocity.z = fmaxf(last_vz, desired);
-    velocity.z -= brake_amt * 0.2;
+    velocity.z -= brake_amt * 0.125;
+    velocity.z -= 0.01 * last_vz / topSpeed;
     velocity.z = fmaxf(velocity.z, 0.f);
 
     //velocity.x = fmaxf(last_vx, drift_amt * 0.8);
@@ -327,7 +328,7 @@ void Car::updateControls()
     //std::cout << brake_amt << std::endl;
     //std::cout << vel_percent << "," << wp_adj << "," << turn_amt << std::endl;
     
-    float turn_rate = wheel.getPosition() * turn_amt * 0.1;
+    float turn_rate = wheel.getPosition() * turn_amt * 0.035;
     rotate(0, -turn_rate, 0);
 
     //std::cout << thr.getPosition() << "\t" << brake.getPosition() << "\t" << wp_adj << "," << turn_amt << std::endl;
