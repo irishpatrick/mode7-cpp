@@ -5,12 +5,17 @@
 #include <sstream>
 #include <string>
 #include <cstdint>
+#include <cmath>
 #include <boost/algorithm/string.hpp>
 
 namespace mode7
 {
 
-ControlMap::ControlMap()
+ControlMap::ControlMap() :
+    m_width(1.0f),
+    m_height(1.0f),
+    m_nrows(11),
+    m_ncols(11)
 {
 
 }
@@ -22,8 +27,15 @@ ControlMap::~ControlMap()
 
 void ControlMap::open(const std::string& fn)
 {
+    std::cout << "[ControlMap] open " << fn << std::endl;
     // csv format
     std::ifstream in(fn, std::ios::binary);
+    if (!in)
+    {
+        std::cout << "[ControlMap] failed to open " << fn << std::endl;
+        return;
+    }
+
     std::string line;
     std::vector<std::string> cols;
     int line_num = 0;
@@ -33,7 +45,6 @@ void ControlMap::open(const std::string& fn)
         
         if (line_num == 0)
         {
-
         }
         else
         {
@@ -48,14 +59,26 @@ void ControlMap::open(const std::string& fn)
     }
 
     m_nrows = line_num - 1;
+
+    assert(m_ncols > 0);
+    assert(m_nrows > 0);
+    assert(m_map.size() > 0);
 }
 
 float ControlMap::calculate(float x, float y)
 {
-    float window_x = m_width / (float)m_ncols;
-    float window_y = m_height / (float)m_nrows;
-    int wx = x / window_x;
-    int wy = y / window_y;
+    if (m_map.size() <= 0)
+    {
+        return 0.0f;
+    }
+
+    float window_x = m_width / (float)(m_ncols - 1);
+    float window_y = m_height / (float)(m_nrows - 1);
+    unsigned int wx = x / window_x;
+    unsigned int wy = y / window_y;
+
+    wx = (int)fmin(wx, m_ncols - 1);
+    wy = (int)fmin(wy, m_nrows - 1);
 
     float x1 = (wx + 0) * window_x;
     float y1 = (wy + 0) * window_y;

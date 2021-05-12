@@ -63,7 +63,7 @@ void update()
     skybox.update();
     track.update();
     car.update();
-    aitest.update();
+    //aitest.update();
     Camera::updateView();
     //rltest.update(car.position);
 
@@ -127,6 +127,13 @@ int main(int argc, char** argv)
     rltest.load("assets/track_data/oval2.line");
 
     car.open("assets/cars/testcar");
+    car.openMaps(
+        "assets/cars/newcar/accelmap.csv",
+        "assets/cars/newcar/brakemap.csv",
+        "assets/cars/newcar/driftmap.csv",
+        "assets/cars/newcar/turnmap.csv"
+    );
+
     car.position.y = 1;
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);

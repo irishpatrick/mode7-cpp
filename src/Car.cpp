@@ -4,6 +4,7 @@
 #include "TexCache.hpp"
 #include "Keyboard.hpp"
 #include "Util.hpp"
+
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -143,16 +144,33 @@ void Car::open(const std::string& fn)
     //addChild(&shadow);
 
     anim.open("assets/animations/test_anim.json");
-    //material.addMap(TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
+    //material.addMap(
+    //    TexCache::open("assets/textures/car.png", TexType::DIFFUSE));
     Mesh::createFromShape(Mesh::PLANE);
 }
 
-void Car::openMaps(const std::string& amap_fn, const std::string& bmap_fn, const std::string& dmap_fn, const std::string& tmap_fn)
+void Car::openMaps(
+    const std::string& amap_fn, 
+    const std::string& bmap_fn, 
+    const std::string& dmap_fn, 
+    const std::string& tmap_fn)
 {
     m_accelMap.open(amap_fn);
     m_brakeMap.open(bmap_fn);
     m_driftMap.open(dmap_fn);
     m_turnMap.open(tmap_fn);
+
+    // init sliders also
+    // todo move this
+    thr.setAutoUp(true);
+    thr.setDownRate(0.01);
+    thr.setUpRate(0.25);
+
+    brake.setAutoUp(true);
+    brake.setDownRate(0.0075);
+    brake.setUpRate(0.5);
+
+    wheel.setRestoreRates(0.1, 0.1, 0.25);
 }
 
 /*void Car::updateControls()
@@ -281,15 +299,38 @@ void Car::openMaps(const std::string& amap_fn, const std::string& bmap_fn, const
 void Car::updateControls()
 {
     float vel_percent;
+    float turn_amt = 0.5f;
+    float drift_amt;
+    float brake_amt;
 
     thr.update();
     brake.update();
     wheel.update();
 
-    float vel_percent = m_accelMap.calculate(turn_amt, thr.getPosition());
-    float turn_amt = m_turnMap.calculate(vel_percent, wheel.getPosition());
-    float drift_amt = m_driftMap.calculate(turn_amt, vel_percent);
-    float brake_amt = m_brakeMap.calculate(vel_percent, brake.getPosition());
+    float wp_adj = wheel.getPosition() * 0.5 + 0.5;
+
+    vel_percent = m_accelMap.calculate(turn_amt, thr.getPosition());
+    turn_amt = m_turnMap.calculate(wp_adj, velocity.z / topSpeed);
+    drift_amt = m_driftMap.calculate(turn_amt, vel_percent);
+    brake_amt = m_brakeMap.calculate(brake.getPosition(), vel_percent);
+
+    float desired = vel_percent * topSpeed;
+    float last_vz = velocity.z;
+    float last_vx = velocity.x;
+
+    velocity.z = fmaxf(last_vz, desired);
+    velocity.z -= brake_amt * 0.2;
+    velocity.z = fmaxf(velocity.z, 0.f);
+
+    //velocity.x = fmaxf(last_vx, drift_amt * 0.8);
+
+    //std::cout << brake_amt << std::endl;
+    //std::cout << vel_percent << "," << wp_adj << "," << turn_amt << std::endl;
+    
+    float turn_rate = wheel.getPosition() * turn_amt * 0.1;
+    rotate(0, -turn_rate, 0);
+
+    //std::cout << thr.getPosition() << "\t" << brake.getPosition() << "\t" << wp_adj << "," << turn_amt << std::endl;
 }
 
 void Car::update()
@@ -383,7 +424,7 @@ void Car::draw(Shader& s)
     m_debugText.draw();
 }
 
-void Car::input()
+/*void Car::input()
 {
 
     int left = Keyboard::isDown("left");
@@ -417,6 +458,33 @@ void Car::input()
     if (!left && !right)
     {
         m_wheelState = IDLE;
+    }
+}*/
+
+void Car::input()
+{
+    int left = Keyboard::isDown("left");
+    int right = Keyboard::isDown("right");
+
+    if (Keyboard::isDown("c"))
+    {
+        thr.down();
+    }
+    else if (Keyboard::isDown("x"))
+    {
+        brake.down();
+    }
+    else
+    {
+    }
+
+    if (left)
+    {
+        wheel.left();
+    }
+    if (right)
+    {
+        wheel.right();
     }
 }
 
