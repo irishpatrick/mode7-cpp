@@ -163,7 +163,7 @@ void Car::openMaps(
     // init sliders also
     // todo move this
     thr.setAutoUp(true);
-    thr.setDownRate(0.01);
+    thr.setDownRate(0.02);
     thr.setUpRate(0.25);
 
     brake.setAutoUp(true);
@@ -328,7 +328,7 @@ void Car::updateControls()
     //std::cout << brake_amt << std::endl;
     //std::cout << vel_percent << "," << wp_adj << "," << turn_amt << std::endl;
     
-    float turn_rate = wheel.getPosition() * turn_amt * 0.035;
+    float turn_rate = wheel.getPosition() * turn_amt * 0.04;
     rotate(0, -turn_rate, 0);
 
     //std::cout << thr.getPosition() << "\t" << brake.getPosition() << "\t" << wp_adj << "," << turn_amt << std::endl;
