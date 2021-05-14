@@ -5,7 +5,7 @@ project(mode7 C CXX)
 if (MSVC)
     set(flags /W3 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
 else()
-    set(flags -Wall -g -std=c++17)
+    set(flags -Wall -g -pg -std=c++17)
     set(libs -lX11)
 endif()
 
@@ -28,7 +28,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         SDL2::SDL2
         SDL2::SDL2main
         SDL2::SDL2_image
-	    SDL2::SDL2_ttf
+        SDL2::SDL2_ttf
         GLEW::GLEW
         assimp::assimp
         LinearMath
@@ -53,9 +53,9 @@ else ()
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
-	    ${SDL2_TTF_INCLUDE_DIRS}
-	    #${CAIRO_INCLUDE_DIRS}
-	${GLEW_INCLUDE_DIRS}
+        ${SDL2_TTF_INCLUDE_DIRS}
+        #${CAIRO_INCLUDE_DIRS}
+        ${GLEW_INCLUDE_DIRS}
         ${NLOHMANN_JSON_INCL}
         ${ASSIMP_INCLUDE_DIRS}
         ${BULLET_INCLUDE_DIRS}
@@ -65,12 +65,13 @@ else ()
         ${libs}
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
-    	${SDL2_TTF_LIBRARIES}
-	    ${GLEW_LIBRARIES}
-	    #${CAIRO_LIBRARIES}
+        ${SDL2_TTF_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        #${CAIRO_LIBRARIES}
         ${ASSIMP_LIBRARIES}
         ${BULLET_LIBRARIES}
         m
+        -pg
     )
 endif()
 

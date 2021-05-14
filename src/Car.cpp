@@ -163,14 +163,14 @@ void Car::openMaps(
     // init sliders also
     // todo move this
     thr.setAutoUp(true);
-    thr.setDownRate(0.02);
-    thr.setUpRate(0.25);
+    thr.setDownRate(0.005);
+    thr.setUpRate(0.02);
 
     brake.setAutoUp(true);
     brake.setDownRate(0.0075);
     brake.setUpRate(0.5);
 
-    wheel.setRestoreRates(0.1, 0.1, 0.25);
+    wheel.setRestoreRates(0.2, 0.2, 0.3);
 }
 
 /*void Car::updateControls()
@@ -302,6 +302,7 @@ void Car::updateControls()
     float turn_amt = 0.5f;
     float drift_amt;
     float brake_amt;
+    float top_speed = 3.f;
 
     thr.update();
     brake.update();
@@ -310,25 +311,50 @@ void Car::updateControls()
     float wp_adj = wheel.getPosition() * 0.5 + 0.5;
 
     vel_percent = m_accelMap.calculate(turn_amt, thr.getPosition());
-    turn_amt = m_turnMap.calculate(wp_adj, velocity.z / topSpeed);
+    turn_amt = m_turnMap.calculate(wp_adj, velocity.z / top_speed);
     drift_amt = m_driftMap.calculate(turn_amt, vel_percent);
     brake_amt = m_brakeMap.calculate(brake.getPosition(), vel_percent);
 
-    float desired = vel_percent * topSpeed;
+    float desired = vel_percent * top_speed;
     float last_vz = velocity.z;
     float last_vx = velocity.x;
 
+    if (desired < velocity.z)
+    {
+        thr.setDownRate(0.07);
+    }
+    else
+    {
+        thr.setDownRate(0.005);
+    }
+
     velocity.z = fmaxf(last_vz, desired);
     velocity.z -= brake_amt * 0.125;
-    velocity.z -= 0.01 * last_vz / topSpeed;
+    velocity.z -= 0.01 * last_vz / top_speed;
     velocity.z = fmaxf(velocity.z, 0.f);
 
-    //velocity.x = fmaxf(last_vx, drift_amt * 0.8);
+    float drift_dir = 1.0 * (wp_adj < 0.50) - 1.0 * (wp_adj > 0.50);
+    float propvx = drift_dir * drift_amt * 0.5;
+    if (fabsf(propvx) < fabsf(last_vx))
+    {
+        velocity.x = last_vx;
+    }
+    else
+    {
+        velocity.x = propvx;
+    }
+    
+    float drift_decay = 0.8 * 0.02;
+    velocity.x -= copysignf(1.f, velocity.x) * drift_decay;
+    //velocity.x = fmaxf(last_vx, drift_dir * drift_amt * 0.8);
+    //velocity.x += drift_dir * 0.01;
 
+    //std::cout << turn_amt << "," << drift_amt << std::endl;
+    //std::cout << velocity.x << std::endl;
     //std::cout << brake_amt << std::endl;
     //std::cout << vel_percent << "," << wp_adj << "," << turn_amt << std::endl;
     
-    float turn_rate = wheel.getPosition() * turn_amt * 0.04;
+    float turn_rate = wheel.getPosition() * turn_amt * 0.03;
     rotate(0, -turn_rate, 0);
 
     //std::cout << thr.getPosition() << "\t" << brake.getPosition() << "\t" << wp_adj << "," << turn_amt << std::endl;
