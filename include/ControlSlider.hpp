@@ -1,8 +1,21 @@
 #ifndef CONTROLSLIDER_HPP
 #define CONTROLSLIDER_HPP
 
+#include <stack>
+
 namespace mode7
 {
+
+typedef struct _ControlSliderState
+{
+    bool autoUp;
+    bool restoring;
+    float downRate;
+    float upRate;
+    float leftRate;
+    float rightRate;
+    float restoreRate;
+} ControlSliderState;
 
 class ControlSlider
 {
@@ -25,16 +38,14 @@ public:
 
     void update();
 
+    void pushCurrentState();
+    void popCurrentState();
+    unsigned int getSp();
+
 private:
+    std::stack<ControlSliderState> m_states;
     float m_pos;
-    bool m_autoUp;
-    bool m_restoring;
     int m_dir;
-    float m_downRate;
-    float m_upRate;
-    float m_leftRate;
-    float m_rightRate;
-    float m_restoreRate;
 };
 
 }

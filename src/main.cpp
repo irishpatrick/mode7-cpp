@@ -133,6 +133,7 @@ int main(int argc, char** argv)
         "assets/cars/newcar/driftmap.csv",
         "assets/cars/newcar/turnmap.csv"
     );
+    car.parseConstants("assets/cars/newcar/constants.json");
 
     car.position.y = 1;
     car.position.x = 0;

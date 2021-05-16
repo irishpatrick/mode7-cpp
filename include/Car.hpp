@@ -62,6 +62,7 @@ public:
     void parseConfig(const std::string&);
     virtual void open(const std::string&);
     void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
+    void parseConstants(const std::string&);
     void updateSprite();
     void updateDebugText();
     virtual void update();

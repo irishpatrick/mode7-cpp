@@ -159,142 +159,48 @@ void Car::openMaps(
     m_brakeMap.open(bmap_fn);
     m_driftMap.open(dmap_fn);
     m_turnMap.open(tmap_fn);
-
-    // init sliders also
-    // todo move this
-    thr.setAutoUp(true);
-    thr.setDownRate(0.005);
-    thr.setUpRate(0.02);
-
-    brake.setAutoUp(true);
-    brake.setDownRate(0.0075);
-    brake.setUpRate(0.5);
-
-    wheel.setRestoreRates(0.2, 0.2, 0.3);
 }
 
-/*void Car::updateControls()
+void Car::parseConstants(const std::string& fn)
 {
-    if (m_inStun)
+    std::ifstream in(fn);
+    if (!in)
     {
-        --ticks;
-        if (ticks == 0)
-        {
-            m_inStun = false;
-            traction = 2.f;
-        }
-    }
-    else
-    {
-        if (state == ACCEL)
-        {
-            if (m_change)
-            {
-                m_change = false;
-                m_gasPos = m_vCurve.getX(speed / topSpeed * 100.f);
-            }
-            m_gasPos += m_props.THROTTLE_RATE;
-            m_brakePos = 0.f;
-        }
-        else if (state == BRAKE)
-        {
-            m_brakePos += m_props.BRAKE_RATE;
-            m_gasPos = 0.f;
-        }
-        else if (state == IDLE)
-        {
-            m_gasPos = 0.f;
-            m_brakePos = 0.f;
-        }
-
-        m_gasPos = Util::constrain(m_gasPos, 0.f, 100.f);
-        m_brakePos = Util::constrain(m_brakePos, 0.f, 10.f);
+        return;
     }
 
+    // parse file
+    json obj;
+    in >> obj;
 
-    if (m_wheelState == LEFT)
+    if (obj["thr_rate"].size() != 2)
     {
-        m_wheelPos -= m_props.WHEEL_RATE;
-        m_driftPos -= m_props.DRIFT_NORM_RATE;
+        std::cout << "bad config" << std::endl;
+        return;
     }
-    else if (m_wheelState == RIGHT)
+    thr.setAutoUp(true);
+    thr.setDownRate(obj["thr_rate"][0]);
+    thr.setUpRate(obj["thr_rate"][1]);
+
+    if (obj["brake_rate"].size() != 2)
     {
-        m_wheelPos += m_props.WHEEL_RATE;
-        m_driftPos += m_props.DRIFT_NORM_RATE;
+        std::cout << "bad config" << std::endl;
+        return;
     }
-    else if (m_wheelState == IDLE)
+    brake.setAutoUp(true);
+    brake.setDownRate(obj["brake_rate"][0]);
+    brake.setUpRate(obj["brake_rate"][1]);
+
+    if (obj["wheel_rate"].size() != 3)
     {
-        float dot = m_wheelPos - 50.f;
-        if (fabsf(m_wheelPos - 50.f) < m_props.WHEEL_RATE / 2.f)
-        {
-            m_wheelPos = 50.f;
-        }
-        else if (dot < 0.f)
-        {
-            m_wheelPos += m_props.WHEEL_RATE;
-        }
-        else if (dot > 0.f)
-        {
-            m_wheelPos -= m_props.WHEEL_RATE;
-        }
-
-        dot = m_driftPos - 50.f;
-        if (fabsf(m_driftPos - 50.f) < m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET / 2.f)
-        {
-            m_driftPos = 50.f;
-        }
-        else if (dot < 0.f)
-        {
-            m_driftPos += m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
-        }
-        else if (dot > 0.f)
-        {
-            m_driftPos -= m_props.DRIFT_NORM_RATE * m_props.DRIFT_NORM_RET;
-        }
+        std::cout << "bad config" << std::endl;
+        return;
     }
-
-    // bounds checking
-    m_wheelPos = Util::constrain(m_wheelPos, 0.f, 100.f);
-    m_driftPos = Util::constrain(m_driftPos, 0.f, 100.f);
-
-    // turning
-    float turn_rate = (m_wheelCurve.getY(m_wheelPos)) / 100.f * m_props.TURN_RATE;
-    rotate(0, -turn_rate * fminf(1.0f, (speed / (topSpeed * 0.1f))), 0);
-
-    // drifting
-    drift = -(m_tractionCurve.getY(m_driftPos)) / 100.f * (m_props.DRIFT_NORM * (speed / topSpeed) + (float)(speed > 0.f) * m_props.DRIFT_BASE);
-
-    if (state == ACCEL)
-    {
-        speed = (m_vCurve.getY(m_gasPos)) / 100.f * topSpeed;
-    }
-    else if (state == BRAKE)
-    {
-        if (fabsf(speed) > 0.03f)
-        {
-            speed += copysignf(0.03f, -speed);
-        }
-        else
-        {
-            speed = 0;
-        }
-    }
-    else if (state == IDLE)
-    {
-        if (fabsf(speed) > m_props.COAST_RATE)
-        {
-            speed += copysignf(m_props.COAST_RATE, -speed);
-        }
-        else
-        {
-            speed = 0;
-        }
-    }
-
-    // apply speed and drift to velocity
-    velocity.x = drift;
-    velocity.z = speed;
-}*/
+    wheel.setRestoreRates(
+        obj["wheel_rate"][0], 
+        obj["wheel_rate"][1], 
+        obj["wheel_rate"][2]);
+}
 
 void Car::updateControls()
 {
@@ -302,7 +208,7 @@ void Car::updateControls()
     float turn_amt = 0.5f;
     float drift_amt;
     float brake_amt;
-    float top_speed = 3.f;
+    float top_speed = 2.2;
 
     thr.update();
     brake.update();
@@ -310,22 +216,23 @@ void Car::updateControls()
 
     float wp_adj = wheel.getPosition() * 0.5 + 0.5;
 
-    vel_percent = m_accelMap.calculate(turn_amt, thr.getPosition());
+    vel_percent = m_accelMap.calculate(1.0, thr.getPosition());
     turn_amt = m_turnMap.calculate(wp_adj, velocity.z / top_speed);
-    drift_amt = m_driftMap.calculate(turn_amt, vel_percent);
-    brake_amt = m_brakeMap.calculate(brake.getPosition(), vel_percent);
+    drift_amt = m_driftMap.calculate(fabs(wheel.getPosition()), velocity.z / top_speed);
+    brake_amt = m_brakeMap.calculate(brake.getPosition(), velocity.z / top_speed);
 
     float desired = vel_percent * top_speed;
     float last_vz = velocity.z;
     float last_vx = velocity.x;
 
-    if (desired < velocity.z)
+    if (desired < velocity.z && thr.getSp() < 1)
     {
+        thr.pushCurrentState();
         thr.setDownRate(0.07);
     }
-    else
+    else if (desired >= velocity.z && thr.getSp() > 0)
     {
-        thr.setDownRate(0.005);
+        thr.popCurrentState();
     }
 
     velocity.z = fmaxf(last_vz, desired);
@@ -334,7 +241,7 @@ void Car::updateControls()
     velocity.z = fmaxf(velocity.z, 0.f);
 
     float drift_dir = 1.0 * (wp_adj < 0.50) - 1.0 * (wp_adj > 0.50);
-    float propvx = drift_dir * drift_amt * 0.5;
+    float propvx = drift_dir * drift_amt * 0.3;
     if (fabsf(propvx) < fabsf(last_vx))
     {
         velocity.x = last_vx;
@@ -343,21 +250,15 @@ void Car::updateControls()
     {
         velocity.x = propvx;
     }
-    
-    float drift_decay = 0.8 * 0.02;
+    float drift_decay = 0.01;
     velocity.x -= copysignf(1.f, velocity.x) * drift_decay;
-    //velocity.x = fmaxf(last_vx, drift_dir * drift_amt * 0.8);
-    //velocity.x += drift_dir * 0.01;
-
-    //std::cout << turn_amt << "," << drift_amt << std::endl;
-    //std::cout << velocity.x << std::endl;
-    //std::cout << brake_amt << std::endl;
-    //std::cout << vel_percent << "," << wp_adj << "," << turn_amt << std::endl;
+    if (fabs(velocity.x) < 1e-2)
+    {
+        velocity.x = 0.0;
+    }
     
     float turn_rate = wheel.getPosition() * turn_amt * 0.03;
     rotate(0, -turn_rate, 0);
-
-    //std::cout << thr.getPosition() << "\t" << brake.getPosition() << "\t" << wp_adj << "," << turn_amt << std::endl;
 }
 
 void Car::update()
