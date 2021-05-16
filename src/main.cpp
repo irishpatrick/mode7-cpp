@@ -59,9 +59,6 @@ void update()
     car.input();
     skybox.position = car.position;
 
-    tree.update();
-    skybox.update();
-    track.update();
     car.update();
     //aitest.update();
     Camera::updateView();
@@ -160,6 +157,11 @@ int main(int argc, char** argv)
 
     cl.addObject(&car, 2.f);
     cl.addObject(&tree, 0.f);
+
+    // only need to update once
+    tree.update();
+    skybox.update();
+    track.update();
 
     running = 1;
     Clock::start();
