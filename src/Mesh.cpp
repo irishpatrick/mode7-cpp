@@ -202,6 +202,26 @@ void Mesh::drawTriangles()
     glBindVertexArray(0);
 }
 
+void Mesh::update()
+{
+    if (!visible)
+    {
+        return;
+    }
+
+    Object::update();
+}
+
+void Mesh::update(glm::mat4& pmat)
+{
+    if (!visible)
+    {
+        return;
+    }
+
+    Object::update(pmat);
+}
+
 void Mesh::draw(Shader& s)
 {
     if (!visible)

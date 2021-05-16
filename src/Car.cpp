@@ -47,90 +47,9 @@ Car::~Car()
 
 }
 
-void Car::parseConfig(const std::string& fn)
-{
-    std::cout << "load car config" << std::endl;
-    std::ifstream in(fn);
-    if (!in)
-    {
-        std::cout << "couldn't open " << fn << std::endl;
-        return;
-    }
-
-    std::string line;
-    std::vector<std::string> parts;
-    while (std::getline(in, line))
-    {
-        boost::split(parts, line, boost::is_any_of("="));
-        if (parts.size() < 2)
-        {
-            std::cout << "bad line: " << line << std::endl;
-            continue;
-        }
-
-        if (parts[0] == "THROTTLE_RATE")
-        {
-            m_props.THROTTLE_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_BASE")
-        {
-            m_props.DRIFT_BASE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_NORM")
-        {
-            m_props.DRIFT_NORM = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_LOSS")
-        {
-            m_props.DRIFT_LOSS = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_NORM_RET")
-        {
-            m_props.DRIFT_NORM_RET = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_LOSS_RET")
-        {
-            m_props.DRIFT_LOSS_RET = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_NORM_RATE")
-        {
-            m_props.DRIFT_NORM_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "DRIFT_LOSS_RATE")
-        {
-            m_props.DRIFT_LOSS_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "TURN_RATE")
-        {
-            m_props.TURN_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "WHEEL_RATE")
-        {
-            m_props.WHEEL_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "BRAKE_RATE")
-        {
-            m_props.BRAKE_RATE = atof(parts[1].c_str());
-        }
-        else if (parts[0] == "COAST_RATE")
-        {
-            m_props.COAST_RATE = atof(parts[1].c_str());
-        }
-        else
-        {
-            std::cout << "fatal at line " << line << std::endl;
-            assert(1 == 0);
-        }
-
-    }
-
-    assert(m_props.DRIFT_NORM > 0);
-    assert(m_props.DRIFT_NORM_RATE > 0);
-}
-
 void Car::open(const std::string& fn)
 {
-    parseConfig("assets/cars/config.txt");
+    //parseConfig("assets/cars/config.txt");
     std::stringstream ss;
     ss << fn << "/";
     m_debugText.init();
@@ -200,6 +119,8 @@ void Car::parseConstants(const std::string& fn)
         obj["wheel_rate"][0], 
         obj["wheel_rate"][1], 
         obj["wheel_rate"][2]);
+
+    m_props.MAX_SPEED = obj["max_speed"];
 }
 
 void Car::updateControls()
@@ -208,7 +129,7 @@ void Car::updateControls()
     float turn_amt = 0.5f;
     float drift_amt;
     float brake_amt;
-    float top_speed = 2.2;
+    float top_speed = m_props.MAX_SPEED;
 
     thr.update();
     brake.update();
@@ -268,7 +189,7 @@ void Car::update()
         Camera::setFOV(70 + 5 * (velocity.z / topSpeed));
     }
 
-    updateDebugText();
+    //updateDebugText();
     updateControls();
 
     int cur = m_racingLine->getCurrentIndex(glm::vec2(position.x, position.z), m_currentZone);
@@ -349,45 +270,8 @@ void Car::draw(Shader& s)
     s.setModel(sprite);
     Mesh::drawTriangles();
 
-    m_debugText.draw();
+    //m_debugText.draw();
 }
-
-/*void Car::input()
-{
-
-    int left = Keyboard::isDown("left");
-    int right = Keyboard::isDown("right");
-
-    if (Keyboard::isDown("c"))
-    {
-        if (state != ACCEL)
-        {
-            m_change = true;
-        }
-        state = ACCEL;
-    }
-    else if (Keyboard::isDown("x"))
-    {
-        state = BRAKE;
-    }
-    else
-    {
-        state = IDLE;
-    }
-
-    if (left)
-    {
-        m_wheelState = LEFT;
-    }
-    if (right)
-    {
-        m_wheelState = RIGHT;
-    }
-    if (!left && !right)
-    {
-        m_wheelState = IDLE;
-    }
-}*/
 
 void Car::input()
 {

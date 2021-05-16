@@ -60,8 +60,10 @@ void ControlSlider::update()
     if (m_states.top().restoring)
     {
         m_pos += 
-            m_states.top().leftRate * (m_dir < 0) + 
-            m_states.top().rightRate * (m_dir > 0) + 
+            m_states.top().leftRate * (m_dir < 0 && m_pos <= 0) + 
+            m_states.top().rightRate * (m_dir > 0 && m_pos >= 0) + 
+            -m_states.top().restoreRate * (m_dir < 0 && m_pos >= 0) + 
+            m_states.top().restoreRate * (m_dir > 0 && m_pos <= 0) + 
             (m_dir == 0) * (1.f * m_states.top().restoreRate * (m_pos < 0.f) + 
             -1.f * m_states.top().restoreRate * (m_pos > 0.f));
         

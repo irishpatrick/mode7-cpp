@@ -50,6 +50,7 @@ typedef struct _car_properties
     float DRIFT_BASE;
     float DRIFT_NORM;
     float DRIFT_LOSS;
+    float MAX_SPEED;
 } car_properties;
 
 class Car : public Mesh
@@ -59,7 +60,6 @@ public:
     Car();
     virtual ~Car();
 
-    void parseConfig(const std::string&);
     virtual void open(const std::string&);
     void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
     void parseConstants(const std::string&);

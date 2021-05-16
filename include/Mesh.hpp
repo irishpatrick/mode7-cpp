@@ -34,6 +34,8 @@ public:
     void createFromArrays(std::vector<Vertex>&, std::vector<unsigned int>&);
     void createFromShape(int);
     void drawTriangles();
+    virtual void update();
+    virtual void update(glm::mat4&);
     virtual void draw(Shader&);
     void setAltShader(Shader&);
     

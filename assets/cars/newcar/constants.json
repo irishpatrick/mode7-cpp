@@ -1,5 +1,5 @@
 {
-    "max_speed": 2.0,
+    "max_speed": 3.2,
     "max_drift": 0.5,
     "max_turn": 0.01,
     
@@ -7,6 +7,6 @@
     "speed_loss": 0.1,
     
     "thr_rate": [0.005, 0.2],
-    "brake_rate": [0.001, 0.2],
+    "brake_rate": [0.0075, 0.2],
     "wheel_rate": [0.1, 0.1, 0.2]
 }
