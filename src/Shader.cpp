@@ -1,7 +1,7 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
-#include <vector>
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -13,7 +13,7 @@
 namespace mode7
 {
 
-std::string openFile(const std::string& fn)
+static std::string openFile(const std::string& fn)
 {
     std::ifstream fp(fn);
     if (!fp)
@@ -28,7 +28,7 @@ std::string openFile(const std::string& fn)
     return code.str();
 }
 
-int compile(GLuint id, const std::string& code)
+static int compile(GLuint id, const std::string& code)
 {
     GLint res = 0;
     int loglen;
@@ -109,6 +109,19 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
 
     id = pid;
     glUseProgram(id);
+
+    ec();
+
+    cacheLocations();
+
+    return 0;
+}
+
+void Shader::cacheLocations()
+{
+    uint32_t n_diffuseMaps = 4;
+    uint32_t n_specularMaps = 4;
+    
     projection = glGetUniformLocation(id, "p");
     view = glGetUniformLocation(id, "v");
     model = glGetUniformLocation(id, "m");
@@ -117,7 +130,24 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
 
     ec();
 
-    return 0;
+    std::stringstream ss;
+    GLuint loc;
+
+    m_diffuseMaps.reserve(n_diffuseMaps);
+    for (uint32_t i = 0; i < n_diffuseMaps; ++i)
+    {
+        ss << "diffuseMap[" << i << "]";
+        m_diffuseMaps.push_back(glGetUniformLocation(id, ss.str().c_str()));
+        ss.clear();
+    }
+
+    m_specularMaps.reserve(n_specularMaps);
+    for (uint32_t i = 0; i < n_specularMaps; ++i)
+    {
+        ss << "specularMap[" << i << "]";
+        m_specularMaps.push_back(glGetUniformLocation(id, ss.str().c_str()));
+        ss.clear();
+    }
 }
 
 void Shader::onlyUse()
@@ -139,7 +169,7 @@ void Shader::setMaterial(Material& m)
 {
     glUniform1i(uv_tile, m.tile);
 
-    std::stringstream ss;   
+    /*std::stringstream ss;   
     for (uint32_t i = 0; i < m.numMaps(); ++i)
     {
         Texture t = m.getMap(i);
@@ -158,7 +188,25 @@ void Shader::setMaterial(Material& m)
         ss.clear();
         glUniform1ui(loc, t.getId());
         glBindTexture(GL_TEXTURE_2D, t.getId());
+    }*/
+
+    for (uint32_t i = 0; i < m.numMaps(); ++i)
+    {
+        Texture t = m.getMap(i);
+        GLuint loc;
+        if (t.getType() == TexType::DIFFUSE)
+        {
+            loc = m_diffuseMaps[i];
+        }
+        else if (t.getType() == TexType::SPECULAR)
+        {
+            loc = m_specularMaps[i];
+        }
+        glActiveTexture(GL_TEXTURE0 + i);
+        glUniform1ui(loc, t.getId());
+        glBindTexture(GL_TEXTURE_2D, t.getId());
     }
+
     glActiveTexture(GL_TEXTURE0);
 }
 

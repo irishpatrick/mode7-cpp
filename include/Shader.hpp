@@ -5,6 +5,7 @@
 #include "Material.hpp"
 #include "Object.hpp"
 #include <string>
+#include <vector>
 
 namespace mode7
 {
@@ -17,6 +18,7 @@ public:
     ~Shader();
 
     int open(const std::string&, const std::string&);
+    void cacheLocations();
 
     void use();
     void onlyUse();
@@ -36,6 +38,9 @@ private:
     GLuint model;
     GLuint diffuseTexture;
     GLuint uv_tile;
+
+    std::vector<GLuint> m_diffuseMaps;
+    std::vector<GLuint> m_specularMaps;
 };
 
 }

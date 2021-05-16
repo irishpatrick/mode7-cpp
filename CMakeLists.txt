@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(mode7 C CXX)
 
 if (MSVC)
-    set(flags /W3 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
+    set(flags /W2 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
 else()
     set(flags -Wall -g -pg -std=c++17)
     set(libs -lX11)
