@@ -9,6 +9,7 @@
 typedef struct _trackdata
 {
     uint32_t n_segments;
+    uint32_t max_segments;
     float width;
     
     line* centerline;
@@ -17,6 +18,14 @@ typedef struct _trackdata
     quad* walls_bounds;
 } trackdata;
 
-void trackdata_add_segment(trackdata*, float* a, float* b);
+void trackdata_init(trackdata*);
+void trackdata_save(trackdata*, const char*);
+void trackdata_free(trackdata*);
+
+void trackdata_centerline(trackdata*, line*);
+void trackdata_track_bounds(trackdata*, float*, float*, float*, float*);
+void trackdata_runoff_bounds(trackdata*, float);
+void trackdata_walls_bounds(trackdata*, float);
+void trackdata_push(trackdata*);
 
 #endif /* TRACKDATA_H */

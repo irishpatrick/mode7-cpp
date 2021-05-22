@@ -124,9 +124,8 @@ void track_add_line(track* tr, line* ln)
 
 static int interpolate_line(float* start, line* ln, int n_points)
 {
-    printf("line\n");
-    float step = 1.f / (float)n_points;
     float t;
+    float step = 1.f / (float)n_points;
 
     for (int i = 0; i < n_points; ++i)
     {
@@ -141,9 +140,8 @@ static int interpolate_line(float* start, line* ln, int n_points)
 
 static int interpolate_bezier(float* start, bezier* ln, int n_points)
 {
-    printf("bezeir\n");
-    float step = 1.f / (float)n_points;
     float t;
+    float step = 1.f / (float)n_points;
 
     for (int i = 0; i < n_points; ++i)
     {
@@ -158,7 +156,6 @@ static int interpolate_bezier(float* start, bezier* ln, int n_points)
 
 void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
 {
-    printf("start meshify...\n");
     // start with 100 pairs allocated
     int max_points = 1000;
     int n_points = 0;
@@ -185,7 +182,6 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         {
             case SEG_LINE:
                 seg_len = line_calc_distance(*lines_head);
-                //added = interpolate_line(points + (n_points * 2), *lines_head, n_inter_pts);
                 added = interpolate_line(points + (n_points * 2), *lines_head, seg_len / inter_len);
                 n_points += added;
                 ++lines_head;
@@ -194,7 +190,6 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
 
             case SEG_BEZIER:
                 seg_len = bezier_estimate_distance(*beziers_head, 0.1f);
-                //added = interpolate_bezier(points + (n_points * 2), *beziers_head, n_inter_pts);
                 added = interpolate_bezier(points + (n_points * 2), *beziers_head, seg_len / inter_len);
                 n_points += added;
                 ++beziers_head;
@@ -241,13 +236,14 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     float tmp;
     for (int i = 0; i < n_lines; ++i)
     {
-        // fetch current and next point, loop back to first if necessary
+        // fetch current and next point, loops back to first point
         a = points + (((i + 0) % n_points) * 2);
         b = points + (((i + 1) % n_points) * 2);
 
         // compute vector from a to b
         d[0] = b[0] - a[0];
         d[1] = b[1] - a[1];
+
         // normalize
         mag = sqrtf(d[0] * d[0] + d[1] * d[1]);
         d[0] = d[0] / mag;
@@ -258,13 +254,13 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         d[1] = -d[0];
         d[0] = tmp;
 
+        // sides of the track
         u[0] = a[0] + d[0] * -track_width;
         u[1] = a[1] + d[1] * -track_width;
         v[0] = a[0] + d[0] * track_width;
         v[1] = a[1] + d[1] * track_width;
 
         line_connect(&lines[i], u[0], u[1], v[0], v[1]);
-        //line_print(&lines[i]);
     }
 
     free(points);
@@ -285,6 +281,8 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     float fbuf[2];
     for (int i = 0; i < n_meshes; ++i)
     {
+        float* v;
+        float t;
         int a = (i + 0) % n_lines;
         int b = (i + 1) % n_lines;
         front = &lines[a];
@@ -294,23 +292,22 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         mesh_copy(cur, stock);
         for (int k = 0; k < cur->n_vertices; ++k)
         {
-            float* v = &cur->vertices[k * 3];
-            // snap vertices to line
+            // grab current vertex
+            v = &cur->vertices[k * 3];
             
+            // snap vertices to line
             v[2] += 4.5; // adjust to midpoint;
-            float t = v[2] / 4.5; // for line calculation
+            t = v[2] / 4.5; // for line calculation
             assert (t >= -1.f && t <= 1.f);
             // back vertices
             if (v[0] == 0.0f)
             {
                 line_solve(back, t, fbuf);
-                //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
             }
             // front vertices
             else if (v[0] == 1.0f)
             {
                 line_solve(front, t, fbuf);
-                //printf("solved: (%f,%f)\n", fbuf[0], fbuf[1]);
             }
             v[0] = fbuf[0];
             v[2] = fbuf[1];

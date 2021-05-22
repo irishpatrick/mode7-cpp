@@ -16,5 +16,6 @@ typedef struct _quad
 } quad;
 
 void quad_connect(quad*, vec2, vec2, vec2, vec2);
+void quad_connect_raw(quad*, float*, float*, float*, float*);
 
 #endif /* GEOMETRY_H */
