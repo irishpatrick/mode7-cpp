@@ -60,6 +60,7 @@ void update()
     skybox.position = car.position;
 
     car.update();
+    skybox.update();
     //aitest.update();
     Camera::updateView();
     //rltest.update(car.position);

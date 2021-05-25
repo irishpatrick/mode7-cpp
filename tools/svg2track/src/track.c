@@ -64,6 +64,8 @@ void track_init(track* tr, int max_segments)
         tr->lookup = NULL;
         return;
     }
+
+    trackdata_init(&tr->tdata);
 }
 
 void track_destroy(track* tr)
@@ -90,6 +92,8 @@ void track_destroy(track* tr)
         free(tr->beziers);
         tr->beziers = NULL;
     }
+
+    trackdata_free(&tr->tdata);
 }
 
 void track_add_bezier(track* tr, bezier* bz)
@@ -240,6 +244,12 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         a = points + (((i + 0) % n_points) * 2);
         b = points + (((i + 1) % n_points) * 2);
 
+        // compute centerline and add to track data
+        line cl;
+        line_connect(&cl, a[0], a[1], b[0], b[1]);
+        trackdata_centerline(&tr->tdata, &cl);
+        trackdata_push_clp(&tr->tdata);
+
         // compute vector from a to b
         d[0] = b[0] - a[0];
         d[1] = b[1] - a[1];
@@ -287,6 +297,14 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         int b = (i + 1) % n_lines;
         front = &lines[a];
         back = &lines[b];
+        
+        // add bounds to trackdata, compute bounds for runoff, walls
+        trackdata_track_bounds(&tr->tdata, front->p1, front->p2, back->p2, back->p1);
+        trackdata_push_tbp(&tr->tdata);
+        trackdata_runoff_bounds(&tr->tdata, 10.0);
+        trackdata_push_rbp(&tr->tdata);
+        trackdata_walls_bounds(&tr->tdata, 10.0);
+        trackdata_push_wbp(&tr->tdata);
 
         cur = &meshes[i];
         mesh_copy(cur, stock);
@@ -317,4 +335,11 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     // write to single mesh
     printf("saving to %s...\n", out_fn);
     wavefront_save(meshes, out_fn, n_meshes);
+
+    char tdat_fn[100];
+    tdat_fn[0] = 0;
+    strcpy(tdat_fn, out_fn);
+    strcat(tdat_fn, ".tdat");
+    trackdata_save(&tr->tdata, tdat_fn);
 }
+

@@ -13,6 +13,7 @@ typedef struct _quad
 {
     vec2 p[4];
     line l[4];
+    float length[4];
 } quad;
 
 void quad_connect(quad*, vec2, vec2, vec2, vec2);

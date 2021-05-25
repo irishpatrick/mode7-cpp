@@ -4,6 +4,7 @@
 #include "line.h"
 #include "bezier.h"
 #include "mesh.h"
+#include "trackdata.h"
 
 typedef enum {SEG_LINE = 0, SEG_BEZIER = 1} segment_t;
 
@@ -16,6 +17,7 @@ typedef struct _track
     segment_t* lookup;
     line** lines;
     bezier** beziers;
+    trackdata tdata;
 } track;
 
 void track_init(track*, int);
@@ -27,3 +29,4 @@ void track_add_line(track*, line*);
 void track_meshify(track*, mesh*, mesh*, const char*);
 
 #endif /* TRACK_H */
+

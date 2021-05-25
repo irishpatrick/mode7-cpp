@@ -223,7 +223,7 @@ int main(int argc, char** argv)
 
     if (strlen(stock_fn) < 1)
     {
-        strcpy(stock_fn, "../default.obj");
+        strcpy(stock_fn, "../assets/default/default.obj");
     }
 
     int n_meshes = wavefront_load(&stock, stock_fn);
