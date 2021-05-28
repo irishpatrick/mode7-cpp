@@ -37,6 +37,29 @@ Scene ModelLoader::open(const std::string& fn)
     return s;
 }
 
+std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
+{
+    std::vector<std::shared_ptr<Mesh>> meshes;
+    std::unique_ptr<Scene> s(new Scene());
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(fn, aiProcess_Triangulate | aiProcess_FlipUVs);
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        std::cout << "error::assimp::" << importer.GetErrorString() << std::endl;
+        //return meshes;
+        return s;
+    }
+
+    processNode(meshes, scene->mRootNode, scene);
+
+    for (auto& e : meshes)
+    {
+        s->addMesh(e);
+    }
+    
+    return s;
+}
+
 void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene)
 {
     matrix = Util::fromAi(node->mTransformation);

@@ -1,5 +1,3 @@
-#include <cstdio>
-#include <SDL.h>
 #include "Camera.hpp"
 #include "Screen.hpp"
 #include "Shader.hpp"
@@ -7,7 +5,6 @@
 #include "Mesh.hpp"
 #include "ModelLoader.hpp"
 #include "Clock.hpp"
-#include <iostream>
 #include "Tree.hpp"
 #include "Track.hpp"
 #include "Texture.hpp"
@@ -17,6 +14,10 @@
 #include "AI.hpp"
 #include "Collisions.hpp"
 #include "HUD.hpp"
+
+#include <cstdio>
+#include <SDL.h>
+#include <iostream>
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -31,7 +32,8 @@ Shader shadowShader;
 Scene skybox;
 Tree tree;
 Car car;
-Scene track;
+//Scene track;
+Track track;
 AI aitest;
 Collisions cl;
 RacingLine rltest;
@@ -75,7 +77,7 @@ void draw()
     Screen::beginRender();
 
     skybox.draw(spriteShader);
-    track.draw(spriteShader);
+    track.getScene()->draw(spriteShader);
     tree.draw(spriteShader);
     aitest.draw(spriteShader);
     car.draw(spriteShader);
@@ -107,10 +109,11 @@ int main(int argc, char** argv)
     //track = ModelLoader::open("assets/models/oval2.dae");
     //track = ModelLoader::open("assets/models/oval_small.dae");
     //track = ModelLoader::open("assets/blender/newtrack.dae");
-    track = ModelLoader::open("assets/track_data/track1.dae");
-    //track.scale = glm::vec3(1.f);
-    track.scale = glm::vec3(20.f);
-    track.position.y = track.scale.y - track.scale.y * 0.125;
+    //track = ModelLoader::open("assets/track_data/track1.dae");
+    track.open("assets/track_data/track1.dae");
+    track.attachData("assets/track_data/track1.obj.tdat");
+    track.getScene()->scale = glm::vec3(20.f);
+    track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
     //track.position.y = -track.scale.y;
     //track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
@@ -162,7 +165,7 @@ int main(int argc, char** argv)
     // only need to update once
     tree.update();
     skybox.update();
-    track.update();
+    track.getScene()->update();
 
     running = 1;
     Clock::start();

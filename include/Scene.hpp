@@ -26,11 +26,9 @@ public:
     inline std::string query()
     {
         std::stringstream ss;
-        int i = 0;
-        for (auto& m : meshes)
+        for (unsigned int i = 0; i < meshes.size(); ++i)
         {
             ss << i << ": " << "..." << "\n";
-            ++i;
         }
 
         return ss.str();

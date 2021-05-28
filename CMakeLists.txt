@@ -80,7 +80,45 @@ find_path(GLM_INCL glm)
 find_path(JSON_INCL nlohmann)
 set(incl ${incl} ${GLM_INCL} ${BOOST_INCL} ${JSON_INCL})
 
-file(GLOB sources src/* include/*)
+#file(GLOB sources src/* include/*)
+
+set(sources
+    src/AI.cpp
+    src/Animation.cpp
+    src/BBox.cpp
+    src/Camera.cpp
+    src/Car.cpp
+    src/Clock.cpp
+    src/Collisions.cpp
+    src/ControlMap.cpp
+    src/ControlSlider.cpp
+    src/DebugPath.cpp
+    src/DebugText.cpp
+    src/DropShadow.cpp
+    src/Group.cpp
+    src/HUD.cpp
+    src/Keyboard.cpp
+    src/Light.cpp
+    src/Line.cpp
+    src/Line2D.cpp
+    src/main.cpp
+    src/Material.cpp
+    src/Mesh.cpp
+    src/ModelLoader.cpp
+    src/Object.cpp
+    src/RacingLine.cpp
+    src/ResponseCurve.cpp
+    src/Scene.cpp
+    src/Screen.cpp
+    src/Shader.cpp
+    src/TexCache.cpp
+    src/Texture.cpp
+    src/Timer.cpp
+    src/Track.cpp
+    src/Tree.cpp
+    src/Util.cpp
+)
+
 add_executable(${PROJECT_NAME} ${sources})
 
 file(GLOB assets assets/*)

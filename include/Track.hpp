@@ -1,8 +1,14 @@
 #ifndef TRACK_HPP
 #define TRACK_HPP
 
-#include <string>
 #include "Shader.hpp"
+#include "Line2D.hpp"
+#include "Rect.hpp"
+#include "Scene.hpp"
+
+#include <string>
+#include <vector>
+#include <memory>
 
 namespace mode7
 {
@@ -11,10 +17,24 @@ class Track
 {
 public:
 
-    static void open(const std::string&);
-    static void update();
-    static void draw(Shader&);
-    static void destroy();
+    Track();
+    ~Track();
+
+    void open(const std::string&);
+    void attachData(const std::string&);
+    void transformData(glm::vec3, glm::vec3, glm::vec3);
+    Scene* getScene();
+    void update();
+    void draw(Shader&);
+    void destroy();
+
+private:
+
+    std::vector<Line2D> m_centerline;
+    std::vector<Rect> m_trackBounds;
+    std::vector<Rect> m_runoffBounds;
+    std::vector<Rect> m_wallsBounds;
+    std::unique_ptr<Scene> m_scene;
 };
 
 }
