@@ -11,6 +11,19 @@ class Rect
 {
 public:
 
+    inline void connect(glm::vec2 pa, glm::vec2 pb, glm::vec2 pc, glm::vec2 pd)
+    {
+        p[0] = pa;
+        p[1] = pb;
+        p[2] = pc;
+        p[3] = pd;
+
+        a.create(pa, pb);
+        b.create(pb, pc);
+        c.create(pc, pd);
+        d.create(pd, pa);
+    }
+
     inline bool checkIntersect(glm::vec2 pt)
     {
         float da = fabsf(a.distTo(pt));
@@ -28,6 +41,7 @@ public:
     Line2D b;
     Line2D c;
     Line2D d;
+    glm::vec2 p[4];
 };
 
 }
