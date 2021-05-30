@@ -2,7 +2,7 @@
 #define RECT_HPP
 
 #include "Line2D.hpp"
-#include "gl.h"
+#include "gl.hpp"
 
 namespace mode7
 {

@@ -1,5 +1,5 @@
 #include "AI.hpp"
-#include "gl.h"
+#include "gl.hpp"
 #include <iostream>
 
 namespace mode7

@@ -1,7 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Material.hpp"
 #include "Object.hpp"
 #include <string>

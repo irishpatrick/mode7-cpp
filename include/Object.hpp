@@ -2,7 +2,7 @@
 #define OBJECT_HPP
 
 #include <vector>
-#include "gl.h"
+#include "gl.hpp"
 #include "BBox.hpp"
 
 namespace mode7

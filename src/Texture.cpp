@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
-#include "gl.h"
+#include "gl.hpp"
 
 namespace mode7
 {

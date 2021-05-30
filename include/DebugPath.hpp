@@ -1,7 +1,7 @@
 #ifndef DEBUGPATH_HPP
 #define DEBUGPATH_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Object.hpp"
 #include "Shader.hpp"
 #include <vector>

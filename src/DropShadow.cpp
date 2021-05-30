@@ -1,7 +1,7 @@
 #include "DropShadow.hpp"
 #include "Texture.hpp"
 #include "TexCache.hpp"
-#include "gl.h"
+#include "gl.hpp"
 #include "Camera.hpp"
 
 namespace mode7

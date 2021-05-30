@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "gl.h"
+#include "gl.hpp"
 #include "Line2D.hpp"
 #include "DebugPath.hpp"
 #include "Rect.hpp"

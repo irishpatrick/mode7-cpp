@@ -20,7 +20,7 @@
 #endif
 #include <Windows.h>
 #include <gl/glew.h>
-#include <gl/GL.h>
+#include <gl/gl.hpp>
 #else
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -28,7 +28,7 @@
 
 #include <iostream>
 
-inline void ec()
+inline void gl_err_check()
 {
     GLuint err = glGetError();
     if (err)
@@ -36,5 +36,8 @@ inline void ec()
         std::cout << gluErrorString(err) << std::endl;
     }
 }
+
+// TODO add debug check
+#define ec gl_err_check()
 
 #endif /* GL_HPP */

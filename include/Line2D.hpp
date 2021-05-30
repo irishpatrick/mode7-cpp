@@ -1,7 +1,7 @@
 #ifndef LINE2D_HPP
 #define LINE2D_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 
 namespace mode7
 {

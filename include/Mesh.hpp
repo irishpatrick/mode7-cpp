@@ -4,7 +4,7 @@
 #include "Object.hpp"
 #include "Shader.hpp"
 #include "Material.hpp"
-#include "gl.h"
+#include "gl.hpp"
 
 namespace mode7
 {

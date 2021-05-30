@@ -1,7 +1,7 @@
 #ifndef CAR_HPP
 #define CAR_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Mesh.hpp"
 #include "Shader.hpp"
 #include "Line.hpp"

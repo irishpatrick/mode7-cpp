@@ -2,7 +2,7 @@
 #define LIGHT_HPP
 
 #include "Object.hpp"
-#include "gl.h"
+#include "gl.hpp"
 #include <string>
 #include <sstream>
 

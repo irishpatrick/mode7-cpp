@@ -2,7 +2,7 @@
 #define UTIL_HPP
 
 #include <assimp/Importer.hpp>
-#include "gl.h"
+#include "gl.hpp"
 
 #ifdef __linux__
 #include <X11/Xlib.h>

@@ -1,7 +1,7 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include <string>
 #include <cstdint>
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Object.hpp"
-#include "gl.h"
+#include "gl.hpp"
 
 namespace mode7
 {

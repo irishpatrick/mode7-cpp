@@ -1,7 +1,7 @@
 #ifndef DEBUGTEXT_HPP
 #define DEBUGTEXT_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "Object.hpp"

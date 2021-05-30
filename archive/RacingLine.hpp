@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "gl.h"
+#include "gl.hpp"
 #include "BBox.hpp"
 
 class Point

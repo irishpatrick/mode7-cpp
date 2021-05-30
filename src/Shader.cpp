@@ -78,16 +78,16 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
 
     std::cout << "compile " << vfn << std::endl;
     compile(vsid, vs_code);
-    ec();
+    ec;
     std::cout << "compile " << ffn << std::endl;
     compile(fsid, fs_code);
-    ec();
+    ec;
     
     GLuint pid = glCreateProgram();
     glAttachShader(pid, vsid);
     glAttachShader(pid, fsid);
     glLinkProgram(pid);
-    ec();
+    ec;
 
     GLint res;
     int loglen;
@@ -110,7 +110,7 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
     id = pid;
     glUseProgram(id);
 
-    ec();
+    ec;
 
     cacheLocations();
 
@@ -128,7 +128,7 @@ void Shader::cacheLocations()
     diffuseTexture = glGetUniformLocation(id, "tex");
     uv_tile = glGetUniformLocation(id, "uv_tile");
 
-    ec();
+    ec;
 
     std::stringstream ss;
     m_diffuseMaps.reserve(n_diffuseMaps);
@@ -156,11 +156,11 @@ void Shader::onlyUse()
 void Shader::use()
 {
     glUseProgram(id);
-    //ec();
+    //ec;
 
     glUniformMatrix4fv(projection, 1, GL_FALSE, MAT(Camera::getProjection()));
     glUniformMatrix4fv(view, 1, GL_FALSE, MAT(Camera::getView()));
-    //ec();
+    //ec;
 }
 
 void Shader::setMaterial(Material& m)

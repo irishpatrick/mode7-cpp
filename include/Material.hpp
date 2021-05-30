@@ -1,7 +1,7 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
-#include "gl.h"
+#include "gl.hpp"
 #include "Texture.hpp"
 #include <vector>
 #include <cstdint>

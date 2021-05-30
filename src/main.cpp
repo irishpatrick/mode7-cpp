@@ -19,7 +19,7 @@
 #include <SDL.h>
 #include <iostream>
 
-#define WIDTH 1.5 * 720
+#define WIDTH 1280
 #define HEIGHT 720
 
 using namespace mode7;
