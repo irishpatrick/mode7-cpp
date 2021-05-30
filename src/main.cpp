@@ -19,7 +19,7 @@
 #include <SDL.h>
 #include <iostream>
 
-#define WIDTH 1280
+#define WIDTH 1.5 * 720
 #define HEIGHT 720
 
 using namespace mode7;
@@ -28,6 +28,7 @@ SDL_Event e;
 int running;
 Shader spriteShader;
 Shader shadowShader;
+Shader skyboxShader;
 
 Scene skybox;
 Tree tree;
@@ -76,7 +77,7 @@ void draw()
 {
     Screen::beginRender();
 
-    skybox.draw(spriteShader);
+    skybox.draw(skyboxShader);
     track.getScene()->draw(spriteShader);
     tree.draw(spriteShader);
     aitest.draw(spriteShader);
@@ -95,12 +96,16 @@ int main(int argc, char** argv)
     Keyboard::attach();
 
     spriteShader.open(
-        "assets/shaders/skybox_v.glsl",
-        "assets/shaders/skybox_f.glsl");
+        "assets/shaders/sprite_v.glsl",
+        "assets/shaders/sprite_f.glsl");
 
     shadowShader.open(
         "assets/shaders/shadow_v.glsl",
         "assets/shaders/shadow_f.glsl"
+    );
+    skyboxShader.open(
+        "assets/shaders/skybox_v.glsl",
+        "assets/shaders/skybox_f.glsl"
     );
 
     skybox = ModelLoader::open("assets/models/skybox.dae");

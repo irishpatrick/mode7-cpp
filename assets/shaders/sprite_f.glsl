@@ -1,10 +1,10 @@
 #version 330 core
 
 in vec2 uv;
+in float depth;
 out vec4 color;
 
-uniform int blur;
-uniform sampler2D tex;
+uniform sampler2D diffuseMap[16];
 
 vec4 blurf(sampler2D image, vec2 uv, vec2 resolution, vec2 direction)
 {
@@ -26,12 +26,22 @@ vec4 blurf(sampler2D image, vec2 uv, vec2 resolution, vec2 direction)
 
 void main()
 {
-    vec4 tc = texture(tex, uv);
-    vec4 far = blurf(tex, uv, vec2(15360.0, 8640.0), vec2(1.5 * (gl_FragCoord.z / gl_FragCoord.w), 0.5));
-    vec4 texel = mix(tc, far, smoothstep(0.1, 100.0, gl_FragCoord.z / gl_FragCoord.w));
-    if (texel.a < 0.5)
+    vec4 tc = texture(diffuseMap[0], uv);
+    //vec4 far = blurf(tex, uv, vec2(15360.0, 8640.0), vec2(1.5 * (gl_FragCoord.z / gl_FragCoord.w), 0.5));
+    //vec4 texel = mix(tc, far, smoothstep(0.1, 100.0, gl_FragCoord.z / gl_FragCoord.w));
+    vec4 texel = tc;
+    if (texel.a < 0.3)
     {
         discard;
     }
-    color = texel;
+    
+    float fogNear = 3;
+    float fogFar = 100;
+    float fogDepth = (depth - fogNear) / 1500;
+   
+    //color = texel;
+    color = mix(texel, vec4(0.8, 0.9, 1.0, 1.0), smoothstep(fogNear, fogFar, (fogDepth)));
+    color = mix(texel, vec4(0.8, 0.9, 1.0, 1.0), sqrt(fogDepth));
+    //color = vec4(gl_FragCoord.x / 1280, gl_FragCoord.y / 720, gl_FragCoord.z / 1000, 1);
+    //color = vec4(clr, 1);
 }

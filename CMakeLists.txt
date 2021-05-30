@@ -95,6 +95,7 @@ set(sources
     src/DebugPath.cpp
     src/DebugText.cpp
     src/DropShadow.cpp
+    src/FrameBuffer.cpp
     src/Group.cpp
     src/HUD.cpp
     src/Keyboard.cpp
