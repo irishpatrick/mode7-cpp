@@ -131,8 +131,6 @@ void Shader::cacheLocations()
     ec();
 
     std::stringstream ss;
-    GLuint loc;
-
     m_diffuseMaps.reserve(n_diffuseMaps);
     for (uint32_t i = 0; i < n_diffuseMaps; ++i)
     {

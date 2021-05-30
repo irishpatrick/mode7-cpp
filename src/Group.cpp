@@ -11,10 +11,10 @@ Group::Group()
 
 Group::~Group()
 {
-    for (auto& mesh : meshes)
+    /*for (auto& mesh : meshes)
     {
-        //delete mesh;
-    }
+        delete mesh;
+    }*/
 }
 
 void Group::addMesh(Mesh* m)
