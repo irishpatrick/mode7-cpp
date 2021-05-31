@@ -20,7 +20,7 @@
 #endif
 #include <Windows.h>
 #include <gl/glew.h>
-#include <gl/gl.hpp>
+#include <gl/gl.h>
 #else
 #include <GL/glew.h>
 #include <GL/gl.h>
