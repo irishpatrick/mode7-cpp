@@ -68,8 +68,9 @@ void update()
 
     car.update();
     skybox.update();
-    //aitest.update();
+    aitest.update();
     Camera::updateView();
+    tree.update();
     //rltest.update(car.position);
 
     cl.update();
@@ -151,7 +152,7 @@ int main(int argc, char** argv)
     //track = ModelLoader::open("assets/blender/newtrack.dae");
     //track = ModelLoader::open("assets/track_data/track1.dae");
     track.open("assets/track_data/track1.dae");
-    track.attachData("assets/track_data/track1.obj.tdat");
+    //track.attachData("assets/track_data/track1.obj.tdat");
     track.getScene()->scale = glm::vec3(20.f);
     track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
     //track.position.y = -track.scale.y;

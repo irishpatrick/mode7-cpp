@@ -15,10 +15,10 @@ using json = nlohmann::json;
 
 static void next_vec2(std::vector<unsigned char>::iterator& it, glm::vec2& v)
 {
-    std::memcpy(&v[0], it.base(), sizeof(float));
+    //std::memcpy(&v[0], it.base(), sizeof(float));
     it += sizeof(float);
 
-    std::memcpy(&v[1], it.base(), sizeof(float));
+    //std::memcpy(&v[1], it.base(), sizeof(float));
     it += sizeof(float);
 }
 
@@ -55,15 +55,15 @@ void Track::attachData(const std::string& fn)
     }
 
     int n_seg;
-    std::memcpy(&n_seg, it.base(), sizeof(int));
+    //std::memcpy(&n_seg, it.base(), sizeof(int));
     it += sizeof(int);
 
     int start;
-    std::memcpy(&start, it.base(), sizeof(int));
+    //std::memcpy(&start, it.base(), sizeof(int));
     it += sizeof(int);
 
     int stride;
-    std::memcpy(&stride, it.base(), sizeof(int));
+    //std::memcpy(&stride, it.base(), sizeof(int));
     it += sizeof(int);
 
     Line2D cl;
