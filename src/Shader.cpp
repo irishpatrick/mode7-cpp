@@ -200,8 +200,8 @@ void Shader::setMaterial(Material& m)
         {
             loc = m_specularMaps[i];
         }
+        glUniform1i(loc, i);
         glActiveTexture(GL_TEXTURE0 + i);
-        glUniform1ui(loc, t.getId());
         glBindTexture(GL_TEXTURE_2D, t.getId());
     }
 

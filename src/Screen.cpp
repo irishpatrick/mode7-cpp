@@ -16,12 +16,11 @@ static int width;
 static int height;
 
 static mode7::FrameBuffer fb;
-static std::map<std::string, uint32_t> fb_lookup;
+static std::map<std::string, GLint> fb_lookup;
 static std::vector<mode7::FrameBuffer*> fb_pipeline;
 static std::vector<GLint> fb_target;
 
 static mode7::Shader screenShader;
-static GLint depthtex_loc;
 static int RESX;
 static int RESY;
 
@@ -63,8 +62,8 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetSwapInterval(0);
 
@@ -88,7 +87,7 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         printf("glew init error: %s\n", glewGetErrorString(err));
     }
 
-    glEnable(GL_MULTISAMPLE);
+    //glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glClearColor(0.7f, 0.7f, 0.8f, 1.0f);
@@ -99,18 +98,19 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         "assets/shaders/screen_f.glsl"
     );
 
-    depthtex_loc = glGetUniformLocation(screenShader.pid(), "depthtex_loc");
-
     fb.init(RESX, RESY);
     fb.setShader(&screenShader);
 }
 
-void mode7::Screen::addFrameBuffer(const std::string& name, mode7::FrameBuffer* fb)
+void mode7::Screen::addFrameBuffer(const std::string& name, mode7::FrameBuffer* ofb)
 {
     fb_target.push_back(
-        glGetUniformLocation(fb->getScreenShader()->pid(), name.c_str()));
-    fb_pipeline.push_back(fb);
+        glGetUniformLocation(fb.getScreenShader()->pid(), name.c_str()));
+    //assert(fb_target.back() >= 0);
+    fb_pipeline.push_back(ofb);
     fb_lookup[name] = fb_pipeline.size() - 1;
+    assert(fb_pipeline.size() == fb_target.size());
+    assert(fb_pipeline.size() == fb_lookup.size());
 }
 
 const std::vector<mode7::FrameBuffer*>& mode7::Screen::getPipeline()
@@ -131,13 +131,27 @@ void mode7::Screen::runPipeline(void (*draw)(int32_t))
     fb.begin();
     draw(-1);
     
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glViewport(0, 0, width, height);
+    /*glBlitFramebuffer(
+        0, 0, width, height,
+        0, 0, width, height,
+        GL_COLOR_BUFFER_BIT, GL_NEAREST
+    );*/
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
     fb.preDraw();
     for (uint32_t i = 0; i < fb_pipeline.size(); ++i)
     {
         fb.feedTex(fb_target[i], fb_pipeline[i]->getTexGL());
     }
 
-    flip();
+    fb.draw();
+    //fb_pipeline[0]->preDraw(); fb_pipeline[0]->draw();
+    SDL_GL_SwapWindow(window);
+
+    //flip();
 }
 
 void mode7::Screen::clear()
@@ -152,7 +166,7 @@ mode7::Shader& mode7::Screen::getShader()
 
 void mode7::Screen::beginRender()
 {
-    fb.begin();
+    //fb.begin();
 }
 
 void mode7::Screen::flip()
@@ -168,6 +182,7 @@ void mode7::Screen::flip()
     glClear(GL_COLOR_BUFFER_BIT);
 
     fb.draw();
+    //fb_pipeline[0]->preDraw(); fb_pipeline[0]->draw();
     SDL_GL_SwapWindow(window);
 }
 

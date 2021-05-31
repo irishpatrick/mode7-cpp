@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.0)
 project(mode7 C CXX)
 
 if (MSVC)
-    set(flags /W2 /DEBUG /D_CRT_SECURE_NO_WARNINGS)
+    set(flags /W2 /D_CRT_SECURE_NO_WARNINGS)
 else()
-    set(flags -Wall -g -pg -std=c++17)
+    set(flags -Wall -pg -std=c++17)
     set(libs -lX11)
 endif()
 
@@ -125,7 +125,7 @@ add_executable(${PROJECT_NAME} ${sources})
 file(GLOB assets assets/*)
 file(COPY ${assets} DESTINATION ./assets)
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${flags})
+target_compile_options(${PROJECT_NAME} PRIVATE ${CMAKE_CXX_FLAGS} ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
 

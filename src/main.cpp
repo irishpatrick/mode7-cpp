@@ -90,11 +90,11 @@ void draw(int32_t step)
 
     if (forced)
     {
-        skybox.draw(skyboxShader);
-        track.getScene()->draw(spriteShader);
-        tree.draw(spriteShader);
-        aitest.draw(spriteShader);
-        car.draw(spriteShader);
+        skybox.draw(*forced);
+        track.getScene()->draw(*forced);
+        tree.draw(*forced);
+        aitest.draw(*forced);
+        car.draw(*forced);
     }
     else
     {

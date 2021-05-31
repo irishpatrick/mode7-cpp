@@ -20,7 +20,7 @@ public:
     inline void setShader(Shader* sh)
     {
         m_shader = sh;
-        m_colortex_loc = glGetUniformLocation(m_shader->pid(), "tex");
+        m_colortex_loc = glGetUniformLocation(m_shader->pid(), "colorTex");
     }
 
     inline void forceShader(Shader* sh)
@@ -52,21 +52,25 @@ public:
         glViewport(0, 0, m_width, m_height);
     }
 
-    inline void feedTex(GLint loc, GLint id)
+    inline void feedTex(GLint loc, GLuint id)
     {
+        glUniform1i(loc, m_tp);
         glActiveTexture(GL_TEXTURE0 + m_tp);
-        glUniform1ui(loc, id);
         glBindTexture(GL_TEXTURE_2D, id);
+        ++m_tp;
     }
 
     inline void preDraw()
     {
+        m_tp = 0;
         m_shader->onlyUse();
         feedTex(m_colortex_loc, m_fb_tex);
     }
 
     inline void draw()
     {
+        glActiveTexture(GL_TEXTURE0); // not sure if needed
+
         glBindVertexArray(m_vao);
         glDisable(GL_DEPTH_TEST);
         glDrawArrays(GL_TRIANGLES, 0, 6);
