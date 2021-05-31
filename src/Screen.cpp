@@ -18,8 +18,10 @@ static int height;
 static mode7::FrameBuffer fb;
 static std::map<std::string, uint32_t> fb_lookup;
 static std::vector<mode7::FrameBuffer*> fb_pipeline;
+static std::vector<GLint> fb_target;
 
 static mode7::Shader screenShader;
+static GLint depthtex_loc;
 static int RESX;
 static int RESY;
 
@@ -97,12 +99,16 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         "assets/shaders/screen_f.glsl"
     );
 
+    depthtex_loc = glGetUniformLocation(screenShader.pid(), "depthtex_loc");
+
     fb.init(RESX, RESY);
     fb.setShader(&screenShader);
 }
 
 void mode7::Screen::addFrameBuffer(const std::string& name, mode7::FrameBuffer* fb)
 {
+    fb_target.push_back(
+        glGetUniformLocation(fb->getScreenShader()->pid(), name.c_str()));
     fb_pipeline.push_back(fb);
     fb_lookup[name] = fb_pipeline.size() - 1;
 }
@@ -124,12 +130,24 @@ void mode7::Screen::runPipeline(void (*draw)(int32_t))
 
     fb.begin();
     draw(-1);
+    
+    fb.preDraw();
+    for (uint32_t i = 0; i < fb_pipeline.size(); ++i)
+    {
+        fb.feedTex(fb_target[i], fb_pipeline[i]->getTexGL());
+    }
+
     flip();
 }
 
 void mode7::Screen::clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+mode7::Shader& mode7::Screen::getShader()
+{
+    return screenShader;
 }
 
 void mode7::Screen::beginRender()

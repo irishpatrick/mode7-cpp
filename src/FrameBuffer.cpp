@@ -19,7 +19,8 @@ static float screen_quad_data[] = {
 
 FrameBuffer::FrameBuffer() :
     m_shader(nullptr),
-    m_shader_override(nullptr)
+    m_shader_override(nullptr),
+    m_tp(0)
 {
 
 }

@@ -20,12 +20,17 @@ public:
     inline void setShader(Shader* sh)
     {
         m_shader = sh;
-        m_texture_loc = glGetUniformLocation(m_shader->pid(), "tex");
+        m_colortex_loc = glGetUniformLocation(m_shader->pid(), "tex");
     }
 
     inline void forceShader(Shader* sh)
     {
         m_shader_override = sh;
+    }
+
+    inline Shader* getScreenShader()
+    {
+        return m_shader;
     }
 
     inline Shader* getForcedShader()
@@ -47,14 +52,21 @@ public:
         glViewport(0, 0, m_width, m_height);
     }
 
-    inline void draw()
+    inline void feedTex(GLint loc, GLint id)
+    {
+        glActiveTexture(GL_TEXTURE0 + m_tp);
+        glUniform1ui(loc, id);
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    inline void preDraw()
     {
         m_shader->onlyUse();
+        feedTex(m_colortex_loc, m_fb_tex);
+    }
 
-        glActiveTexture(GL_TEXTURE0);
-        glUniform1ui(m_texture_loc, m_fb_tex);
-        glBindTexture(GL_TEXTURE_2D, m_fb_tex);
-        
+    inline void draw()
+    {
         glBindVertexArray(m_vao);
         glDisable(GL_DEPTH_TEST);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -76,8 +88,9 @@ private:
     GLuint m_vao;
     uint32_t m_width;
     uint32_t m_height;
+    uint32_t m_tp;
     Shader* m_shader;
-    GLuint m_texture_loc;
+    GLuint m_colortex_loc;
     Shader* m_shader_override;
 };
 

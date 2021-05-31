@@ -27,15 +27,16 @@ using namespace mode7;
 
 SDL_Event e;
 int running;
+
 Shader spriteShader;
 Shader shadowShader;
 Shader skyboxShader;
 Shader depthShader;
+Shader passShader;
 
 Scene skybox;
 Tree tree;
 Car car;
-//Scene track;
 Track track;
 AI aitest;
 Collisions cl;
@@ -132,10 +133,15 @@ int main(int argc, char** argv)
         "assets/shaders/skybox_v.glsl",
         "assets/shaders/skybox_f.glsl"
     );
+    err = passShader.open(
+        "assets/shaders/pass_v.glsl",
+        "assets/shaders/pass_f.glsl"
+    );
     
     depthTexture.init(WIDTH, HEIGHT);
-    depthTexture.setShader(&depthShader);
-    Screen::addFrameBuffer("depth", &depthTexture);
+    depthTexture.setShader(&passShader);
+    depthTexture.forceShader(&depthShader);
+    Screen::addFrameBuffer("depthTex", &depthTexture);
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
     skybox.scale = glm::vec3(1200.f);

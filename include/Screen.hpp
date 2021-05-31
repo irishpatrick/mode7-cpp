@@ -17,6 +17,7 @@ public:
     static void clear();
     static void addFrameBuffer(const std::string&, FrameBuffer*);
     static const std::vector<FrameBuffer*>& getPipeline();
+    static Shader& getShader();
     static void runPipeline(void (*)(int32_t));
     static void beginRender();
     static void flip();
