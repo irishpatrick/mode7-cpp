@@ -22,6 +22,16 @@ public:
         m_shader = sh;
         m_texture_loc = glGetUniformLocation(m_shader->pid(), "tex");
     }
+
+    inline void forceShader(Shader* sh)
+    {
+        m_shader_override = sh;
+    }
+
+    inline Shader* getForcedShader()
+    {
+        return m_shader_override;
+    }
     
     inline GLuint getTexGL()
     {
@@ -68,6 +78,7 @@ private:
     uint32_t m_height;
     Shader* m_shader;
     GLuint m_texture_loc;
+    Shader* m_shader_override;
 };
 
 }

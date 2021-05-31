@@ -14,6 +14,7 @@
 #include "AI.hpp"
 #include "Collisions.hpp"
 #include "HUD.hpp"
+#include "FrameBuffer.hpp"
 
 #include <cstdio>
 #include <SDL.h>
@@ -29,6 +30,7 @@ int running;
 Shader spriteShader;
 Shader shadowShader;
 Shader skyboxShader;
+Shader depthShader;
 
 Scene skybox;
 Tree tree;
@@ -39,6 +41,7 @@ AI aitest;
 Collisions cl;
 RacingLine rltest;
 HUD hud;
+FrameBuffer depthTexture;
 
 void update()
 {
@@ -73,19 +76,36 @@ void update()
     hud.update();
 }
 
-void draw()
+void draw(int32_t step)
 {
-    Screen::beginRender();
+    FrameBuffer* fb = nullptr;
+    Shader* forced = nullptr;
 
-    skybox.draw(skyboxShader);
-    track.getScene()->draw(spriteShader);
-    tree.draw(spriteShader);
-    aitest.draw(spriteShader);
-    car.draw(spriteShader);
+    if (step >= 0)
+    {
+        fb = Screen::getPipeline()[step];
+        forced = fb->getForcedShader();
+    }
+
+    if (forced)
+    {
+        skybox.draw(skyboxShader);
+        track.getScene()->draw(spriteShader);
+        tree.draw(spriteShader);
+        aitest.draw(spriteShader);
+        car.draw(spriteShader);
+    }
+    else
+    {
+        skybox.draw(skyboxShader);
+        track.getScene()->draw(spriteShader);
+        tree.draw(spriteShader);
+        aitest.draw(spriteShader);
+        car.draw(spriteShader);
+    }
+
     rltest.getDebugPath()->draw();
     hud.draw();
-
-    Screen::flip();
 }
 
 int main(int argc, char** argv)
@@ -94,19 +114,28 @@ int main(int argc, char** argv)
     Camera::create(WIDTH, HEIGHT, 70.f, 1.0f, 1500.f);
 
     Keyboard::attach();
-
-    spriteShader.open(
+    
+    int err;
+    err = depthShader.open(
+        "assets/shaders/depth_v.glsl",
+        "assets/shaders/depth_f.glsl"
+    );
+    err = spriteShader.open(
         "assets/shaders/sprite_v.glsl",
-        "assets/shaders/sprite_f.glsl");
-
-    shadowShader.open(
+        "assets/shaders/sprite_f.glsl"
+    );
+    err = shadowShader.open(
         "assets/shaders/shadow_v.glsl",
         "assets/shaders/shadow_f.glsl"
     );
-    skyboxShader.open(
+    err = skyboxShader.open(
         "assets/shaders/skybox_v.glsl",
         "assets/shaders/skybox_f.glsl"
     );
+    
+    depthTexture.init(WIDTH, HEIGHT);
+    depthTexture.setShader(&depthShader);
+    Screen::addFrameBuffer("depth", &depthTexture);
 
     skybox = ModelLoader::open("assets/models/skybox.dae");
     skybox.scale = glm::vec3(1200.f);
@@ -176,7 +205,7 @@ int main(int argc, char** argv)
     Clock::start();
     while (running)
     {
-        draw();
+        Screen::runPipeline(draw);
         Clock::tick();
         while (Clock::lagging())
         {

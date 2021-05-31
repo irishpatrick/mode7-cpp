@@ -1,11 +1,12 @@
 #include "Screen.hpp"
 #include "Shader.hpp"
 #include "Util.hpp"
-#include "FrameBuffer.hpp"
 
 #include "gl.hpp"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <map>
+#include <vector>
 
 #define WMAX 1.f
 
@@ -15,12 +16,14 @@ static int width;
 static int height;
 
 static mode7::FrameBuffer fb;
+static std::map<std::string, uint32_t> fb_lookup;
+static std::vector<mode7::FrameBuffer*> fb_pipeline;
 
 static mode7::Shader screenShader;
 static int RESX;
 static int RESY;
 
-static float screen_quad_data[] = {
+/*static float screen_quad_data[] = {
     -1.0f, -1.0f,  0.f,  0.f,
      WMAX, -1.0f,  1.f,  0.f,
      WMAX,  WMAX,  1.f,  1.f,
@@ -28,7 +31,7 @@ static float screen_quad_data[] = {
      WMAX,  WMAX,  1.f,  1.f,
     -1.0f,  WMAX,  0.f,  1.f,
     -1.0f, -1.0f,  0.f,  0.f
-};
+};*/
 
 void mode7::Screen::create(int w, int h, bool fullscreen)
 {
@@ -96,6 +99,32 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
 
     fb.init(RESX, RESY);
     fb.setShader(&screenShader);
+}
+
+void mode7::Screen::addFrameBuffer(const std::string& name, mode7::FrameBuffer* fb)
+{
+    fb_pipeline.push_back(fb);
+    fb_lookup[name] = fb_pipeline.size() - 1;
+}
+
+const std::vector<mode7::FrameBuffer*>& mode7::Screen::getPipeline()
+{
+    return fb_pipeline;
+}
+
+void mode7::Screen::runPipeline(void (*draw)(int32_t))
+{
+    int32_t i = 0;
+    for (auto& e : fb_pipeline)
+    {
+        e->begin();
+        draw(i);
+        ++i;
+    }
+
+    fb.begin();
+    draw(-1);
+    flip();
 }
 
 void mode7::Screen::clear()

@@ -162,7 +162,7 @@ void Car::updateControls()
     velocity.z = fmaxf(velocity.z, 0.f);
 
     float drift_dir = 1.0 * (wp_adj < 0.50) - 1.0 * (wp_adj > 0.50);
-    float propvx = drift_dir * drift_amt * 0.3;
+    float propvx = drift_dir * drift_amt * 0.8;
     if (fabsf(propvx) < fabsf(last_vx))
     {
         velocity.x = last_vx;
