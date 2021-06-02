@@ -158,7 +158,7 @@ void Car::updateControls()
 
     velocity.z = fmaxf(last_vz, desired);
     velocity.z -= brake_amt * 0.125;
-    velocity.z -= 0.01 * last_vz / top_speed;
+    velocity.z -= 0.04 * last_vz / top_speed;
     velocity.z = fmaxf(velocity.z, 0.f);
 
     float drift_dir = 1.0 * (wp_adj < 0.50) - 1.0 * (wp_adj > 0.50);
