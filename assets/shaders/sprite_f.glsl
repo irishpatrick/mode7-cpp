@@ -40,8 +40,8 @@ void main()
     float fogDepth = (depth - fogNear) / 1500;
    
     //color = texel;
-    color = mix(texel, vec4(0.8, 0.9, 1.0, 1.0), smoothstep(fogNear, fogFar, (fogDepth)));
-    color = mix(texel, vec4(0.8, 0.9, 1.0, 1.0), sqrt(fogDepth));
+    //color = mix(texel, 0.7 * vec4(0.8, 0.9, 1.0, 1.0), smoothstep(fogNear, fogFar, (fogDepth)));
+    color = mix(texel, 0.3 * texel + 0.7 * vec4(0.8, 0.9, 1.0, 1.0), sqrt(fogDepth));
     //color = vec4(gl_FragCoord.x / 1280, gl_FragCoord.y / 720, gl_FragCoord.z / 1000, 1);
     //color = vec4(clr, 1);
 }
