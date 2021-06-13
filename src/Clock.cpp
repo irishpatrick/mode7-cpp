@@ -3,6 +3,8 @@
 
 #define MILLIS SDL_GetTicks
 
+#include <iostream>
+
 namespace mode7
 {
 
@@ -11,6 +13,7 @@ static long cur = 0;
 static long prev = 0;
 static long elapsed = 0;
 static long lag = 0;
+static float m_fps;
 //static float ratio = 0.5f;
 
 void Clock::start()
@@ -23,6 +26,7 @@ void Clock::tick()
 {
     cur = MILLIS();
     elapsed = cur - prev;
+    m_fps = 1000.0 / (float)elapsed;
     prev = cur;
     lag += elapsed;
 }
@@ -40,6 +44,11 @@ long Clock::delta()
 bool Clock::lagging()
 {
     return lag >= interval;
+}
+
+float Clock::fps()
+{
+    return m_fps;
 }
 
 float Clock::extrapolate()

@@ -219,6 +219,7 @@ int main(int argc, char** argv)
             update();
             Clock::lagTick();
         }
+        printf("fps: %.3f\n", Clock::fps());
     }
 
     Screen::destroy();

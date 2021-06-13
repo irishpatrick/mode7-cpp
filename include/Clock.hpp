@@ -14,6 +14,7 @@ public:
     static long delta();
     static bool lagging();
     static float extrapolate();
+    static float fps();
 };
 
 }
