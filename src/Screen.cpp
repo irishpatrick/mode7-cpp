@@ -7,6 +7,7 @@
 #include <SDL_ttf.h>
 #include <map>
 #include <vector>
+#include <iostream>
 
 #define WMAX 1.f
 
@@ -52,16 +53,31 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         height = h * sc;
     }
 
-    TTF_Init();
+    int err;
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    err = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    if (err < 0)
+    {
+        std::cout << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    err = TTF_Init();
+    if (err < 0)
+    {
+        std::cout << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -81,10 +97,10 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     ctx = SDL_GL_CreateContext(window);
 
     glewExperimental = GL_TRUE;
-    const GLenum err = glewInit();
-    if (err != GLEW_OK)
+    const GLenum glerr = glewInit();
+    if (glerr != GLEW_OK)
     {
-        printf("glew init error: %s\n", glewGetErrorString(err));
+        printf("glew init error: %s\n", glewGetErrorString(glerr));
     }
 
     //glEnable(GL_MULTISAMPLE);
