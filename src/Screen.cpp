@@ -1,6 +1,7 @@
 #include "Screen.hpp"
 #include "Shader.hpp"
 #include "Util.hpp"
+#include "Camera.hpp"
 
 #include "gl.hpp"
 #include <SDL.h>

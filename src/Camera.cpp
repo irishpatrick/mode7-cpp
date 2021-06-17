@@ -8,6 +8,7 @@ glm::mat4 Camera::projection(1.0f);
 Object Camera::object;
 
 static float m_w, m_h, m_n, m_f;
+static float m_dof;
 
 void Camera::create(float w, float h, float fov, float n, float f)
 {
@@ -48,6 +49,16 @@ Object& Camera::getObject()
 void Camera::setFOV(float fov)
 {
     projection = glm::perspective(glm::radians(fov), m_w / m_h, m_n, m_f);
+}
+
+void Camera::setDOF(float threshold)
+{
+    m_dof = threshold;
+}
+
+float Camera::getDOF()
+{
+    return m_dof;
 }
 
 }

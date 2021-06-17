@@ -18,6 +18,8 @@ public:
     static glm::mat4 getView();
     static Object& getObject();
     static void setFOV(float);
+    static void setDOF(float);
+    static float getDOF();
 
 private:
 
