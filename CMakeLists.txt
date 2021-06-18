@@ -5,11 +5,11 @@ project(mode7 C CXX)
 if (MSVC)
     set(flags /W2 /D_CRT_SECURE_NO_WARNINGS)
 else()
-    set(flags -Wall -pg -std=c++17)
+    set(flags -Wall -pg -std=c++17 -pthread)
     set(libs -lX11)
 endif()
 
-set(incl include)
+set(incl include src)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -72,6 +72,7 @@ else ()
         ${BULLET_LIBRARIES}
         m
         -pg
+        -pthread
     )
 endif()
 
@@ -105,12 +106,13 @@ set(sources
     src/main.cpp
     src/Material.cpp
     src/Mesh.cpp
+    src/MeshUpdateWorker.cpp
     src/ModelLoader.cpp
     src/Object.cpp
     src/RacingLine.cpp
     src/ResponseCurve.cpp
     src/Scene.cpp
-    src/Scheduler.cpp
+    src/Scheduler.tpp
     src/Screen.cpp
     src/Shader.cpp
     src/TexCache.cpp

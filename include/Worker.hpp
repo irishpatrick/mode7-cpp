@@ -2,6 +2,7 @@
 #define WORKER_HPP
 
 #include <thread>
+#include <mutex>
 #include <memory>
 #include <queue>
 
@@ -22,13 +23,17 @@ public:
     void queue(void*);
 
     size_t getQueueLen();
+    bool isDone();
 
 private:
-    void jobLoop();
+    static void jobLoop(Worker*);
 
+    bool m_isdone;
     bool m_running;
     bool m_autostop;
+
     std::unique_ptr<std::thread> m_thread;
+    std::mutex m_jobq_mutex;
     std::queue<void*> m_jobq;
 };
 

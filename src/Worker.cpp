@@ -1,9 +1,12 @@
 #include "Worker.hpp"
 
+#include <iostream>
+
 namespace mode7
 {
 
-Worker::Worker()
+Worker::Worker() :
+    m_isdone(false)
 {
  
 }
@@ -13,34 +16,43 @@ Worker::~Worker()
 
 }
 
-void Worker::jobLoop()
+void Worker::jobLoop(Worker* w)
 {
     bool started = false;
-    while (m_running)
+    void* cur;
+    while (w->m_running)
     {
-        while (m_jobq.size() > 0)
+        while (w->m_jobq.size() > 0)
         {
             started = true;
-            job(m_jobq.front());
-            m_jobq.pop();
+
+            w->m_jobq_mutex.lock();
+            cur = w->m_jobq.front();
+            w->m_jobq.pop();
+            w->m_jobq_mutex.unlock();
+
+            w->job(cur);
         }
         
-        if (started && m_autostop)
+        if (started && w->m_autostop)
         {
-            m_running = false;
+            w->m_running = false;
         }
     }
 }
 
 void Worker::queue(void* data)
 {
+    m_jobq_mutex.lock();
     m_jobq.push(data);
+    m_jobq_mutex.unlock();
 }
 
 void Worker::start(bool autostop)
 {
     m_running = true;
     m_autostop = autostop;
+    m_thread = std::make_unique<std::thread>(jobLoop, this);
 }
 
 void Worker::stop()
@@ -56,6 +68,11 @@ void Worker::join()
 size_t Worker::getQueueLen()
 {
     return m_jobq.size();
+}
+
+bool Worker::isDone()
+{
+    return m_jobq.size() == 0;
 }
 
 }

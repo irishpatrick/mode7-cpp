@@ -15,7 +15,8 @@
 #include "Collisions.hpp"
 #include "HUD.hpp"
 #include "FrameBuffer.hpp"
-#include "Worker.hpp"
+#include "Scheduler.hpp"
+#include "MeshUpdateWorker.hpp"
 
 #include <cstdio>
 #include <SDL.h>
@@ -28,6 +29,7 @@ using namespace mode7;
 
 SDL_Event e;
 int running;
+int fps_ctr = 0;
 
 Shader spriteShader;
 Shader shadowShader;
@@ -44,6 +46,8 @@ Collisions cl;
 RacingLine rltest;
 HUD hud;
 FrameBuffer depthTexture;
+
+Scheduler<MeshUpdateWorker> updateScheduler;
 
 void update()
 {
@@ -67,6 +71,8 @@ void update()
     car.input();
     skybox.position = car.position;
 
+    //updateScheduler.distribute();
+    //updateScheduler.spinWait();
     car.update();
     skybox.update();
     aitest.update();
@@ -209,6 +215,12 @@ int main(int argc, char** argv)
     skybox.update();
     track.getScene()->update();
 
+    updateScheduler.startWorkers(4);
+    updateScheduler.addJobData(&tree);
+    updateScheduler.addJobData(&skybox);
+    updateScheduler.addJobData(&aitest);
+    updateScheduler.addJobData(&car);
+
     running = 1;
     Clock::start();
     while (running)
@@ -220,7 +232,11 @@ int main(int argc, char** argv)
             update();
             Clock::lagTick();
         }
-        printf("fps: %.3f\n", Clock::fps());
+        if (fps_ctr++ > 100)
+        {
+            fps_ctr = 0;
+            printf("fps: %.3f\n", Clock::fps());
+        }
     }
 
     Screen::destroy();
