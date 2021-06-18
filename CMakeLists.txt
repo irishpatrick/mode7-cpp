@@ -110,6 +110,7 @@ set(sources
     src/RacingLine.cpp
     src/ResponseCurve.cpp
     src/Scene.cpp
+    src/Scheduler.cpp
     src/Screen.cpp
     src/Shader.cpp
     src/TexCache.cpp
@@ -118,6 +119,7 @@ set(sources
     src/Track.cpp
     src/Tree.cpp
     src/Util.cpp
+    src/Worker.cpp
 )
 
 add_executable(${PROJECT_NAME} ${sources})

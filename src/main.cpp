@@ -15,6 +15,7 @@
 #include "Collisions.hpp"
 #include "HUD.hpp"
 #include "FrameBuffer.hpp"
+#include "Worker.hpp"
 
 #include <cstdio>
 #include <SDL.h>
