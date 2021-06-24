@@ -1,24 +1,26 @@
 #include "MeshUpdateWorker.hpp"
-#include "Mesh.hpp"
+#include "Object.hpp"
 
 namespace mode7
 {
 
-MeshUpdateWorker::MeshUpdateWorker(uint32_t id) : 
-    Worker(id)
-{
+    MeshUpdateWorker::MeshUpdateWorker(uint32_t id) : 
+        Worker(id)
+    {
 
-}
+    }
 
-MeshUpdateWorker::~MeshUpdateWorker()
-{
+    MeshUpdateWorker::~MeshUpdateWorker()
+    {
 
-}
+    }
 
-void* MeshUpdateWorker::job(void* data)
-{
-    Mesh* m = (Mesh*)data;
-    m->update();
-}
+    void* MeshUpdateWorker::job(void* data)
+    {
+        Object* m = (Object*)data;
+        m->update();
+        
+        return nullptr;
+    }
 
 }

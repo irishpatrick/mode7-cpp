@@ -40,6 +40,7 @@ void Scheduler<T>::addJobData(void* data)
 template <class T>
 void Scheduler<T>::distribute()
 {
+    //std::cout << "fill workers" << std::endl;
     int ctr = 0;
     while (ctr < m_jobdata.size())
     {
@@ -54,6 +55,7 @@ void Scheduler<T>::distribute()
         }
     }
 
+    //std::cout << "run workers" << std::endl;
     {
         auto lg = m_syncdata.getLockGuard();
         for (auto& e : m_workers)
@@ -73,6 +75,8 @@ void Scheduler<T>::distribute()
     }
 
     m_syncdata.resetCounter();
+
+    //std::cout << "done!" << std::endl;
 }
 
 template <class T>

@@ -123,6 +123,11 @@ void Object::update()
 
 void Object::update(glm::mat4 pmat)
 {
+    if (parent)
+    {
+        pmat = parent->worldMatrix;
+    }
+    
     quat = ry * rz * rx;
 
     glm::mat4 t = glm::translate(glm::mat4(1.0f), position);
@@ -141,7 +146,8 @@ void Object::update(glm::mat4 pmat)
 
     for (auto& e : children)
     {
-        e->update(worldMatrix);
+        //e->update(worldMatrix);
+        e->update();
     }
 }
 

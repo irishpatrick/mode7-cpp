@@ -8,14 +8,14 @@
 namespace mode7
 {
 
-class MeshUpdateWorker : public Worker
-{
-public:
-    MeshUpdateWorker(uint32_t);
-    virtual ~MeshUpdateWorker();
+    class MeshUpdateWorker : public Worker
+    {
+    public:
+        MeshUpdateWorker(uint32_t);
+        virtual ~MeshUpdateWorker();
 
-    virtual void* job(void*);
-};
+        virtual void* job(void*);
+    };
 
 }
 
