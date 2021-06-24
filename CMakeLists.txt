@@ -10,6 +10,7 @@ else()
 endif()
 
 set(incl include src)
+set(libs worker)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -50,6 +51,8 @@ else ()
     pkg_check_modules(BULLET REQUIRED bullet)
 
     set(incl
+        ./worker/include
+        ./worker/src
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
@@ -112,7 +115,6 @@ set(sources
     src/RacingLine.cpp
     src/ResponseCurve.cpp
     src/Scene.cpp
-    src/Scheduler.tpp
     src/Screen.cpp
     src/Shader.cpp
     src/TexCache.cpp
@@ -121,8 +123,9 @@ set(sources
     src/Track.cpp
     src/Tree.cpp
     src/Util.cpp
-    src/Worker.cpp
 )
+
+add_subdirectory(./worker)
 
 add_executable(${PROJECT_NAME} ${sources})
 
@@ -131,6 +134,7 @@ file(COPY ${assets} DESTINATION ./assets)
 
 target_compile_options(${PROJECT_NAME} PRIVATE ${CMAKE_CXX_FLAGS} ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
+target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/worker)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
 
 #add_subdirectory(./tools/sim)

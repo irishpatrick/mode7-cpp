@@ -3,13 +3,15 @@
 
 #include "Worker.hpp"
 
+#include <cstdint>
+
 namespace mode7
 {
 
 class MeshUpdateWorker : public Worker
 {
 public:
-    MeshUpdateWorker();
+    MeshUpdateWorker(uint32_t);
     virtual ~MeshUpdateWorker();
 
     virtual void* job(void*);

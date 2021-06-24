@@ -71,13 +71,13 @@ void update()
     car.input();
     skybox.position = car.position;
 
-    //updateScheduler.distribute();
+    updateScheduler.distribute();
     //updateScheduler.spinWait();
-    car.update();
-    skybox.update();
-    aitest.update();
+    //car.update();
+    //skybox.update();
+    //aitest.update();
     Camera::updateView();
-    tree.update();
+    //tree.update();
     //rltest.update(car.position);
 
     cl.update();
@@ -215,7 +215,7 @@ int main(int argc, char** argv)
     skybox.update();
     track.getScene()->update();
 
-    updateScheduler.startWorkers(4);
+    updateScheduler.startWorkers(2);
     updateScheduler.addJobData(&tree);
     updateScheduler.addJobData(&skybox);
     updateScheduler.addJobData(&aitest);
@@ -239,6 +239,7 @@ int main(int argc, char** argv)
         }
     }
 
+    updateScheduler.shutdown();
     Screen::destroy();
     SDL_Quit();
 

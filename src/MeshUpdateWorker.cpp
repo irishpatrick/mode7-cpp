@@ -4,8 +4,8 @@
 namespace mode7
 {
 
-MeshUpdateWorker::MeshUpdateWorker() : 
-    Worker()
+MeshUpdateWorker::MeshUpdateWorker(uint32_t id) : 
+    Worker(id)
 {
 
 }

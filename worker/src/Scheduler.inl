@@ -1,4 +1,4 @@
-#include "Scheduler.hpp"
+
 
 namespace mode7
 {
@@ -21,7 +21,9 @@ int Scheduler<T>::startWorkers(uint32_t n_workers)
     std::unique_ptr<T> created;
     for (uint32_t i = 0; i < n_workers; ++i)
     {
-        created = std::make_unique<T>();
+        m_syncdata.setNumWorkers(n_workers);
+        created = std::make_unique<T>(i + 1);
+        created->setSyncData(&m_syncdata);
         m_workers.push_back(std::move(created));
         m_workers.back()->start(false);
     }
@@ -51,6 +53,42 @@ void Scheduler<T>::distribute()
             }
         }
     }
+
+    {
+        auto lg = m_syncdata.getLockGuard();
+        for (auto& e : m_workers)
+        {
+            e->go();
+        }
+    }   
+    m_syncdata.getWakeWorkerCV()->notify_all();
+
+    uint32_t n_workers = m_workers.size();
+    uint32_t* wctr = &n_workers;
+    SyncData* sdat = &m_syncdata;
+
+    {
+        auto lk = m_syncdata.getUniqueLock();
+        m_syncdata.getWakeSchedulerCV()->wait(lk, [sdat]{return sdat->getCounter() == 0;});
+    }
+
+    m_syncdata.resetCounter();
+}
+
+template <class T>
+void Scheduler<T>::shutdown()
+{
+    {
+        auto lg = m_syncdata.getLockGuard();
+        for (auto& e : m_workers)
+        {
+            e->go();
+            e->stop();
+        }
+    }   
+    m_syncdata.getWakeWorkerCV()->notify_all();
+
+    join();
 }
 
 template <class T>
