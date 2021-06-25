@@ -57,7 +57,7 @@ void Scheduler<T>::distribute()
 
     //std::cout << "run workers" << std::endl;
     {
-        auto lg = m_syncdata.getLockGuard();
+        std::lock_guard<std::mutex> lg(m_syncdata.getLockMutex());
         for (auto& e : m_workers)
         {
             e->go();
@@ -83,7 +83,7 @@ template <class T>
 void Scheduler<T>::shutdown()
 {
     {
-        auto lg = m_syncdata.getLockGuard();
+        std::lock_guard<std::mutex> lg(m_syncdata.getLockMutex());
         for (auto& e : m_workers)
         {
             e->go();

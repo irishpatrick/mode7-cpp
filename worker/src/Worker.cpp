@@ -48,7 +48,7 @@ void Worker::jobLoop(Worker* w)
         w->m_should_begin = false;
 
         {
-            auto lg = w->m_syncdata->getLockGuard();
+            std::lock_guard<std::mutex> lg(w->m_syncdata->getLockMutex());
             w->m_syncdata->decrement();
         }
         w->m_syncdata->getWakeSchedulerCV()->notify_one();

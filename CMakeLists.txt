@@ -24,6 +24,12 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     find_package(assimp CONFIG REQUIRED)
     find_package(Bullet CONFIG REQUIRED)
 
+    set(incl
+        ${incl}
+        ./worker/include
+        ./worker/src
+    )
+
     set(libs
         ${libs}
         SDL2::SDL2

@@ -216,15 +216,21 @@ int main(int argc, char** argv)
     skybox.update();
     track.getScene()->update();
 
-    updateScheduler.startWorkers(1);
+    updateScheduler.startWorkers(2);
     updateScheduler.addJobData(&tree);
     updateScheduler.addJobData(&skybox);
     updateScheduler.addJobData(&aitest);
     updateScheduler.addJobData(&car);
-    for (int i = 0; i < 300; ++i)
+    //for (int i = 0; i < 500; ++i)
+    /*std::cout << track.getScene()->getChildren().size() << std::endl;
+    for (int i = 0; i < track.getScene()->getChildren().size(); ++i)
     {
         updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-    }
+        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
+        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
+        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
+        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
+    }*/
     
 
     running = 1;
@@ -241,7 +247,7 @@ int main(int argc, char** argv)
         if (fps_ctr++ > 100)
         {
             fps_ctr = 0;
-            //printf("fps: %.3f\n", Clock::fps());
+            printf("fps: %.3f\n", Clock::fps());
         }
     }
 

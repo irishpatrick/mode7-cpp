@@ -26,7 +26,7 @@ void Clock::tick()
 {
     cur = MILLIS();
     elapsed = cur - prev;
-    std::cout << "cur: " << cur << "\telapsed: " << elapsed << std::endl;
+    //std::cout << "cur: " << cur << "\telapsed: " << elapsed << std::endl;
     m_fps = 1000.0 / (float)elapsed;
     prev = cur;
     lag += elapsed;
@@ -34,7 +34,7 @@ void Clock::tick()
 
 void Clock::lagTick()
 {
-    std::cout << lag << std::endl;
+    //std::cout << lag << std::endl;
     lag -= interval;
 }
 

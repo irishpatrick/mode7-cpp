@@ -81,8 +81,8 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetSwapInterval(1);
+    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
 
     unsigned int flags = 0;
     if (fullscreen)
@@ -96,6 +96,13 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         SDL_WINDOW_OPENGL | flags
     );
     ctx = SDL_GL_CreateContext(window);
+
+    err = SDL_GL_SetSwapInterval(0);
+    if (err < 0)
+    {
+        std::cout << SDL_GetError() << std::endl;
+        exit(1);
+    }
 
     glewExperimental = GL_TRUE;
     const GLenum glerr = glewInit();

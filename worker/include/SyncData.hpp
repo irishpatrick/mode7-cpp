@@ -40,12 +40,17 @@ namespace mode7
 
         inline std::unique_lock<std::mutex> getUniqueLock()
         {
-            return std::unique_lock(m_lock_mutex);
+            return (std::unique_lock<std::mutex>(m_lock_mutex));
         }
 
-        inline std::lock_guard<std::mutex> getLockGuard()
+        /*inline std::lock_guard<std::mutex> getLockGuard()
         {
-            return std::lock_guard<std::mutex>(m_lock_mutex);
+            return std::move(std::lock_guard<std::mutex>(m_lock_mutex));
+        }*/
+
+        inline std::mutex& getLockMutex()
+        {
+            return m_lock_mutex;
         }
 
         inline void resetCounter()
