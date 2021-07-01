@@ -49,7 +49,6 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     else
     {
         int sc = Util::getMonitorScale();
-        std::cout << sc << std::endl;
         width = w * sc;
         height = h * sc;
     }

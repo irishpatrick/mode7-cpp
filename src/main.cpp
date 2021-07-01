@@ -19,6 +19,8 @@
 #include "MeshUpdateWorker.hpp"
 
 #include <cstdio>
+#include <cassert>
+#include <memory>
 #include <SDL.h>
 #include <iostream>
 
@@ -37,7 +39,7 @@ Shader skyboxShader;
 Shader depthShader;
 Shader passShader;
 
-Scene skybox;
+std::shared_ptr<Scene> skybox;
 Tree tree;
 Car car;
 Track track;
@@ -69,7 +71,7 @@ void update()
     }
 
     car.input();
-    skybox.position = car.position;
+    skybox->position = car.position;
 
     updateScheduler.distribute();
     //updateScheduler.spinWait();
@@ -99,7 +101,7 @@ void draw(int32_t step)
 
     if (forced)
     {
-        skybox.draw(*forced);
+        skybox->draw(*forced);
         track.getScene()->draw(*forced);
         tree.draw(*forced);
         aitest.draw(*forced);
@@ -107,7 +109,7 @@ void draw(int32_t step)
     }
     else
     {
-        skybox.draw(skyboxShader);
+        skybox->draw(skyboxShader);
         track.getScene()->draw(spriteShader);
         tree.draw(spriteShader);
         aitest.draw(spriteShader);
@@ -152,14 +154,18 @@ int main(int argc, char** argv)
     depthTexture.forceShader(&depthShader);
     Screen::addFrameBuffer("depthTex", &depthTexture);
 
-    skybox = ModelLoader::open("assets/models/skybox.dae");
-    skybox.scale = glm::vec3(1200.f);
+    skybox = ModelLoader::openShared("assets/models/skybox.dae");
+    skybox->name = "skybox";
+    skybox->scale = glm::vec3(1200.f);
+    //assert(skybox.getMesh(0)->getParent() == &skybox);
+    //skybox.getMesh(0)->scale = skybox.scale;
     //skybox.getMesh(0)->visible = false;
     //track = ModelLoader::open("assets/models/oval2.dae");
     //track = ModelLoader::open("assets/models/oval_small.dae");
     //track = ModelLoader::open("assets/blender/newtrack.dae");
     //track = ModelLoader::open("assets/track_data/track1.dae");
     track.open("assets/track_data/track1.dae");
+    track.getScene()->name = "trak1";
     //track.attachData("assets/track_data/track1.obj.tdat");
     track.getScene()->scale = glm::vec3(20.f);
     track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
@@ -213,12 +219,12 @@ int main(int argc, char** argv)
 
     // only need to update once
     tree.update();
-    skybox.update();
+    skybox->update();
     track.getScene()->update();
 
     updateScheduler.startWorkers(2);
     updateScheduler.addJobData(&tree);
-    updateScheduler.addJobData(&skybox);
+    updateScheduler.addJobData(skybox.get());
     updateScheduler.addJobData(&aitest);
     updateScheduler.addJobData(&car);
     //for (int i = 0; i < 500; ++i)
@@ -244,11 +250,11 @@ int main(int argc, char** argv)
             update();
             Clock::lagTick();
         }
-        if (fps_ctr++ > 100)
+        /*if (fps_ctr++ > 100)
         {
             fps_ctr = 0;
             printf("fps: %.3f\n", Clock::fps());
-        }
+        }*/
     }
 
     updateScheduler.shutdown();

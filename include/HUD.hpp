@@ -6,6 +6,8 @@
 #include "Shader.hpp"
 #include "Scene.hpp"
 
+#include <memory>
+
 namespace mode7
 {
 
@@ -36,7 +38,7 @@ private:
     Mesh m_brakeGauge;
     Mesh m_brake;
     Shader m_shader;
-    Scene scene;
+    std::shared_ptr<Scene> scene;
 };
 
 }

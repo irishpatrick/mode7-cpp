@@ -2,6 +2,7 @@
 #define OBJECT_HPP
 
 #include <vector>
+#include <string>
 #include "gl.hpp"
 #include "BBox.hpp"
 
@@ -55,6 +56,8 @@ public:
     glm::quat quat;
     glm::mat4 matrix;
     glm::mat4 inherent;
+
+    std::string name;
 
 protected:
 

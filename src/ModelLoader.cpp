@@ -13,17 +13,15 @@ namespace mode7
 
 static glm::mat4 matrix;
 
-//std::vector<Mesh> ModelLoader::open(const std::string& fn)
-Scene ModelLoader::open(const std::string& fn)
+std::shared_ptr<Scene> ModelLoader::openShared(const std::string& fn)
 {
     std::vector<std::shared_ptr<Mesh>> meshes;
-    Scene s;
+    std::shared_ptr<Scene> s = std::make_shared<Scene>();
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(fn, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "error::assimp::" << importer.GetErrorString() << std::endl;
-        //return meshes;
         return s;
     }
 
@@ -31,9 +29,9 @@ Scene ModelLoader::open(const std::string& fn)
 
     for (auto& e : meshes)
     {
-        s.addMesh(e);
+        s->addMesh(e);
     }
-    //return meshes;
+    
     return s;
 }
 
@@ -46,7 +44,6 @@ std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "error::assimp::" << importer.GetErrorString() << std::endl;
-        //return meshes;
         return s;
     }
 

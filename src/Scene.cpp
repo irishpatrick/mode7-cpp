@@ -1,9 +1,13 @@
 #include "Scene.hpp"
 
+#include <cassert>
+#include <iostream>
+
 namespace mode7
 {
 
-Scene::Scene()
+Scene::Scene() : 
+    Object()
 {
 
 }
@@ -16,8 +20,8 @@ Scene::~Scene()
 void Scene::addMesh(std::shared_ptr<Mesh> mesh)
 {
     meshes.push_back(mesh);
-    addChild(mesh.get());
-    //mesh->parent = this;
+    std::cout << "scene set parent " << this << std::endl;
+    addChild((Object*)meshes.back().get());
 }
 
 Mesh* Scene::getMesh(unsigned int index)

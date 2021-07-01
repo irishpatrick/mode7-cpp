@@ -21,7 +21,8 @@ Object::Object() :
     front(),
     right(),
     up(0, 1, 0),
-    parent(nullptr)
+    parent(nullptr),
+    name("Unnamed Object")
 {
 
 }
@@ -92,6 +93,7 @@ void Object::addChild(Object* o)
     o->ry = o->ry * glm::inverse(ry);
     o->rz = o->rz * glm::inverse(rz);
     children.push_back(o);
+    std::cout << "object set parent " << this << std::endl;
 }
 
 Object* Object::getParent()
