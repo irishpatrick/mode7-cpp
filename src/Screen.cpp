@@ -78,8 +78,6 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
     //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
 
@@ -96,7 +94,7 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     );
     ctx = SDL_GL_CreateContext(window);
 
-    err = SDL_GL_SetSwapInterval(0);
+    err = SDL_GL_SetSwapInterval(1);
     if (err < 0)
     {
         std::cout << SDL_GetError() << std::endl;
@@ -110,7 +108,6 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         printf("glew init error: %s\n", glewGetErrorString(glerr));
     }
 
-    //glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glClearColor(0.7f, 0.7f, 0.8f, 1.0f);

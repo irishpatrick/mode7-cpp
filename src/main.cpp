@@ -74,10 +74,6 @@ void update()
     skybox->position = car.position;
 
     updateScheduler.distribute();
-    //updateScheduler.spinWait();
-    //car.update();
-    //skybox.update();
-    //aitest.update();
     Camera::updateView();
     //tree.update();
     //rltest.update(car.position);
@@ -123,7 +119,7 @@ void draw(int32_t step)
 int main(int argc, char** argv)
 {
     Screen::create(WIDTH, HEIGHT, false);
-    Camera::create(WIDTH, HEIGHT, 70.f, 1.0f, 1500.f);
+    Camera::create(WIDTH, HEIGHT, 70.0, 0.1, 1500.0);
 
     Keyboard::attach();
     

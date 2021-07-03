@@ -29,10 +29,10 @@ namespace mode7
 
         inline void destroy()
         {
-            std::cout << m_pixels << std::endl;
+            //std::cout << m_pixels << std::endl;
             if (m_pixels)
             {
-                std::cout << "freesurf " << m_pixels << std::endl;
+                //std::cout << "freesurf " << m_pixels << std::endl;
                 SDL_FreeSurface(m_pixels);
                 m_pixels = nullptr;
             }

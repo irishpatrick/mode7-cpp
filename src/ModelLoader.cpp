@@ -57,7 +57,7 @@ std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
 
 void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene, aiMatrix4x4 transform)
 {
-    std::cout << "process node: " << node->mName.C_Str() << std::endl;
+    //std::cout << "process node: " << node->mName.C_Str() << std::endl;
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
