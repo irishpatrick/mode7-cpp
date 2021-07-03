@@ -157,7 +157,7 @@ void Car::updateControls()
     }
 
     velocity.z = fmaxf(last_vz, desired);
-    velocity.z -= brake_amt * 0.125;
+    velocity.z -= brake_amt * 0.075;
     velocity.z -= 0.04 * last_vz / top_speed;
     velocity.z = fmaxf(velocity.z, 0.f);
 

@@ -16,16 +16,16 @@ public:
     Material();
     virtual ~Material();
 
-    void addMap(Texture);
+    void addMap(Texture*);
 
-    virtual Texture getMap(uint32_t);
+    virtual Texture* getMap(uint32_t);
     virtual uint32_t numMaps();
 
     int tile;
 
 protected:
 
-    std::vector<Texture> maps;
+    std::vector<Texture*> maps;
 };
 
 }

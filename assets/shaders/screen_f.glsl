@@ -8,8 +8,8 @@ uniform sampler2D colorTex;
 void main()
 {
     float pi_2 = 3.14159264338327 * 2.0;
-    float blur_n_dir = 16.0;
-    float blur_qual = 2.0;
+    float blur_n_dir = 32.0;
+    float blur_qual = 32.0;
     float size = 4.0;
     float depth = min(1.0, length(texture(depthTex, tc).xyz));
     vec2 rad = vec2(size / 1280, size / 720);

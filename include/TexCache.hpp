@@ -11,7 +11,7 @@ class TexCache
 {
 public:
 
-    static Texture open(const std::string&, TexType);
+    static Texture* open(const std::string&, TexType);
 
 };
 

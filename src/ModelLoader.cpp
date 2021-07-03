@@ -11,8 +11,6 @@
 namespace mode7
 {
 
-static glm::mat4 matrix;
-
 std::shared_ptr<Scene> ModelLoader::openShared(const std::string& fn)
 {
     std::vector<std::shared_ptr<Mesh>> meshes;
@@ -25,7 +23,7 @@ std::shared_ptr<Scene> ModelLoader::openShared(const std::string& fn)
         return s;
     }
 
-    processNode(meshes, scene->mRootNode, scene);
+    processNode(meshes, scene->mRootNode, scene, aiMatrix4x4());
 
     for (auto& e : meshes)
     {
@@ -47,7 +45,7 @@ std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
         return s;
     }
 
-    processNode(meshes, scene->mRootNode, scene);
+    processNode(meshes, scene->mRootNode, scene, aiMatrix4x4());
 
     for (auto& e : meshes)
     {
@@ -57,25 +55,24 @@ std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
     return s;
 }
 
-void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene)
+void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene, aiMatrix4x4 transform)
 {
-    matrix = Util::fromAi(node->mTransformation);
-    //std::cout << "process node: " << node->mName.C_Str() << std::endl;
+    std::cout << "process node: " << node->mName.C_Str() << std::endl;
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        vec.push_back(processMesh(mesh, scene));
+        vec.push_back(processMesh(mesh, scene, transform * node->mTransformation));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; ++i)
     {
-        processNode(vec, node->mChildren[i], scene);
+        processNode(vec, node->mChildren[i], scene, transform * node->mTransformation);
     }
 }
 
-std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene, aiMatrix4x4 transform)
 {
-    //std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
+    std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
     std::shared_ptr<Mesh> out = std::make_shared<Mesh>();
     Material mat;
 
@@ -125,21 +122,23 @@ std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scen
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<Texture> d = loadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Texture*> d = loadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         for (auto& e : d)
         {
             mat.addMap(e);
         }
     }
 
-    out->inherent = matrix;
+    
+
+    out->inherent = Util::fromAi(transform);
     out->setMaterial(mat);
     out->createFromArrays(vertices, indices);
 
     return out;
 }
 
-std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType type, const std::string& name)
+std::vector<Texture*> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType type, const std::string& name)
 {
     TexType tt;
     if (name == "texture_diffuse")
@@ -150,11 +149,10 @@ std::vector<Texture> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType ty
     {
         tt = TexType::SPECULAR;
     }
-    std::vector<Texture> out;
+    std::vector<Texture*> out;
 
     for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i)
     {
-        Texture t;
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string fn = "assets/textures/" + std::string(str.C_Str());

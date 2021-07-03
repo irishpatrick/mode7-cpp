@@ -190,19 +190,19 @@ void Shader::setMaterial(Material& m)
 
     for (uint32_t i = 0; i < m.numMaps(); ++i)
     {
-        Texture t = m.getMap(i);
+        Texture* t = m.getMap(i);
         GLuint loc;
-        if (t.getType() == TexType::DIFFUSE)
+        if (t->getType() == TexType::DIFFUSE)
         {
             loc = m_diffuseMaps[i];
         }
-        else if (t.getType() == TexType::SPECULAR)
+        else if (t->getType() == TexType::SPECULAR)
         {
             loc = m_specularMaps[i];
         }
         glUniform1i(loc, i);
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, t.getId());
+        glBindTexture(GL_TEXTURE_2D, t->getId());
     }
 
     glActiveTexture(GL_TEXTURE0);

@@ -18,9 +18,9 @@ public:
 
     static std::unique_ptr<Scene> openUnique(const std::string&);
     static std::shared_ptr<Scene> openShared(const std::string&);
-    static void processNode(std::vector<std::shared_ptr<Mesh>>&, aiNode*, const aiScene*);
-    static std::shared_ptr<Mesh> processMesh(aiMesh*, const aiScene*);
-    static std::vector<Texture> loadTextures(aiMaterial*, aiTextureType, const std::string&);
+    static void processNode(std::vector<std::shared_ptr<Mesh>>&, aiNode*, const aiScene*, aiMatrix4x4);
+    static std::shared_ptr<Mesh> processMesh(aiMesh*, const aiScene*, aiMatrix4x4);
+    static std::vector<Texture*> loadTextures(aiMaterial*, aiTextureType, const std::string&);
 
 private:
 

@@ -20,13 +20,13 @@ public:
     void open(const std::string&);
     void setCurrentFrame(uint32_t);
 
-    virtual Texture getMap(uint32_t);
+    virtual Texture* getMap(uint32_t);
     virtual uint32_t numMaps();
 
 private:
 
     uint32_t mCurrentFrame;
-    std::vector<Texture> frames;
+    std::vector<Texture*> frames;
 };
 
 }

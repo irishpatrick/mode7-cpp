@@ -20,7 +20,6 @@ Scene::~Scene()
 void Scene::addMesh(std::shared_ptr<Mesh> mesh)
 {
     meshes.push_back(mesh);
-    std::cout << "scene set parent " << this << std::endl;
     addChild((Object*)meshes.back().get());
 }
 

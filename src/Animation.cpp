@@ -47,7 +47,7 @@ void Animation::setCurrentFrame(uint32_t index)
     mCurrentFrame = index;
 }
 
-Texture Animation::getMap(uint32_t)
+Texture* Animation::getMap(uint32_t)
 {
     return frames[mCurrentFrame];
 }
