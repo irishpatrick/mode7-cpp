@@ -127,6 +127,7 @@ set(sources
     src/Texture.cpp
     src/Timer.cpp
     src/Track.cpp
+    src/TrackData.cpp
     src/Tree.cpp
     src/Util.cpp
 )

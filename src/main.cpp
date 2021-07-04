@@ -144,6 +144,12 @@ int main(int argc, char** argv)
         "assets/shaders/pass_v.glsl",
         "assets/shaders/pass_f.glsl"
     );
+
+    if (err)
+    {
+        std::cout << "failed to load shader!" << std::endl;
+        return 1;
+    }
     
     depthTexture.init(WIDTH, HEIGHT);
     depthTexture.setShader(&passShader);

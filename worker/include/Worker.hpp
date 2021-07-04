@@ -11,53 +11,51 @@
 
 namespace mode7
 {
-
-class Worker
-{
-public:
-    Worker(uint32_t);
-    virtual ~Worker();
-
-    virtual void* job(void*) = 0;
-
-    inline void setSyncData(SyncData* sd)
+    class Worker
     {
-        m_syncdata = sd;
-    }
+    public:
+        Worker(uint32_t);
+        virtual ~Worker();
 
-    inline void go()
-    {
-        m_should_begin = true;
-    }
+        virtual void* job(void*) = 0;
 
-    inline void stop()
-    {
-        m_running = false;
-    }
+        inline void setSyncData(SyncData* sd)
+        {
+            m_syncdata = sd;
+        }
 
-    void start(bool);
-    void join();
-    void queue(void*);
+        inline void go()
+        {
+            m_should_begin = true;
+        }
 
-    size_t getQueueLen();
-    bool isDone();
+        inline void stop()
+        {
+            m_running = false;
+        }
 
-private:
-    static void jobLoop(Worker*);
+        void start(bool);
+        void join();
+        void queue(void*);
 
-    bool m_isdone;
-    bool m_running;
-    bool m_autostop;
-    bool m_should_begin;
+        size_t getQueueLen();
+        bool isDone();
 
-    uint32_t m_id;
+    private:
+        static void jobLoop(Worker*);
 
-    std::unique_ptr<std::thread> m_thread;
-    SyncData* m_syncdata;
-    std::mutex m_jobq_mutex;
-    std::queue<void*> m_jobq;
-};
+        bool m_isdone;
+        bool m_running;
+        bool m_autostop;
+        bool m_should_begin;
 
+        uint32_t m_id;
+
+        std::unique_ptr<std::thread> m_thread;
+        SyncData* m_syncdata;
+        std::mutex m_jobq_mutex;
+        std::queue<void*> m_jobq;
+    };
 }
 
 #endif /* WORKER_HPP */

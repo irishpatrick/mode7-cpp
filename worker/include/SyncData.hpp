@@ -43,11 +43,6 @@ namespace mode7
             return (std::unique_lock<std::mutex>(m_lock_mutex));
         }
 
-        /*inline std::lock_guard<std::mutex> getLockGuard()
-        {
-            return std::move(std::lock_guard<std::mutex>(m_lock_mutex));
-        }*/
-
         inline std::mutex& getLockMutex()
         {
             return m_lock_mutex;

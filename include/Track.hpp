@@ -5,6 +5,7 @@
 #include "Line2D.hpp"
 #include "Rect.hpp"
 #include "Scene.hpp"
+#include "TrackData.hpp"
 
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@ private:
     std::vector<Rect> m_runoffBounds;
     std::vector<Rect> m_wallsBounds;
     std::unique_ptr<Scene> m_scene;
+    TrackData m_data;
 };
 
 }
