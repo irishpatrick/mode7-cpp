@@ -33,3 +33,8 @@ void quad_connect_raw(quad* q, float* a, float* b, float* c, float* d)
     vec2 vd = {d[0], d[1]};
     quad_connect(q, va, vb, vc, vd);
 }
+
+void quad_from_buffer(quad* q, float* buf)
+{
+    quad_connect_raw(q, buf, buf + 2, buf + 4, buf + 6);
+}

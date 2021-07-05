@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 
-#include "Line2D.hpp"
-#include "Rect.hpp"
+#include "geometry.h"
+#include "line.h"
 
 namespace mode7
 {
@@ -17,10 +18,13 @@ namespace mode7
         ~TrackData();
 
         int open(const std::string&);
+        int transform(const glm::mat4&);
 
     private:
-        std::vector<Line2D> m_centerLines;
-        std::vector<Rect> m_trackBounds;
+        std::vector<line> m_centerLines;
+        std::vector<quad> m_trackBounds;
+        std::vector<quad> m_runoffBounds;
+        std::vector<quad> m_wallBounds;
     };
 }
 

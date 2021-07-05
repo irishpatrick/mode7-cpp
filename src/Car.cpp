@@ -49,11 +49,9 @@ Car::~Car()
 
 void Car::open(const std::string& fn)
 {
-    //parseConfig("assets/cars/config.txt");
     std::stringstream ss;
     ss << fn << "/";
     m_debugText.init();
-    //m_vCurve.open("assets/cars/higha.txt");
     m_vCurve.open(ss.str() + "gas.txt");
     m_wheelCurve.open(ss.str() + "wheel.txt");
     m_tractionCurve.open(ss.str() + "drift.txt");
@@ -141,6 +139,8 @@ void Car::updateControls()
     turn_amt = m_turnMap.calculate(wp_adj, velocity.z / top_speed);
     drift_amt = m_driftMap.calculate(fabs(wheel.getPosition()), velocity.z / top_speed);
     brake_amt = m_brakeMap.calculate(brake.getPosition(), velocity.z / top_speed);
+
+    brake_amt *= (1.0 - (turn_amt / 1.5));
 
     float desired = vel_percent * top_speed;
     float last_vz = velocity.z;

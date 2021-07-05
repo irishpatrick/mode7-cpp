@@ -11,6 +11,11 @@ void line_connect(line* l, float x1, float y1, float x2, float y2)
     l->p2[1] = y2;
 }
 
+void line_from_buffer(line* l, float* buf)
+{
+    line_connect(l, buf[0], buf[1], buf[2], buf[3]);
+}
+
 void line_solve(line* l, float t, float out[2])
 {
     out[0] = (1.f - t) * l->p1[0] + t * l->p2[0];

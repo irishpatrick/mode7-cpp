@@ -19,7 +19,7 @@ std::shared_ptr<Scene> ModelLoader::openShared(const std::string& fn)
     const aiScene* scene = importer.ReadFile(fn, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "error::assimp::" << importer.GetErrorString() << std::endl;
+        std::cout << "[ModelLoader] error::assimp::" << importer.GetErrorString() << std::endl;
         return s;
     }
 
@@ -57,7 +57,6 @@ std::unique_ptr<Scene> ModelLoader::openUnique(const std::string& fn)
 
 void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* node, const aiScene* scene, aiMatrix4x4 transform)
 {
-    //std::cout << "process node: " << node->mName.C_Str() << std::endl;
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -72,7 +71,6 @@ void ModelLoader::processNode(std::vector<std::shared_ptr<Mesh>>& vec, aiNode* n
 
 std::shared_ptr<Mesh> ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene, aiMatrix4x4 transform)
 {
-    std::cout << "\tprocess mesh: " << mesh->mName.C_Str() << std::endl;
     std::shared_ptr<Mesh> out = std::make_shared<Mesh>();
     Material mat;
 

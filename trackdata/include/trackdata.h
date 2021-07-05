@@ -1,6 +1,11 @@
 #ifndef TRACKDATA_H
 #define TRACKDATA_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+
 #include "line.h"
 #include "geometry.h"
 
@@ -41,5 +46,9 @@ void trackdata_push_clp(trackdata*);
 void trackdata_push_tbp(trackdata*);
 void trackdata_push_rbp(trackdata*);
 void trackdata_push_wbp(trackdata*);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* TRACKDATA_H */

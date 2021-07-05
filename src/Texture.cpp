@@ -8,7 +8,6 @@
 
 namespace mode7
 {
-
     Texture::Texture() :
         type(TexType::DIFFUSE),
         id(-1),
@@ -103,5 +102,4 @@ namespace mode7
         }
         glTexSubImage2D(GL_TEXTURE_2D, 0, r->x, r->y, r->w, r->h, mode, GL_UNSIGNED_BYTE, m_pixels->pixels);
     }
-
 }

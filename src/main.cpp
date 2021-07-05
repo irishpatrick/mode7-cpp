@@ -85,7 +85,6 @@ void update()
 
 void draw(int32_t step)
 {
-    //std::cout << "draw" << std::endl;
     FrameBuffer* fb = nullptr;
     Shader* forced = nullptr;
 
@@ -167,14 +166,14 @@ int main(int argc, char** argv)
     //track = ModelLoader::open("assets/blender/newtrack.dae");
     //track = ModelLoader::open("assets/track_data/track1.dae");
     track.open("assets/track_data/track1.dae");
-    track.getScene()->name = "trak1";
-    //track.attachData("assets/track_data/track1.obj.tdat");
+    track.getScene()->name = "track1";
     track.getScene()->scale = glm::vec3(20.f);
     track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
     //track.position.y = -track.scale.y;
     //track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
     //track.position.y = 1 * -1.1f;
+    track.attachData("assets/track_data/track1.obj.tdat");
 
     tree.init();
     tree.position.x = 3;

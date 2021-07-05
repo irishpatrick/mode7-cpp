@@ -10,7 +10,7 @@ else()
 endif()
 
 set(incl include src)
-set(libs ${libs} worker)
+set(libs ${libs} worker trackdata geometry)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -28,6 +28,8 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         ${incl}
         ./worker/include
         ./worker/src
+        ./trackdata/include
+        ./geometry/include
     )
 
     set(libs
@@ -59,6 +61,8 @@ else ()
     set(incl
         ./worker/include
         ./worker/src
+        ./trackdata/include
+        ./geometry/include
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
@@ -110,7 +114,6 @@ set(sources
     src/HUD.cpp
     src/Keyboard.cpp
     src/Light.cpp
-    src/Line.cpp
     src/Line2D.cpp
     src/main.cpp
     src/Material.cpp
@@ -127,12 +130,14 @@ set(sources
     src/Texture.cpp
     src/Timer.cpp
     src/Track.cpp
-    src/TrackData.cpp
     src/Tree.cpp
     src/Util.cpp
 )
 
+add_subdirectory(./geometry)
 add_subdirectory(./worker)
+add_subdirectory(./trackdata)
+add_subdirectory(./tools/svg2track)
 
 add_executable(${PROJECT_NAME} ${sources})
 
