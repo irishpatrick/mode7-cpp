@@ -11,17 +11,18 @@ namespace mode7
 RacingLine::RacingLine() :
     m_queuedAction(0)
 {
-
 }
 
 RacingLine::~RacingLine()
 {
-
 }
 
 int RacingLine::load(const std::string& fn)
 {
+#ifdef _BUILD_DEBUG_TOOLS
     m_path.init();
+#endif /* _BUILD_DEBUG_TOOLS */
+
     std::vector<glm::vec2> points;
 
     std::ifstream in(fn);
@@ -107,11 +108,13 @@ int RacingLine::load(const std::string& fn)
 
     points.push_back(points.back());
     points.push_back(points[0]);
+
+#ifdef _BUILD_DEBUG_TOOLS
     m_path.createFromPoints(points);
     m_path.position.y = 0.5f;
     //m_path.position.x = -325.f;
     m_path.update();
-
+#endif /* _BUILD_DEBUG_TOOLS */
     in.close();
 
     return 0;

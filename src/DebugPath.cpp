@@ -1,4 +1,8 @@
+#ifdef _BUILD_DEBUG_TOOLS
+
 #include "DebugPath.hpp"
+
+#include <iostream>
 
 namespace mode7
 {
@@ -65,3 +69,5 @@ void DebugPath::draw()
 }
 
 }
+
+#endif /* _BUILD_DEBUG_TOOLS */

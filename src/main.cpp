@@ -74,6 +74,7 @@ void update()
     skybox->position = car.position;
 
     updateScheduler.distribute();
+    track.update();
     Camera::updateView();
     //tree.update();
     //rltest.update(car.position);
@@ -97,7 +98,8 @@ void draw(int32_t step)
     if (forced)
     {
         skybox->draw(*forced);
-        track.getScene()->draw(*forced);
+        //track.getScene()->draw(*forced);
+        track.draw(*forced);
         tree.draw(*forced);
         aitest.draw(*forced);
         car.draw(*forced);
@@ -105,13 +107,17 @@ void draw(int32_t step)
     else
     {
         skybox->draw(skyboxShader);
-        track.getScene()->draw(spriteShader);
+        //track.getScene()->draw(spriteShader);
+        track.draw(spriteShader);
         tree.draw(spriteShader);
         aitest.draw(spriteShader);
         car.draw(spriteShader);
     }
 
-    rltest.getDebugPath()->draw();
+#ifdef _BUILD_DEBUG_TOOLS
+    //rltest.getDebugPath()->draw();
+#endif /* _BUILD_DEBUG_TOOLS */
+
     hud.draw();
 }
 
@@ -161,14 +167,13 @@ int main(int argc, char** argv)
     //assert(skybox.getMesh(0)->getParent() == &skybox);
     //skybox.getMesh(0)->scale = skybox.scale;
     //skybox.getMesh(0)->visible = false;
-    //track = ModelLoader::open("assets/models/oval2.dae");
-    //track = ModelLoader::open("assets/models/oval_small.dae");
-    //track = ModelLoader::open("assets/blender/newtrack.dae");
-    //track = ModelLoader::open("assets/track_data/track1.dae");
     track.open("assets/track_data/track1.dae");
+    //track.open("assets/track_data/test_circle_full.dae");
     track.getScene()->name = "track1";
     track.getScene()->scale = glm::vec3(20.f);
+    //track.getScene()->scale = glm::vec3(3.f);
     track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
+    //track.getScene()->position.y = -track.getScene()->scale.y;
     //track.position.y = -track.scale.y;
     //track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
@@ -226,7 +231,7 @@ int main(int argc, char** argv)
     updateScheduler.startWorkers(2);
     updateScheduler.addJobData(&tree);
     updateScheduler.addJobData(skybox.get());
-    updateScheduler.addJobData(&aitest);
+    //updateScheduler.addJobData(&aitest);
     updateScheduler.addJobData(&car);
     //for (int i = 0; i < 500; ++i)
     /*std::cout << track.getScene()->getChildren().size() << std::endl;

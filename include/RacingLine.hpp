@@ -67,15 +67,19 @@ public:
         Rect* r = &m_rects[index];
     }*/
 
+#ifdef _BUILD_DEBUG_TOOLS
     inline DebugPath* getDebugPath()
     {
         return &m_path;
     }
+#endif /* _BUILD_DEBUG_TOOLS */
 
 private:
 
     int m_queuedAction;
+#ifdef _BUILD_DEBUG_TOOLS
     DebugPath m_path;
+#endif /* _BUILD_DEBUG_TOOLS */
     std::vector<std::pair<Line2D, int>> m_lines;
     std::vector<Rect> m_rects;
     std::vector<Rect> m_bounds;

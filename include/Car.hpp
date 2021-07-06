@@ -64,7 +64,9 @@ public:
     void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
     void parseConstants(const std::string&);
     void updateSprite();
+#ifdef _BUILD_DEBUG_TOOLS
     void updateDebugText();
+#endif /* _BUILD_DEBUG_TOOLS */
     virtual void update();
     virtual void draw(Shader&);
 
@@ -115,7 +117,9 @@ protected:
 
     Object sprite;
     Animation anim;
+#ifdef _BUILD_DEBUG_TOOLS
     DebugText m_debugText;
+#endif /* _BUILD_DEBUG_TOOLS */
     std::vector<Line> velCurve;
     ResponseCurve m_vCurve;
     ResponseCurve m_wheelCurve;

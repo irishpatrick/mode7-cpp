@@ -1,3 +1,5 @@
+#ifdef _BUILD_DEBUG_TOOLS
+
 #include "DebugText.hpp"
 #include <iostream>
 
@@ -124,3 +126,5 @@ void DebugText::draw()
 }
 
 }
+
+#endif /* _BUILD_DEBUG_TOOLS */

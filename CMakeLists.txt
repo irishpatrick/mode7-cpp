@@ -1,15 +1,19 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 
 project(mode7 C CXX)
 
 if (MSVC)
-    set(flags /W2 /D_CRT_SECURE_NO_WARNINGS)
+    set(flags ${flags} /W2 /D_CRT_SECURE_NO_WARNINGS)
 else()
-    set(flags -Wall -pg -std=c++17 -pthread)
+    set(flags ${flags} -Wall -pg -std=c++17 -pthread)
     set(libs X11)
 endif()
 
-set(incl include src)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(flags ${flags} -D_BUILD_DEBUG_TOOLS)
+endif()
+
+set(incl ${incl} include src)
 set(libs ${libs} worker trackdata geometry)
 
 # using vcpkg
@@ -148,8 +152,3 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${CMAKE_CXX_FLAGS} ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/worker)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
-
-#add_subdirectory(./tools/sim)
-#add_subdirectory(./tools/editor)
-#add_subdirectory(./tools/tasm)
-#add_subdirectory(./tools/svg2track)

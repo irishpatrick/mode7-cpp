@@ -6,6 +6,7 @@
 #include "Rect.hpp"
 #include "Scene.hpp"
 #include "TrackData.hpp"
+#include "DebugPath.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +23,6 @@ namespace mode7
 
         void open(const std::string&);
         void attachData(const std::string&);
-        void transformData(glm::vec3, glm::vec3, glm::vec3);
         Scene* getScene();
         void update();
         void draw(Shader&);
@@ -36,6 +36,12 @@ namespace mode7
         std::vector<Rect> m_wallsBounds;
         std::unique_ptr<Scene> m_scene;
         TrackData m_data;
+#ifdef _BUILD_DEBUG_TOOLS
+        DebugPath m_centerLineDbg;
+        DebugPath m_trackBoundDbg;
+        DebugPath m_runoffBoundDbg;
+        DebugPath m_wallBoundDbg;
+#endif /* _BUILD_DEBUG_TOOLS */
     };
 }
 

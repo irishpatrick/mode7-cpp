@@ -1,3 +1,5 @@
+#ifdef _BUILD_DEBUG_TOOLS
+
 #ifndef DEBUGPATH_HPP
 #define DEBUGPATH_HPP
 
@@ -20,6 +22,11 @@ public:
     void createFromPoints(std::vector<glm::vec2>&);
     void draw();
 
+    inline bool isReady()
+    {
+        return m_isReady;
+    }
+
 private:
 
     bool m_isReady;
@@ -32,3 +39,5 @@ private:
 }
 
 #endif /* DEBUGPATH_HPP */
+
+#endif /* _BUILD_DEBUG_TOOLS */

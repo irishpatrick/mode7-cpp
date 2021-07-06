@@ -1,8 +1,0 @@
-{
-    "frames": [
-        {"diffuse": "assets/textures/car.png"},
-        {"diffuse": "assets/textures/car-left.png"},
-        {"diffuse": "assets/textures/car-right.png"},
-        {"diffuse": "assets/textures/car.png"}
-    ]
-}

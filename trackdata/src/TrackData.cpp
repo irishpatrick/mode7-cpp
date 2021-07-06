@@ -74,7 +74,7 @@ namespace mode7
         }
 
         // move head to start
-        in.seekg(start, std::ios::beg);
+        //in.seekg(start, std::ios::beg);
 
         // parse data
         float qbuf[8];
@@ -84,8 +84,10 @@ namespace mode7
         {
             // read centerline
             in.read((char*)qbuf, 4 * sizeof(float));
+            //std::cout << "buffer " << qbuf[0] << "," << qbuf[1] << "," << qbuf[2] << "," << qbuf[3] << std::endl;
             line_from_buffer(&ln, qbuf);
             m_centerLines.push_back(ln);
+            std::cout << "line " << ln.p1[0] << "," << ln.p1[1] << "," << ln.p2[0] << "," << ln.p2[1] << std::endl;
 
             // read track bounds
             in.read((char*)qbuf, 8 * sizeof(float));
@@ -164,5 +166,86 @@ namespace mode7
         }
 
         return n_processed;
+    }
+
+    std::vector<glm::vec2> TrackData::getCenterLinePts()
+    {
+        std::vector<glm::vec2> points;
+        line* cur;
+
+        for (uint32_t i = 0; i < m_centerLines.size(); ++i)
+        {
+            cur = &m_centerLines[i];
+            points.push_back(glm::vec2(cur->p1[0], cur->p1[1]));
+            points.push_back(glm::vec2(cur->p2[0], cur->p2[1]));
+        }
+
+        return points;
+    }
+
+    std::vector<glm::vec2> TrackData::getTrackBoundPts()
+    {
+        std::vector<glm::vec2> points;
+        quad* cur;
+        uint32_t a;
+        uint32_t b;
+
+        for (uint32_t i = 0; i < m_trackBounds.size(); ++i)
+        {
+            cur = &m_trackBounds[i];
+            for (uint32_t j = 0; j < 4; ++j)
+            {
+                a = (j + 0) % 4;
+                b = (j + 1) % 4;
+                points.push_back(glm::vec2(cur->p[a].x, cur->p[a].y));
+                points.push_back(glm::vec2(cur->p[b].x, cur->p[b].y));
+            }
+        }
+
+        return points;
+    }
+
+    std::vector<glm::vec2> TrackData::getRunoffBoundPts()
+    {
+        std::vector<glm::vec2> points;
+        quad* cur;
+        uint32_t a;
+        uint32_t b;
+
+        for (uint32_t i = 0; i < m_runoffBounds.size(); ++i)
+        {
+            cur = &m_runoffBounds[i];
+            for (uint32_t j = 0; j < 4; ++j)
+            {
+                a = (j + 0) % 4;
+                b = (j + 1) % 4;
+                points.push_back(glm::vec2(cur->p[a].x, cur->p[a].y));
+                points.push_back(glm::vec2(cur->p[b].x, cur->p[b].y));
+            }
+        }
+
+        return points;
+    }
+
+    std::vector<glm::vec2> TrackData::getWallBoundPts()
+    {
+        std::vector<glm::vec2> points;
+        quad* cur;
+        uint32_t a;
+        uint32_t b;
+
+        for (uint32_t i = 0; i < m_wallBounds.size(); ++i)
+        {
+            cur = &m_wallBounds[i];
+            for (uint32_t j = 0; j < 4; ++j)
+            {
+                a = (j + 0) % 4;
+                b = (j + 1) % 4;
+                points.push_back(glm::vec2(cur->p[a].x, cur->p[a].y));
+                points.push_back(glm::vec2(cur->p[b].x, cur->p[b].y));
+            }
+        }
+
+        return points;
     }
 }

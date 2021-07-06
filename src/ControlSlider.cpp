@@ -59,26 +59,27 @@ void ControlSlider::update()
     assert(m_states.size() > 0);
     if (m_states.top().restoring)
     {
+        float damping = fmax(0.01, 0.15 * log(fabs(m_pos)) + 1.0); // prevent position from bouncing with high restore coefficient
         m_pos += 
-            m_states.top().leftRate * (m_dir < 0 && m_pos <= 0) + 
-            m_states.top().rightRate * (m_dir > 0 && m_pos >= 0) + 
-            -m_states.top().restoreRate * (m_dir < 0 && m_pos >= 0) + 
-            m_states.top().restoreRate * (m_dir > 0 && m_pos <= 0) + 
-            (m_dir == 0) * (1.f * m_states.top().restoreRate * (m_pos < 0.f) + 
-            -1.f * m_states.top().restoreRate * (m_pos > 0.f));
+            m_states.top().leftRate * (m_dir < 0 && m_pos <= 0) + // wheels left turning left
+            m_states.top().rightRate * (m_dir > 0 && m_pos >= 0) + // wheels right turning right
+            damping * -m_states.top().restoreRate * (m_dir < 0 && m_pos >= 0) + // wheels right turning left
+            damping * m_states.top().restoreRate * (m_dir > 0 && m_pos <= 0) + // wheels left turing right
+            (m_dir == 0) * (damping * m_states.top().restoreRate * (m_pos < 0.f) + // no steering input
+            -damping * m_states.top().restoreRate * (m_pos > 0.0));
         
-        if (m_pos > 1.f)
+        if (m_pos > 1.0)
         {
-            m_pos = 1.f;
+            m_pos = 1.0;
         }
-        else if (m_pos < -1.f)
+        else if (m_pos < -1.0)
         {
-            m_pos = -1.f;
+            m_pos = -1.0;
         }
         
-        if (fabs(m_pos) < 1e-2)
+        if (fabs(m_pos) < 4e-2)
         {
-            m_pos = 0.f;
+            m_pos = 0.0;
         }
         m_dir = 0;
     }

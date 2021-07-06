@@ -1,3 +1,5 @@
+#ifdef _BUILD_DEBUG_TOOLS
+
 #ifndef DEBUGTEXT_HPP
 #define DEBUGTEXT_HPP
 
@@ -57,3 +59,5 @@ private:
 }
 
 #endif /* DEBUGTEXT_HPP */
+
+#endif /* _BUILD_DEBUG_TOOLS */

@@ -19,6 +19,10 @@ namespace mode7
 
         int open(const std::string&);
         int transform(const glm::mat4&);
+        std::vector<glm::vec2> getCenterLinePts();
+        std::vector<glm::vec2> getTrackBoundPts();
+        std::vector<glm::vec2> getRunoffBoundPts();
+        std::vector<glm::vec2> getWallBoundPts();
 
     private:
         std::vector<line> m_centerLines;

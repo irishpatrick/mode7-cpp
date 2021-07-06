@@ -51,7 +51,9 @@ void Car::open(const std::string& fn)
 {
     std::stringstream ss;
     ss << fn << "/";
+#ifdef _BUILD_DEBUG_TOOLS
     m_debugText.init();
+#endif /* BUILD_DEBUG_TOOLS */
     m_vCurve.open(ss.str() + "gas.txt");
     m_wheelCurve.open(ss.str() + "wheel.txt");
     m_tractionCurve.open(ss.str() + "drift.txt");
@@ -140,7 +142,10 @@ void Car::updateControls()
     drift_amt = m_driftMap.calculate(fabs(wheel.getPosition()), velocity.z / top_speed);
     brake_amt = m_brakeMap.calculate(brake.getPosition(), velocity.z / top_speed);
 
-    brake_amt *= (1.0 - (turn_amt / 1.5));
+    std::cout << wheel.getPosition() << std::endl;
+
+    turn_amt *= (1.0 - (brake_amt / 1.25));
+    brake_amt *= (1.0 - (turn_amt / 1.25));
 
     float desired = vel_percent * top_speed;
     float last_vz = velocity.z;
@@ -315,6 +320,7 @@ void Car::stun()
     ticks = 40;
 }
 
+#ifdef _BUILD_DEBUG_TOOLS
 void Car::updateDebugText()
 {
     if (!m_racingLine)
@@ -373,5 +379,6 @@ void Car::updateDebugText()
         cross_next << ", " << distToNext << ", " << fabsf(cross_next) / distToNext << "\n";
     m_debugText.setText(ss.str());
 }
+#endif /* _BUILD_DEBUG_TOOLS */
 
 }
