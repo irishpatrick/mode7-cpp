@@ -9,6 +9,7 @@ assets/
 out/
 .vscode/
 .vs/
+**/installer
 
 # Prerequisites
 *.d

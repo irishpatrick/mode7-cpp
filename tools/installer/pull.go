@@ -3,7 +3,6 @@ package main
 import (
 	"archive/tar"
 	"context"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -49,26 +48,18 @@ func extract_xz(src string, dst string) {
 
 		switch hdr.Typeflag {
 		case tar.TypeDir:
-			/*fn, err := filepath.Abs(path.Join(dst, hdr.Name))
-			if err != nil {
-				log.Fatal(err)
-			}*/
-			fmt.Println("mkdir " + path.Join(dst, hdr.Name))
+			//fmt.Println("mkdir " + path.Join(dst, hdr.Name))
 			err = os.MkdirAll(path.Join(dst, hdr.Name), 0777)
 			if err != nil {
 				log.Fatal(err)
 			}
 		case tar.TypeReg, tar.TypeRegA:
-			/*fn, err := filepath.Abs(path.Join(dst, hdr.Name))
-			if err != nil {
-				log.Fatal(err)
-			}*/
 			fn := path.Join(dst, hdr.Name)
 			err = os.MkdirAll(path.Dir(fn), 0777)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("mkfile " + path.Join(dst, hdr.Name))
+			//fmt.Println("mkfile " + path.Join(dst, hdr.Name))
 			w, err := os.Create(path.Join(dst, hdr.Name))
 			if err != nil {
 				log.Fatal(err)
@@ -111,7 +102,7 @@ var pullCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Println(resp.URL)
+		//fmt.Println(resp.URL)
 
 		httpresp, err := http.Get(resp.URL)
 		if err != nil {
@@ -131,5 +122,7 @@ var pullCmd = &cobra.Command{
 		}
 
 		extract_xz("./assets.tar.xz", "../../")
+
+		os.Remove("./assets.tar.xz")
 	},
 }
