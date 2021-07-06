@@ -167,13 +167,13 @@ int main(int argc, char** argv)
     //assert(skybox.getMesh(0)->getParent() == &skybox);
     //skybox.getMesh(0)->scale = skybox.scale;
     //skybox.getMesh(0)->visible = false;
-    track.open("assets/track_data/track1.dae");
-    //track.open("assets/track_data/test_circle_full.dae");
+    //track.open("assets/track_data/track1.dae");
+    track.open("assets/track_data/test_circle_full.dae");
     track.getScene()->name = "track1";
-    track.getScene()->scale = glm::vec3(20.f);
-    //track.getScene()->scale = glm::vec3(3.f);
-    track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
-    //track.getScene()->position.y = -track.getScene()->scale.y;
+    //track.getScene()->scale = glm::vec3(20.f);
+    track.getScene()->scale = glm::vec3(3.f);
+    //track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
+    track.getScene()->position.y = -track.getScene()->scale.y;
     //track.position.y = -track.scale.y;
     //track.position.y = -track.scale.y - 4.f;
     //track.scale = glm::vec3(2.0f);
@@ -243,7 +243,6 @@ int main(int argc, char** argv)
         updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
         updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
     }*/
-    
 
     running = 1;
     Clock::start();

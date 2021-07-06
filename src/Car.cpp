@@ -142,7 +142,7 @@ void Car::updateControls()
     drift_amt = m_driftMap.calculate(fabs(wheel.getPosition()), velocity.z / top_speed);
     brake_amt = m_brakeMap.calculate(brake.getPosition(), velocity.z / top_speed);
 
-    std::cout << wheel.getPosition() << std::endl;
+    //std::cout << wheel.getPosition() << std::endl;
 
     turn_amt *= (1.0 - (brake_amt / 1.25));
     brake_amt *= (1.0 - (turn_amt / 1.25));
