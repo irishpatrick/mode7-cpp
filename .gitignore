@@ -5,6 +5,7 @@ CMakeSettings.json
 *.swp
 *.swo
 build/
+assets/
 out/
 .vscode/
 .vs/
@@ -27,7 +28,7 @@ out/
 *.dll
 
 # Fortran module files
-*.mod
+#*.mod
 *.smod
 
 # Compiled Static libraries
