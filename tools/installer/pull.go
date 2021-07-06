@@ -102,8 +102,6 @@ var pullCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		//fmt.Println(resp.URL)
-
 		httpresp, err := http.Get(resp.URL)
 		if err != nil {
 			log.Fatal(err)
