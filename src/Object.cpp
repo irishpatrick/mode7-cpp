@@ -119,10 +119,20 @@ void Object::move()
 
 void Object::update()
 {
-    update(glm::mat4(1.0f));
+    update(glm::mat4(1.0f), true);
+}
+
+void Object::update(bool should_decompose)
+{
+    update(glm::mat4(1.0f), should_decompose);
 }
 
 void Object::update(glm::mat4 pmat)
+{
+    update(pmat, false);
+}
+
+void Object::update(glm::mat4 pmat, bool should_decompose)
 {
     if (parent)
     {
@@ -137,18 +147,20 @@ void Object::update(glm::mat4 pmat)
 
     matrix = inherent * t * r * s;
     worldMatrix = pmat * matrix;
-    //accumulate();
-    decompose();
 
-    // etc
-    front = worldQuat * Util::zAxis();
-    right = -glm::cross(front, up);
-    up = glm::cross(front, right);
+    if (should_decompose)
+    {
+        decompose();
+
+        // etc
+        front = worldQuat * Util::zAxis();
+        right = -glm::cross(front, up);
+        up = glm::cross(front, right);
+    }
 
     for (auto& e : children)
     {
-        //e->update(worldMatrix);
-        e->update();
+        e->update(false);
     }
 }
 

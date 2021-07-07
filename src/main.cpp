@@ -74,7 +74,6 @@ void update()
     skybox->position = car.position;
 
     updateScheduler.distribute();
-    track.update();
     Camera::updateView();
     //tree.update();
     //rltest.update(car.position);
@@ -98,7 +97,6 @@ void draw(int32_t step)
     if (forced)
     {
         skybox->draw(*forced);
-        //track.getScene()->draw(*forced);
         track.draw(*forced);
         tree.draw(*forced);
         aitest.draw(*forced);
@@ -107,7 +105,6 @@ void draw(int32_t step)
     else
     {
         skybox->draw(skyboxShader);
-        //track.getScene()->draw(spriteShader);
         track.draw(spriteShader);
         tree.draw(spriteShader);
         aitest.draw(spriteShader);
@@ -227,22 +224,13 @@ int main(int argc, char** argv)
     tree.update();
     skybox->update();
     track.getScene()->update();
+    track.update();
 
-    updateScheduler.startWorkers(2);
+    updateScheduler.startWorkers(4);
     updateScheduler.addJobData(&tree);
     updateScheduler.addJobData(skybox.get());
     //updateScheduler.addJobData(&aitest);
     updateScheduler.addJobData(&car);
-    //for (int i = 0; i < 500; ++i)
-    /*std::cout << track.getScene()->getChildren().size() << std::endl;
-    for (int i = 0; i < track.getScene()->getChildren().size(); ++i)
-    {
-        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-        updateScheduler.addJobData((void*)track.getScene()->getMesh(i));
-    }*/
 
     running = 1;
     Clock::start();
