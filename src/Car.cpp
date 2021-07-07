@@ -60,7 +60,6 @@ void Car::open(const std::string& fn)
 
     shadow.create();
     shadow.position.y = -1.f;
-    //addChild(&shadow);
 
     anim.open("assets/animations/test_anim.json");
     //material.addMap(

@@ -20,7 +20,11 @@ public:
 
     void move();
     virtual void update();
+    virtual void update(bool);
     virtual void update(glm::mat4);
+    virtual void update(glm::mat4, bool);
+
+
 
     glm::mat4 getWorldMatrix();
     glm::vec3 getWorldPosition();
