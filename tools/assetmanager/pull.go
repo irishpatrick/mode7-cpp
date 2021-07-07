@@ -2,12 +2,15 @@ package main
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"context"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
@@ -74,6 +77,59 @@ func extract_xz(src string, dst string) {
 	}
 }
 
+func extract_zip(src string, dst string) {
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer r.Close()
+
+	os.MkdirAll(dst, 0777)
+
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer func() {
+			if err := rc.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		path := filepath.Join(dst, f.Name)
+
+		// Check for ZipSlip (Directory traversal)
+		if !strings.HasPrefix(path, filepath.Clean(dst)+string(os.PathSeparator)) {
+			log.Fatalf("illegal file path: %s", path)
+		}
+
+		if f.FileInfo().IsDir() {
+			os.MkdirAll(path, 0777)
+		} else {
+			os.MkdirAll(filepath.Dir(path), 0777)
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer f.Close()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		return nil
+	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 var pullCmd = &cobra.Command{
 	Use:   "pull",
 	Short: "get version",
@@ -88,7 +144,7 @@ var pullCmd = &cobra.Command{
 		client := s3.NewFromConfig(cfg)
 
 		bucket := aws.String("mode7-assets")
-		key := aws.String("assets.tar.xz")
+		key := aws.String("assets.zip")
 
 		input := &s3.GetObjectInput{
 			Bucket: bucket,
@@ -108,7 +164,7 @@ var pullCmd = &cobra.Command{
 		}
 		defer httpresp.Body.Close()
 
-		out, err := os.Create("./assets.tar.xz")
+		out, err := os.Create("./assets.zip")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -119,8 +175,10 @@ var pullCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		extract_xz("./assets.tar.xz", "../../")
+		//extract_xz("./assets.tar.xz", "../../")
+		//os.Remove("./assets.tar.xz")
 
-		os.Remove("./assets.tar.xz")
+		extract_zip("./assets.zip", "../../assets")
+		os.Remove("./assets.zip")
 	},
 }
