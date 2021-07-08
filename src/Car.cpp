@@ -182,7 +182,7 @@ void Car::updateControls()
         velocity.x = 0.0;
     }
     
-    float turn_rate = wheel.getPosition() * turn_amt * 0.03;
+    float turn_rate = wheel.getPosition() * turn_amt * 0.0375;
     rotate(0, -turn_rate, 0);
 }
 
