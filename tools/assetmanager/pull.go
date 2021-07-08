@@ -52,7 +52,7 @@ func extract_xz(src string, dst string) {
 		switch hdr.Typeflag {
 		case tar.TypeDir:
 			//fmt.Println("mkdir " + path.Join(dst, hdr.Name))
-			err = os.MkdirAll(path.Join(dst, hdr.Name), 0777)
+			err = os.MkdirAll(filepath.ToSlash(path.Join(dst, hdr.Name)), 0777)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -63,7 +63,7 @@ func extract_xz(src string, dst string) {
 				log.Fatal(err)
 			}
 			//fmt.Println("mkfile " + path.Join(dst, hdr.Name))
-			w, err := os.Create(path.Join(dst, hdr.Name))
+			w, err := os.Create(filepath.ToSlash(path.Join(dst, hdr.Name)))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -78,7 +78,7 @@ func extract_xz(src string, dst string) {
 }
 
 func extract_zip(src string, dst string) {
-	r, err := zip.OpenReader(src)
+	r, err := zip.OpenReader(filepath.ToSlash(src))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -97,10 +97,10 @@ func extract_zip(src string, dst string) {
 			}
 		}()
 
-		path := filepath.Join(dst, f.Name)
+		path := filepath.ToSlash(path.Join(dst, f.Name))
 
 		// Check for ZipSlip (Directory traversal)
-		if !strings.HasPrefix(path, filepath.Clean(dst)+string(os.PathSeparator)) {
+		if !strings.HasPrefix(path, filepath.ToSlash(filepath.Clean(dst))+string(os.PathSeparator)) {
 			log.Fatalf("illegal file path: %s", path)
 		}
 
@@ -174,9 +174,6 @@ var pullCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		//extract_xz("./assets.tar.xz", "../../")
-		//os.Remove("./assets.tar.xz")
 
 		extract_zip("./assets.zip", "../../assets")
 		os.Remove("./assets.zip")

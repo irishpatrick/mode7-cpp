@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"archive/zip"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -17,7 +18,7 @@ import (
 )
 
 func compressDir(dn string) {
-	dirpath := path.Clean(dn)
+	dirpath := filepath.ToSlash(path.Clean(dn))
 
 	fp, err := os.Create("./assets.zip")
 	if err != nil {
@@ -29,6 +30,7 @@ func compressDir(dn string) {
 	defer w.Close()
 
 	walker := func(pth string, info os.FileInfo, err error) error {
+		pth = filepath.ToSlash(pth)
 		if err != nil {
 			log.Fatal(err)
 		}
