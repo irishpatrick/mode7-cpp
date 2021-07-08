@@ -120,7 +120,7 @@ void draw(int32_t step)
 
 int main(int argc, char** argv)
 {
-    Screen::create(WIDTH, HEIGHT, false);
+    Screen::create(WIDTH, HEIGHT, true);
     Camera::create(WIDTH, HEIGHT, 70.0, 0.1, 1500.0);
 
     Keyboard::attach();

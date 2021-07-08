@@ -84,7 +84,7 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     unsigned int flags = 0;
     if (fullscreen)
     {
-        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        flags |= SDL_WINDOW_BORDERLESS;
     }
     window = SDL_CreateWindow(
         "title",
@@ -92,6 +92,10 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
         width, height,
         SDL_WINDOW_OPENGL | flags
     );
+    if (fullscreen)
+    {
+        SDL_SetWindowPosition(window, 0, 0);
+    }
     ctx = SDL_GL_CreateContext(window);
 
     err = SDL_GL_SetSwapInterval(1);
