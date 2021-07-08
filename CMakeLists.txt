@@ -18,9 +18,6 @@ set(libs ${libs} worker trackdata geometry)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
-
-    message(STATUS "Using vcpkg")
-
     find_package(SDL2 CONFIG REQUIRED)
     find_package(sdl2-image CONFIG REQUIRED)
     find_package(sdl2-ttf CONFIG REQUIRED)
@@ -51,7 +48,6 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         BulletSoftBody
         glm::glm
     )
-
 else ()
 
     find_package(PkgConfig)
