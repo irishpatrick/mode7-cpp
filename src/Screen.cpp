@@ -98,7 +98,7 @@ void mode7::Screen::create(int w, int h, bool fullscreen)
     }
     ctx = SDL_GL_CreateContext(window);
 
-    err = SDL_GL_SetSwapInterval(1);
+    err = SDL_GL_SetSwapInterval(0);
     if (err < 0)
     {
         std::cout << SDL_GetError() << std::endl;

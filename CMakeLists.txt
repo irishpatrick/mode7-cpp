@@ -27,6 +27,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     find_package(GLEW CONFIG REQUIRED)
     find_package(assimp CONFIG REQUIRED)
     find_package(Bullet CONFIG REQUIRED)
+    find_package(glm CONFIG REQUIRED)
 
     set(incl
         ${incl}
@@ -48,6 +49,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         Bullet3Common
         BulletDynamics
         BulletSoftBody
+        glm::glm
     )
 
 else ()
@@ -141,7 +143,10 @@ set(sources
 add_subdirectory(./geometry)
 add_subdirectory(./worker)
 add_subdirectory(./trackdata)
-add_subdirectory(./tools/svg2track)
+
+if (${BUILD_TOOLS})
+    add_subdirectory(./tools/svg2track)
+endif()
 
 add_executable(${PROJECT_NAME} ${sources})
 

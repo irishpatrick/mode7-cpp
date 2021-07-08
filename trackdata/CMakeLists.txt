@@ -13,7 +13,19 @@ set(incl
     ../geometry/include
 )
 
+set(libs
+    geometry
+)
+
+if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
+    find_package(glm CONFIG REQUIRED)
+    set(libs
+        ${libs}
+        glm::glm
+    )
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${sources})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
-target_link_libraries(${PROJECT_NAME} PRIVATE geometry)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
