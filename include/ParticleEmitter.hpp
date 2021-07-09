@@ -3,6 +3,8 @@
 
 #include "Particle.hpp"
 #include "Shader.hpp"
+#include "Scheduler.hpp"
+#include "ParticleUpdateWorker.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -26,7 +28,7 @@ namespace mode7
         uint32_t n_particles;
         std::vector<Particle> m_particles;
         std::queue<Particle*> m_ready;
-
+        Scheduler<ParticleUpdateWorker> m_updateScheduler;
     };
 } // namespace mode7
 

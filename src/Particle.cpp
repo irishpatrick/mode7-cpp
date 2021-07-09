@@ -13,6 +13,11 @@ namespace mode7
 
     }
 
+    void Particle::update()
+    {
+        
+    }
+
     void Particle::draw(Shader* shader)
     {
 

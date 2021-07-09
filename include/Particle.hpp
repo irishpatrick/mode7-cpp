@@ -14,6 +14,7 @@ namespace mode7
         Particle();
         ~Particle();
 
+        void update();
         void draw(Shader*);
 
     private:

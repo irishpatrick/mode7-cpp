@@ -125,6 +125,7 @@ set(sources
     src/Object.cpp
     src/Particle.cpp
     src/ParticleEmitter.cpp
+    src/ParticleUpdateWorker.cpp
     src/RacingLine.cpp
     src/ResponseCurve.cpp
     src/Scene.cpp
