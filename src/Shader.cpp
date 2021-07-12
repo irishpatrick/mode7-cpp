@@ -7,9 +7,6 @@
 #include <iostream>
 #include <cstdint>
 
-#define MAT(x) &(x[0][0])
-#define VEC(x) &(x[0])
-
 namespace mode7
 {
 
@@ -117,13 +114,19 @@ int Shader::open(const std::string& vfn, const std::string& ffn)
     return 0;
 }
 
+void Shader::cacheCameraMatrices()
+{
+    projection = glGetUniformLocation(id, "p");
+    view = glGetUniformLocation(id, "v");
+}
+
 void Shader::cacheLocations()
 {
     uint32_t n_diffuseMaps = 4;
     uint32_t n_specularMaps = 4;
+
+    cacheCameraMatrices();
     
-    projection = glGetUniformLocation(id, "p");
-    view = glGetUniformLocation(id, "v");
     model = glGetUniformLocation(id, "m");
     diffuseTexture = glGetUniformLocation(id, "tex");
     uv_tile = glGetUniformLocation(id, "uv_tile");

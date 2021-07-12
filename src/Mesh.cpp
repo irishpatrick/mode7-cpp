@@ -36,6 +36,7 @@ Mesh::Mesh() :
     alt(nullptr),
     visible(true)
 {
+    
 }
 
 Mesh::~Mesh()

@@ -7,6 +7,9 @@
 #include <string>
 #include <vector>
 
+#define MAT(x) &(x[0][0])
+#define VEC(x) &(x[0])
+
 namespace mode7
 {
 
@@ -18,6 +21,7 @@ public:
     ~Shader();
 
     int open(const std::string&, const std::string&);
+    void cacheCameraMatrices();
     void cacheLocations();
 
     void use();

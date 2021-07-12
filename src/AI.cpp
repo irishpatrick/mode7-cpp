@@ -134,6 +134,7 @@ void AI::update()
     Car::shadow.update();
     Object::update();
     Car::sprite.update();
+    Car::updateEffects();
 }
 
 }

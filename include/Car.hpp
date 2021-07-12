@@ -12,6 +12,8 @@
 #include "ResponseCurve.hpp"
 #include "ControlMap.hpp"
 #include "ControlSlider.hpp"
+#include "ParticleEmitter.hpp"
+
 #include <string>
 #include <vector>
 
@@ -60,6 +62,7 @@ public:
     Car();
     virtual ~Car();
 
+    void init();
     virtual void open(const std::string&);
     void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
     void parseConstants(const std::string&);
@@ -71,6 +74,7 @@ public:
     virtual void draw(Shader&);
 
     void updateControls();
+    void updateEffects();
 
     inline void setRacingLine(RacingLine* rl)
     {
@@ -83,6 +87,11 @@ public:
     void setTracked(bool);
 
     float traction;
+
+    inline void drawEffects(bool val)
+    {
+        m_drawEffects = val;
+    }
 
 protected:
 
@@ -112,6 +121,7 @@ protected:
     int m_currentZone;
 
     bool m_change;
+    bool m_drawEffects;
 
     RacingLine* m_racingLine;
 
@@ -134,6 +144,10 @@ protected:
     ControlSlider thr;
     ControlSlider brake;
     ControlSlider wheel;
+
+    // particles
+    ParticleEmitter m_wheelParticlesL;
+    ParticleEmitter m_wheelParticlesR;
 };
 
 }

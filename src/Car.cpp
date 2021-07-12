@@ -37,7 +37,8 @@ Car::Car() :
     m_maxPower(3.f),
     topSpeed(2.0f),
     m_change(false),
-    m_racingLine(nullptr)
+    m_racingLine(nullptr),
+    m_drawEffects(false)
 {
 
 }
@@ -45,6 +46,18 @@ Car::Car() :
 Car::~Car()
 {
 
+}
+
+void Car::init()
+{
+    // setup particle emitters
+    Texture* smoke_tex = TexCache::open("assets/textures/smoke.png", TexType::DIFFUSE);
+    m_wheelParticlesL.init(2000, smoke_tex->getId());
+    m_wheelParticlesR.init(2000, smoke_tex->getId());
+    m_wheelParticlesL.setLifeSpread(0.5);
+    m_wheelParticlesR.setLifeSpread(0.5);
+    m_wheelParticlesL.enable();
+    m_wheelParticlesR.enable();
 }
 
 void Car::open(const std::string& fn)
@@ -216,6 +229,20 @@ void Car::update()
     shadow.update();
     Object::update();
     sprite.update();
+
+    updateEffects();
+}
+
+void Car::updateEffects()
+{
+    m_wheelParticlesL.position = position - (0.8f * Object::right) - Object::up;
+    m_wheelParticlesR.position = position + (0.8f * Object::right) - Object::up;
+    m_wheelParticlesL.setSpeed(0.0);
+    m_wheelParticlesR.setSpeed(0.0);
+    m_wheelParticlesR.direction = 8.0f * Object::front + Object::up;
+    m_wheelParticlesL.direction = 8.0f * Object::front + Object::up;
+    m_wheelParticlesL.update();
+    m_wheelParticlesR.update();
 }
 
 void Car::updateSprite()
@@ -267,14 +294,19 @@ void Car::updateSprite()
 
 void Car::draw(Shader& s)
 {
-    shadow.draw(*alt);
-
     s.use();
     s.setMaterial(anim);
     s.setModel(sprite);
     Mesh::drawTriangles();
 
     //m_debugText.draw();
+
+    if (m_drawEffects)
+    {
+        m_wheelParticlesL.draw();
+        m_wheelParticlesR.draw();
+        shadow.draw(*alt);
+    }
 }
 
 void Car::input()

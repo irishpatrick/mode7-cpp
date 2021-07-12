@@ -99,7 +99,9 @@ void draw(int32_t step)
         skybox->draw(*forced);
         track.draw(*forced);
         tree.draw(*forced);
+        aitest.drawEffects(false);
         aitest.draw(*forced);
+        car.drawEffects(false);
         car.draw(*forced);
     }
     else
@@ -107,7 +109,9 @@ void draw(int32_t step)
         skybox->draw(skyboxShader);
         track.draw(spriteShader);
         tree.draw(spriteShader);
+        aitest.drawEffects(true);
         aitest.draw(spriteShader);
+        car.drawEffects(true);
         car.draw(spriteShader);
     }
 
@@ -185,6 +189,7 @@ int main(int argc, char** argv)
 
     rltest.load("assets/track_data/oval2.line");
 
+    car.init();
     car.open("assets/cars/testcar");
     car.openMaps(
         "assets/cars/newcar/accelmap.csv",
@@ -208,6 +213,7 @@ int main(int argc, char** argv)
     hud.init();
 
     aitest.open("assets/cars/testcar");
+    aitest.init();
     aitest.position.y = 1;
     aitest.position.x = 1;
     //aitest.addChild(&Camera::getObject());
@@ -231,6 +237,7 @@ int main(int argc, char** argv)
     updateScheduler.addJobData(skybox.get());
     //updateScheduler.addJobData(&aitest);
     updateScheduler.addJobData(&car);
+    updateScheduler.addJobData(&aitest);
 
     running = 1;
     Clock::start();
