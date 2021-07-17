@@ -9,12 +9,13 @@
 #include "bezier.h"
 #include "track.h"
 #include "wavefront.h"
+#include "preview.h"
 
 static track cur_track;
 
 static void print_usage(void)
 {
-    printf("usage: svg2track <.svg input> <.obj output> [flags]\n");
+    printf("usage: svg2track <.svg input> <.zip asset pack> <.obj output> [flags]\n");
 }
 
 static void parse_path(MsvgElement* el)
@@ -264,6 +265,8 @@ int main(int argc, char** argv)
     mesh_init(&out);
 
     track_meshify(&cur_track, &out, &stock[0], argv[2]);
+
+    preview_track_to_png(&cur_track);
 
     track_destroy(&cur_track);
 

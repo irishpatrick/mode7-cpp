@@ -4,3 +4,6 @@
 [submodule "tools/svg2track/3rdparty/libmsvg"]
 	path = tools/svg2track/3rdparty/libmsvg
 	url = https://github.com/malfer/libmsvg.git
+[submodule "tools/svg2track/3rdparty/libzip"]
+	path = tools/svg2track/3rdparty/libzip
+	url = https://github.com/nih-at/libzip.git

@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.2)
 
 project(mode7 C CXX)
 
-set(BUILD_TOOLS false CACHE STRING "flag to build tools" FORCE)
-
 if (MSVC)
     set(flags ${flags} /W2 /D_CRT_SECURE_NO_WARNINGS)
 else()
@@ -13,6 +11,27 @@ endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(flags ${flags} -D_BUILD_DEBUG_TOOLS -pg)
+endif()
+
+find_program(PYTHON3 python3)
+if (NOT PYTHON3)
+    find_program(PYTHON3 python)
+endif()
+
+if (WIN32)
+add_custom_target(copy_assets
+    ALL
+    COMMAND robocopy /MIR /NFL /NDL /NJH /NJS /NP /NS /NC ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_CURRENT_BINARY_DIR}/assets/ /XD gimp templates blender reference
+    VERBATIM
+)
+endif (WIN32)
+
+if (UNIX OR MINGW)
+add_custom_target(copy_assets
+    ALL
+    COMMAND rsync -av -q ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_CURRENT_BINARY_DIR}/assets/ --exclude gimp --exclude blender --exclude templates --exclude reference
+    VERBATIM
+)
 endif()
 
 set(incl ${incl} include src)
@@ -145,7 +164,7 @@ add_subdirectory(./geometry)
 add_subdirectory(./worker)
 add_subdirectory(./trackdata)
 
-if (${BUILD_TOOLS})
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_subdirectory(./tools/svg2track)
 endif()
 

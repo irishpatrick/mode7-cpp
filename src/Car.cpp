@@ -56,8 +56,8 @@ void Car::init()
     m_wheelParticlesR.init(2000, smoke_tex->getId());
     m_wheelParticlesL.setLifeSpread(0.5);
     m_wheelParticlesR.setLifeSpread(0.5);
-    m_wheelParticlesL.enable();
-    m_wheelParticlesR.enable();
+    //m_wheelParticlesL.enable();
+    //m_wheelParticlesR.enable();
 }
 
 void Car::open(const std::string& fn)
