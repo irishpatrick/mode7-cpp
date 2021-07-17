@@ -130,7 +130,7 @@ int wavefront_load(mesh** m, const char* fn)
                 printf("bad uv!\n");
                 continue;
             }
-            printf("%d %f,%f\n", ne, fbuf[0], fbuf[1]);
+            //printf("%d %f,%f\n", ne, fbuf[0], fbuf[1]);
             mesh_add_uv(cur, fbuf);
         }
         else if (strncmp(line, "vn ", 3) == 0)

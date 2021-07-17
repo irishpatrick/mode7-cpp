@@ -4,25 +4,26 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 static line* centerline_head(trackdata* td)
 {
-    return td->centerline + (td->clp - 1);
+    return td->centerline + (td->clp - 0);
 }
 
 static quad* track_head(trackdata* td)
 {
-    return td->track_bounds + (td->tbp - 1);
+    return td->track_bounds + (td->tbp - 0);
 }
 
 static quad* runoff_head(trackdata* td)
 {
-    return td->runoff_bounds + (td->rbp - 1);
+    return td->runoff_bounds + (td->rbp - 0);
 }
 
 static quad* walls_head(trackdata* td)
 {
-    return td->walls_bounds + (td->wbp - 1);
+    return td->walls_bounds + (td->wbp - 0);
 }
 
 static int check(void* ptr)
@@ -30,7 +31,7 @@ static int check(void* ptr)
     return ptr == NULL;
 }
 
-static void extend_quad(quad* dest, quad* src, float amt)
+/*static void extend_quad(quad* dest, quad* src, float amt)
 {
     line wide[2];
     int lp = 0;
@@ -40,6 +41,7 @@ static void extend_quad(quad* dest, quad* src, float amt)
     for (int i = 0; i < 2; ++i)
     {
         max = -1.f;
+        max_indx = -1;
         for (int j = 0; j < 4; ++j)
         {
             if (max_indx == j)
@@ -51,8 +53,8 @@ static void extend_quad(quad* dest, quad* src, float amt)
             {
                 max = src->length[j];
                 skip = j;
+                max_indx = skip;
             }
-            max_indx = skip;
         }
 
         memcpy(&wide[lp], src->l + skip, sizeof(line));
@@ -60,6 +62,70 @@ static void extend_quad(quad* dest, quad* src, float amt)
     }
 
     quad_connect_raw(dest, wide[0].p1, wide[0].p2, wide[1].p2, wide[1].p1);
+}*/
+
+static float dot(vec2* a, vec2* b)
+{
+    return a->x * b->x + a->y * b->y;
+}
+
+static void extend_quad(quad* dest, quad* src, line* cl, float amt)
+{
+    line* ortho[2];
+    vec2 vecs[2];
+    vec2* vp = vecs;
+    vec2 a;
+    vec2 b;
+    line** lp = ortho;
+    line* cur = NULL;
+
+    //printf("==================== Extend Quad ====================\n");
+    line_print(cl);
+    //assert(line_calc_distance(cl) > 0);
+
+    a.x = cl->p2[0] - cl->p1[0];
+    a.y = cl->p2[1] - cl->p1[1];
+    vec2_normalize(&a);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        cur = src->l + i;
+        assert(cur != NULL);
+        line_print(cur);
+        //assert(line_calc_distance(cur) > 0);
+
+        vp->x = cur->p2[0] - cur->p1[0];
+        vp->y = cur->p2[1] - cur->p1[1];
+        
+        vec2_normalize(vp);
+
+        float d = fabs(dot(&a, vp));
+        printf("dot product: %f\n", d);
+        if (d < 0.1)
+        {
+            printf("choose!\n");
+            *lp = cur;
+            ++lp;
+            ++vp;
+            if (lp - ortho == 2)
+            {
+                break;
+            }
+        }
+    }
+    //assert(lp - ortho == 2);
+    
+    ortho[0]->p1[0] -= amt * vecs[0].x;
+    ortho[0]->p1[1] -= amt * vecs[0].y;
+    ortho[0]->p2[0] += amt * vecs[0].x;
+    ortho[0]->p2[1] += amt * vecs[0].y;
+
+    ortho[1]->p1[0] -= amt * vecs[1].x;
+    ortho[1]->p1[1] -= amt * vecs[1].y;
+    ortho[1]->p2[0] += amt * vecs[1].x;
+    ortho[1]->p2[1] += amt * vecs[1].y;
+
+    quad_connect_raw(dest, ortho[0]->p1, ortho[0]->p2, ortho[1]->p1, ortho[1]->p2);
 }
 
 void trackdata_init(trackdata* td)
@@ -70,10 +136,10 @@ void trackdata_init(trackdata* td)
     td->tbmax = 100;
     td->rbmax = 100;
     td->wbmax = 100;
-    td->clp = 1;
-    td->tbp = 1;
-    td->rbp = 1;
-    td->wbp = 1;
+    td->clp = 0;
+    td->tbp = 0;
+    td->rbp = 0;
+    td->wbp = 0;
     int size_line = td->max_segments * sizeof(line);
     int size_quad = td->max_segments * sizeof(quad);
     
@@ -192,50 +258,35 @@ void trackdata_centerline(trackdata* td, line* ln)
 
 void trackdata_track_bounds(trackdata* td, float* a, float* b, float* c, float* d)
 {
-    line* cl = centerline_head(td);
-    if (!cl)
-    {
-        return;
-    }
-
     quad* tb = track_head(td);
     quad_connect_raw(tb, a, b, c, d);
 }
 
 void trackdata_runoff_bounds(trackdata* td, float len)
 {
-    line* cl = centerline_head(td);
+    /*line* cl = centerline_head(td);
     if (!cl)
     {
         return;
-    }
+    }*/
 
-    quad* tb = track_head(td);
-    if (!tb)
-    {
-        return;
-    }
+    //quad* tb = track_head(td);
 
+    line* cl = td->centerline + td->rbp;
+    quad* tb = td->track_bounds + td->tbp - 1;
+    printf("%d\n", td->rbp);
+    assert(tb->area > 0.0);
     quad* rb = runoff_head(td);
-    extend_quad(rb, tb, len);
+    printf("====================   Runoffs   ====================\n");
+    extend_quad(rb, tb, cl, len);
 }
 
 void trackdata_walls_bounds(trackdata* td, float len)
 {
-    line* cl = centerline_head(td);
-    if (!cl)
-    {
-        return;
-    }
-
-    quad* tb = track_head(td);
-    if (!tb)
-    {
-        return;
-    }
-
+    line* cl = td->centerline + td->wbp;
+    quad* tb = td->track_bounds + td->wbp;
     quad* wb = walls_head(td);
-    extend_quad(wb, tb, len);
+    extend_quad(wb, tb, cl, len);
 }
 
 void trackdata_push_all(trackdata* td)

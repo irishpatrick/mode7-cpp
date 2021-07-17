@@ -135,7 +135,7 @@ static int interpolate_line(float* start, line* ln, int n_points)
     {
         t = (float)i * step;
         line_solve(ln, t, start);
-        printf("(%f,%f)\n", start[0], start[1]);
+        //printf("(%f,%f)\n", start[0], start[1]);
         start += 2; // move head to next point
     }
 
@@ -151,14 +151,14 @@ static int interpolate_bezier(float* start, bezier* ln, int n_points)
     {
         t = (float)i * step;
         bezier_cubic(ln, t, start);
-        printf("(%f,%f)\n", start[0], start[1]);
+        //printf("(%f,%f)\n", start[0], start[1]);
         start += 2; // move head to next point
     }
 
     return n_points;
 }
 
-void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
+void track_meshify(track* tr, mesh* stock, const char* out_fn)
 {
     // start with 100 pairs allocated
     int max_points = 1000;
@@ -181,7 +181,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     {
         int added = 0;
         segment_t type = tr->lookup[i];
-        printf("seg type: %d\n", type);
+        //printf("seg type: %d\n", type);
         switch (type)
         {
             case SEG_LINE:
@@ -278,7 +278,7 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
     // transform all stock pieces
     printf("compute transforms...\n");
 
-    int n_meshes = n_lines + 1;
+    int n_meshes = n_lines;
     mesh* meshes = malloc(n_meshes * sizeof(mesh));
     if (meshes == NULL)
     {
@@ -301,9 +301,9 @@ void track_meshify(track* tr, mesh* out, mesh* stock, const char* out_fn)
         // add bounds to trackdata, compute bounds for runoff, walls
         trackdata_track_bounds(&tr->tdata, front->p1, front->p2, back->p2, back->p1);
         trackdata_push_tbp(&tr->tdata);
-        trackdata_runoff_bounds(&tr->tdata, 10.0);
+        trackdata_runoff_bounds(&tr->tdata, 6.0);
         trackdata_push_rbp(&tr->tdata);
-        trackdata_walls_bounds(&tr->tdata, 10.0);
+        trackdata_walls_bounds(&tr->tdata, 1.0);
         trackdata_push_wbp(&tr->tdata);
 
         cur = &meshes[i];

@@ -99,21 +99,43 @@ void mesh_copy(mesh* dest, mesh* src)
     dest->n_vertices = src->n_vertices;
     dest->max_vertices = src->max_vertices;
     dest->vertices = malloc(dest->n_vertices * sizeof(vertex));
+    if (!dest->vertices)
+    {
+        return;
+    }
     memcpy(dest->vertices, src->vertices, dest->n_vertices * sizeof(vertex));
 
     dest->n_normals = src->n_normals;
     dest->max_normals = src->max_normals;
     dest->normals = malloc(dest->n_normals * sizeof(vertex));
+    if (!dest->normals)
+    {
+        free(dest->vertices);
+        return;
+    }
     memcpy(dest->normals, src->normals, dest->n_normals * sizeof(vertex));
 
     dest->n_uvs = src->n_uvs;
     dest->max_uvs = src->max_uvs;
     dest->uvs = malloc(dest->n_uvs * sizeof(uv));
+    if (!dest->uvs)
+    {
+        free(dest->normals);
+        free(dest->vertices);
+        return;
+    }
     memcpy(dest->uvs, src->uvs, dest->n_uvs * sizeof(uv));
     
     dest->n_indices = src->n_indices;
     dest->max_indices = src->max_indices;
     dest->indices = malloc(dest->n_indices * sizeof(idx));
+    if (!dest->indices)
+    {
+        free(dest->uvs);
+        free(dest->normals);
+        free(dest->vertices);
+        return;
+    }
     memcpy(dest->indices, src->indices, dest->n_indices * sizeof(idx));
 }
 

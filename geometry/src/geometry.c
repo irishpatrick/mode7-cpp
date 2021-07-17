@@ -23,6 +23,8 @@ void quad_connect(quad* q, vec2 a, vec2 b, vec2 c, vec2 d)
        line_connect(q->l + i, a->x, a->y, b->x, b->y);
        q->length[i] = line_calc_distance(q->l + i);
     }
+
+    q->area = q->length[0] * q->length[1];
 }
 
 void quad_connect_raw(quad* q, float* a, float* b, float* c, float* d)
@@ -37,4 +39,16 @@ void quad_connect_raw(quad* q, float* a, float* b, float* c, float* d)
 void quad_from_buffer(quad* q, float* buf)
 {
     quad_connect_raw(q, buf, buf + 2, buf + 4, buf + 6);
+}
+
+float vec2_magnitude(vec2* v)
+{
+    return sqrtf(v->x * v->x + v->y * v->y);
+}
+
+void vec2_normalize(vec2* v)
+{
+    float m = vec2_magnitude(v);
+    v->x /= m;
+    v->y /= m;
 }

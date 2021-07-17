@@ -10,6 +10,6 @@ typedef struct _assetpack
 } assetpack;
 
 int assetpack_open(assetpack*, const char*);
-void assetpack_free(assetpack*, const char*);
+void assetpack_free(assetpack*);
 
 #endif /* ASSETPACK_H */
