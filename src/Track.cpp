@@ -36,7 +36,7 @@ namespace mode7
             std::cout << "[Track] error " << err << ": failed to open " << fn << std::endl;
             return;
         }
-        //m_data.transform(m_scene->getWorldMatrix());
+        m_data.transform(m_scene->getWorldMatrix());
 
 #ifdef _BUILD_DEBUG_TOOLS
      
@@ -80,7 +80,7 @@ namespace mode7
 #ifdef _BUILD_DEBUG_TOOLS
      
         m_centerLineDbg.update();
-         m_trackBoundDbg.update();
+        m_trackBoundDbg.update();
         m_runoffBoundDbg.update();
         m_wallBoundDbg.update();
     
@@ -93,7 +93,9 @@ namespace mode7
 
 #ifdef _BUILD_DEBUG_TOOLS
 
+        //glDisable(GL_DEPTH_TEST);
         m_centerLineDbg.draw();
+        //glEnable(GL_DEPTH_TEST);
         //m_trackBoundDbg.draw();
         //m_runoffBoundDbg.draw();
         //m_wallBoundDbg.draw();

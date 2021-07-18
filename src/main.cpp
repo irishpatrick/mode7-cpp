@@ -24,8 +24,8 @@
 #include <SDL.h>
 #include <iostream>
 
-#define WIDTH 1280
-#define HEIGHT 720
+#define WIDTH 1920
+#define HEIGHT 1080
 
 using namespace mode7;
 
@@ -168,18 +168,22 @@ int main(int argc, char** argv)
     //assert(skybox.getMesh(0)->getParent() == &skybox);
     //skybox.getMesh(0)->scale = skybox.scale;
     //skybox.getMesh(0)->visible = false;
-    track.open("assets/track_data/track1.dae");
+
+    //track.open("assets/track_data/track1.dae");
     //track.open("assets/track_data/test_circle_full.dae");
-    track.getScene()->name = "track1";
-    track.getScene()->scale = glm::vec3(20.f);
-    //track.getScene()->scale = glm::vec3(3.f);
-    track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
-    //track.getScene()->position.y = -track.getScene()->scale.y;
-    //track.position.y = -track.scale.y;
-    //track.position.y = -track.scale.y - 4.f;
-    //track.scale = glm::vec3(2.0f);
-    //track.position.y = 1 * -1.1f;
-    track.attachData("assets/track_data/track1.obj.tdat");
+    track.open("assets/track_data/complex/complex.dae");
+    //track.getScene()->name = "track1";
+    
+    //track.getScene()->scale = glm::vec3(20.f);
+    //track.getScene()->position.y = track.getScene()->scale.y - track.getScene()->scale.y * 0.125;
+    //track.getScene()->update();
+    //track.attachData("assets/track_data/track1.obj.tdat");
+    
+    // test circle setup
+    track.getScene()->scale = glm::vec3(3.f);
+    track.getScene()->position.y = -track.getScene()->scale.y;
+    track.getScene()->update();
+    track.attachData("assets/track_data/complex/complex.obj.tdat");
 
     tree.init();
     tree.position.x = 3;
@@ -199,6 +203,7 @@ int main(int argc, char** argv)
     );
     car.parseConstants("assets/cars/newcar/constants.json");
 
+    //car.position.y = 50;
     car.position.y = 1;
     car.position.x = 0;
     Camera::getObject().position = glm::vec3(0.0f, 2.0f, 5.0f);

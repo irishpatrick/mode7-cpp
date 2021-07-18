@@ -301,7 +301,7 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn)
         // add bounds to trackdata, compute bounds for runoff, walls
         trackdata_track_bounds(&tr->tdata, front->p1, front->p2, back->p2, back->p1);
         trackdata_push_tbp(&tr->tdata);
-        trackdata_runoff_bounds(&tr->tdata, 6.0);
+        trackdata_runoff_bounds(&tr->tdata, 4.0);
         trackdata_push_rbp(&tr->tdata);
         trackdata_walls_bounds(&tr->tdata, 1.0);
         trackdata_push_wbp(&tr->tdata);

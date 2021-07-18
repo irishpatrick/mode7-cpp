@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define ANGLE_LIMIT 0.5 // 60 degree angle limit, cos(60 degrees)
+
 static line* centerline_head(trackdata* td)
 {
     return td->centerline + (td->clp - 0);
@@ -31,39 +33,6 @@ static int check(void* ptr)
     return ptr == NULL;
 }
 
-/*static void extend_quad(quad* dest, quad* src, float amt)
-{
-    line wide[2];
-    int lp = 0;
-    int skip = -1;
-    float max = -1.f;
-    int max_indx = -1;
-    for (int i = 0; i < 2; ++i)
-    {
-        max = -1.f;
-        max_indx = -1;
-        for (int j = 0; j < 4; ++j)
-        {
-            if (max_indx == j)
-            {
-                continue;
-            }
-
-            if (src->length[j] > max)
-            {
-                max = src->length[j];
-                skip = j;
-                max_indx = skip;
-            }
-        }
-
-        memcpy(&wide[lp], src->l + skip, sizeof(line));
-        ++lp;
-    }
-
-    quad_connect_raw(dest, wide[0].p1, wide[0].p2, wide[1].p2, wide[1].p1);
-}*/
-
 static float dot(vec2* a, vec2* b)
 {
     return a->x * b->x + a->y * b->y;
@@ -79,8 +48,10 @@ static void extend_quad(quad* dest, quad* src, line* cl, float amt)
     line** lp = ortho;
     line* cur = NULL;
 
+    memset(ortho, 0, 2 * sizeof(line*));
+
     //printf("==================== Extend Quad ====================\n");
-    line_print(cl);
+    //line_print(cl);
     //assert(line_calc_distance(cl) > 0);
 
     a.x = cl->p2[0] - cl->p1[0];
@@ -91,8 +62,8 @@ static void extend_quad(quad* dest, quad* src, line* cl, float amt)
     {
         cur = src->l + i;
         assert(cur != NULL);
-        line_print(cur);
-        //assert(line_calc_distance(cur) > 0);
+        //line_print(cur);
+        assert(line_calc_distance(cur) > 0);
 
         vp->x = cur->p2[0] - cur->p1[0];
         vp->y = cur->p2[1] - cur->p1[1];
@@ -100,10 +71,9 @@ static void extend_quad(quad* dest, quad* src, line* cl, float amt)
         vec2_normalize(vp);
 
         float d = fabs(dot(&a, vp));
-        printf("dot product: %f\n", d);
-        if (d < 0.1)
+        //printf("dot product: %f\n", d);
+        if (d < ANGLE_LIMIT)
         {
-            printf("choose!\n");
             *lp = cur;
             ++lp;
             ++vp;
@@ -113,7 +83,7 @@ static void extend_quad(quad* dest, quad* src, line* cl, float amt)
             }
         }
     }
-    //assert(lp - ortho == 2);
+    assert(lp - ortho == 2);
     
     ortho[0]->p1[0] -= amt * vecs[0].x;
     ortho[0]->p1[1] -= amt * vecs[0].y;
@@ -274,10 +244,8 @@ void trackdata_runoff_bounds(trackdata* td, float len)
 
     line* cl = td->centerline + td->rbp;
     quad* tb = td->track_bounds + td->tbp - 1;
-    printf("%d\n", td->rbp);
     assert(tb->area > 0.0);
     quad* rb = runoff_head(td);
-    printf("====================   Runoffs   ====================\n");
     extend_quad(rb, tb, cl, len);
 }
 

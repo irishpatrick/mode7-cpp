@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     }
 
     printf("construct track from svg\n");
-    track_init(&cur_track, 1000);
+    track_init(&cur_track, 5000);
     svg_construct_track(&cur_track, argv[1]);
 
     printf("create mesh\n");

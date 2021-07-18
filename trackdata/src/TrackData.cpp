@@ -53,11 +53,11 @@ namespace mode7
         int32_t n_runoff_pts;
         int32_t n_wall_pts;
 
-        in.read(buffer, 4 * sizeof(int32_t));
+        in.read(buffer, 1 * sizeof(int32_t));
         n_centerline_pts    = *(int32_t*)(buffer + (0 * sizeof(int32_t)));
-        n_track_pts         = *(int32_t*)(buffer + (1 * sizeof(int32_t)));
-        n_runoff_pts        = *(int32_t*)(buffer + (2 * sizeof(int32_t)));
-        n_wall_pts          = *(int32_t*)(buffer + (3 * sizeof(int32_t)));
+        //n_track_pts         = *(int32_t*)(buffer + (1 * sizeof(int32_t)));
+        //n_runoff_pts        = *(int32_t*)(buffer + (2 * sizeof(int32_t)));
+        //n_wall_pts          = *(int32_t*)(buffer + (3 * sizeof(int32_t)));
 
         // read starting locations
         uint32_t start;
@@ -87,7 +87,7 @@ namespace mode7
             //std::cout << "buffer " << qbuf[0] << "," << qbuf[1] << "," << qbuf[2] << "," << qbuf[3] << std::endl;
             line_from_buffer(&ln, qbuf);
             m_centerLines.push_back(ln);
-            std::cout << "line " << ln.p1[0] << "," << ln.p1[1] << "," << ln.p2[0] << "," << ln.p2[1] << std::endl;
+            //std::cout << "line " << ln.p1[0] << "," << ln.p1[1] << "," << ln.p2[0] << "," << ln.p2[1] << std::endl;
 
             // read track bounds
             in.read((char*)qbuf, 8 * sizeof(float));
