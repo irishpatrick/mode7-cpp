@@ -11,6 +11,11 @@ out/
 .vs/
 **/installer
 **/assetmanager
+**/target
+
+# Glade
+*.ui~
+*.ui#
 
 # Prerequisites
 *.d
