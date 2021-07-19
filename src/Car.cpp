@@ -311,8 +311,8 @@ void Car::draw(Shader& s)
 
 void Car::input()
 {
-    int left = Keyboard::isDown("left");
-    int right = Keyboard::isDown("right");
+    int left = Keyboard::isDown("left") || Keyboard::isDown("j");
+    int right = Keyboard::isDown("right") || Keyboard::isDown("l");
 
     if (Keyboard::isDown("c"))
     {
