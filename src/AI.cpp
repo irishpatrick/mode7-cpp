@@ -27,7 +27,7 @@ void AI::control()
     }
     else
     {
-        int cur = m_racingLine->getCurrentIndex(
+        /*int cur = m_racingLine->getCurrentIndex(
             glm::vec2(position.x, position.z),
             m_currentZone);
 
@@ -101,7 +101,7 @@ void AI::control()
             //velocity.z = 2.0f;
         }
 
-        m_actionCooldown = 1;
+        m_actionCooldown = 1;*/
     }
 
     if (m_lastAction == 0)
@@ -116,10 +116,10 @@ void AI::control()
 
 void AI::update()
 {
-    if (m_racingLine)
+    /*if (m_racingLine)
     {
         control();
-    }
+    }*/
 
     Car::updateControls();
 

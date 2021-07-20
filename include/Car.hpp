@@ -37,119 +37,128 @@
 
 namespace mode7
 {
+    class Track;
 
-typedef struct _car_properties
-{
-    float THROTTLE_RATE;
-    float DRIFT_NORM_RATE;
-    float DRIFT_LOSS_RATE;
-    float DRIFT_NORM_RET;
-    float DRIFT_LOSS_RET;
-    float COAST_RATE;
-    float BRAKE_RATE;
-    float TURN_RATE;
-    float WHEEL_RATE;
-    float DRIFT_BASE;
-    float DRIFT_NORM;
-    float DRIFT_LOSS;
-    float MAX_SPEED;
-} car_properties;
-
-class Car : public Mesh
-{
-public:
-
-    Car();
-    virtual ~Car();
-
-    void init();
-    virtual void open(const std::string&);
-    void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
-    void parseConstants(const std::string&);
-    void updateSprite();
-#ifdef _BUILD_DEBUG_TOOLS
-    void updateDebugText();
-#endif /* _BUILD_DEBUG_TOOLS */
-    virtual void update();
-    virtual void draw(Shader&);
-
-    void updateControls();
-    void updateEffects();
-
-    inline void setRacingLine(RacingLine* rl)
+    typedef struct _car_properties
     {
-        m_racingLine = rl;
-    }
+        float THROTTLE_RATE;
+        float DRIFT_NORM_RATE;
+        float DRIFT_LOSS_RATE;
+        float DRIFT_NORM_RET;
+        float DRIFT_LOSS_RET;
+        float COAST_RATE;
+        float BRAKE_RATE;
+        float TURN_RATE;
+        float WHEEL_RATE;
+        float DRIFT_BASE;
+        float DRIFT_NORM;
+        float DRIFT_LOSS;
+        float MAX_SPEED;
+    } car_properties;
 
-    void input();
-    void stun();
-
-    void setTracked(bool);
-
-    float traction;
-
-    inline void drawEffects(bool val)
+    class Car : public Mesh
     {
-        m_drawEffects = val;
-    }
+    public:
 
-protected:
+        Car();
+        virtual ~Car();
 
-    DropShadow shadow;
+        void init();
+        virtual void open(const std::string&);
+        void openMaps(const std::string&, const std::string&, const std::string&, const std::string&);
+        void parseConstants(const std::string&);
 
-    int state;
-    int m_wheelState;
-    int ticks;
-    bool m_inStun;
+        virtual void update();
+        virtual void draw(Shader&);
 
-    bool tracked;
+        void updateSprite();
+        void updateControls();
+        void updateTrackInfo();
+        void updateEffects();
 
-    float speed;
-    float drift;
+        inline void setTrack(Track* t)
+        {
+            m_track = t;
+        }
 
-    float throttle;
-    float topSpeed;
+        void input();
+        void stun();
 
-    float m_power;
-    float m_maxPower;
-    float m_gasPos;
-    float m_brakePos;
-    float m_wheelPos;
-    float m_driftPos;
-    float m_brake;
+        void setTracked(bool);
 
-    int m_currentZone;
+        float traction;
 
-    bool m_change;
-    bool m_drawEffects;
+        inline void drawEffects(bool val)
+        {
+            m_drawEffects = val;
+        }
 
-    RacingLine* m_racingLine;
+    #ifdef _BUILD_DEBUG_TOOLS
+        void updateDebugText();
+    #endif /* _BUILD_DEBUG_TOOLS */
 
-    Object sprite;
-    Animation anim;
-#ifdef _BUILD_DEBUG_TOOLS
-    DebugText m_debugText;
-#endif /* _BUILD_DEBUG_TOOLS */
-    std::vector<Line> velCurve;
-    ResponseCurve m_vCurve;
-    ResponseCurve m_wheelCurve;
-    ResponseCurve m_tractionCurve;
-    car_properties m_props;
-    
-    // controls
-    ControlMap m_accelMap;
-    ControlMap m_brakeMap;
-    ControlMap m_driftMap;
-    ControlMap m_turnMap;
-    ControlSlider thr;
-    ControlSlider brake;
-    ControlSlider wheel;
+    protected:
 
-    // particles
-    ParticleEmitter m_wheelParticlesL;
-    ParticleEmitter m_wheelParticlesR;
-};
+        DropShadow shadow;
 
+        int state;
+        int m_wheelState;
+        int ticks;
+        bool m_inStun;
+
+        bool tracked;
+
+        float speed;
+        float drift;
+
+        float throttle;
+        float topSpeed;
+
+        float m_power;
+        float m_maxPower;
+        float m_gasPos;
+        float m_brakePos;
+        float m_wheelPos;
+        float m_driftPos;
+        float m_brake;
+
+        int m_currentZone;
+
+        bool m_change;
+        bool m_drawEffects;
+
+        Track* m_track;
+        int32_t m_curTrackRect;
+
+        //RacingLine* m_racingLine;
+
+        Object sprite;
+        Animation anim;
+        std::vector<Line> velCurve;
+        ResponseCurve m_vCurve;
+        ResponseCurve m_wheelCurve;
+        ResponseCurve m_tractionCurve;
+        car_properties m_props;
+        
+        // controls
+        ControlMap m_accelMap;
+        ControlMap m_brakeMap;
+        ControlMap m_driftMap;
+        ControlMap m_turnMap;
+        ControlSlider thr;
+        ControlSlider brake;
+        ControlSlider wheel;
+
+        // particles
+        ParticleEmitter m_wheelParticlesL;
+        ParticleEmitter m_wheelParticlesR;
+
+    #ifdef _BUILD_DEBUG_TOOLS
+        DebugText m_debugText;
+    #endif /* _BUILD_DEBUG_TOOLS */
+
+        friend class Track;
+    };
 }
 
 #endif /* CAR_HPP */

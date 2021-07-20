@@ -29,13 +29,22 @@ endif (WIN32)
 if (UNIX OR MINGW)
 add_custom_target(copy_assets
     ALL
-    COMMAND rsync -av -q ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_CURRENT_BINARY_DIR}/assets/ --exclude gimp --exclude blender --exclude templates --exclude reference
+    COMMAND rsync -av -q ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_CURRENT_BINARY_DIR}/assets/ --exclude gimp/ --exclude blender/ --exclude templates/ --exclude reference/
     VERBATIM
 )
 endif()
 
-set(incl ${incl} include src)
-set(libs ${libs} worker trackdata geometry)
+set(incl ${incl} 
+    include 
+    src 
+    ./worker/include
+    ./worker/src
+    ./trackdata/include
+    ./geometry/include
+    ./qtree/include
+)
+
+set(libs ${libs} worker trackdata geometry qtree)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -49,10 +58,6 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
 
     set(incl
         ${incl}
-        ./worker/include
-        ./worker/src
-        ./trackdata/include
-        ./geometry/include
     )
 
     set(libs
@@ -82,10 +87,6 @@ else ()
     pkg_check_modules(BULLET REQUIRED bullet)
 
     set(incl
-        ./worker/include
-        ./worker/src
-        ./trackdata/include
-        ./geometry/include
         ${incl}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
@@ -162,11 +163,8 @@ set(sources
 
 add_subdirectory(./geometry)
 add_subdirectory(./worker)
+add_subdirectory(./qtree)
 add_subdirectory(./trackdata)
-
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_subdirectory(./tools/svg2track)
-endif()
 
 add_executable(${PROJECT_NAME} ${sources})
 
@@ -177,3 +175,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${CMAKE_CXX_FLAGS} ${flags})
 target_include_directories(${PROJECT_NAME} PRIVATE ${incl})
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/worker)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs})
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_subdirectory(./tools/svg2track)
+endif()

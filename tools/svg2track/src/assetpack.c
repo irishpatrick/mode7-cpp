@@ -18,7 +18,7 @@ static bool endswith(const char* str, const char* pat)
         return false;
     }
 
-    char* start = str + (str_len - pat_len);
+    const char* start = str + (str_len - pat_len);
 
     return strcmp(start, pat) == 0;
 }
@@ -142,6 +142,8 @@ int assetpack_open(assetpack* ap, const char* fn)
     wavefront_load(&ap->mesh, ".transfer.obj.tmp");
 
     remove(".transfer.obj.tmp");
+
+    return 0;
 }
 
 void assetpack_free(assetpack* ap)

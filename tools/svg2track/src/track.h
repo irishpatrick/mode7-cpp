@@ -24,9 +24,9 @@ void track_init(track*, int);
 void track_destroy(track*);
 
 void track_add_bezier(track*, bezier*);
-void track_add_line(track*, line*);;
+void track_add_line(track*, line*);
 
-void track_meshify(track*, mesh*, const char*);
+void track_meshify(track*, mesh*, const char*, float, float, float);
 
 #endif /* TRACK_H */
 
