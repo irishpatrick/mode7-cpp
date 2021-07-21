@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
-    "fmt"
 
 	"archive/zip"
 
@@ -46,8 +46,8 @@ func compressDir(dn string) {
 		}
 		defer fq.Close()
 
-		fixedpath := path.Join(strings.TrimPrefix(path.Dir(pth), dirpath + "/"), path.Base(pth))
-        fmt.Printf("\t%s\n", fixedpath)
+		fixedpath := path.Join(strings.TrimPrefix(path.Dir(pth), dirpath+"/"), path.Base(pth))
+		fmt.Printf("\t%s\n", fixedpath)
 		fr, err := w.Create(fixedpath)
 		if err != nil {
 			return err
@@ -92,15 +92,16 @@ var pushCmd = &cobra.Command{
 	Short: "get version",
 	Long:  "version",
 	Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println("compressing...")
+		fmt.Println("compressing...")
 		compressDir("../../assets")
 
-        fmt.Println("pushing...")
+		fmt.Println("pushing...")
 		bucket := "mode7-assets"
 		filename := "assets.zip"
 
 		cfg, err := config.LoadDefaultConfig(context.TODO())
 		if err != nil {
+			os.Remove("./assets.zip")
 			log.Fatal(err)
 		}
 
@@ -108,6 +109,7 @@ var pushCmd = &cobra.Command{
 
 		file, err := os.Open(filename)
 		if err != nil {
+			os.Remove("./assets.zip")
 			log.Fatal(err)
 		}
 
@@ -121,6 +123,7 @@ var pushCmd = &cobra.Command{
 
 		_, err = PutFile(context.TODO(), client, input)
 		if err != nil {
+			os.Remove("./assets.zip")
 			log.Fatal(err)
 		}
 

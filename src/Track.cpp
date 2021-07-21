@@ -8,11 +8,23 @@
 
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <cassert>
 
 using json = nlohmann::json;
 
 namespace mode7
 {
+    inline static Rect quad_to_rect(quad* q)
+    {
+        Rect out;
+        out.connect(
+            glm::vec2(q->p[0].x, q->p[0].y),
+            glm::vec2(q->p[1].x, q->p[1].y),
+            glm::vec2(q->p[2].x, q->p[2].y),
+            glm::vec2(q->p[3].x, q->p[3].y)
+        );
+        return out;
+    }
 
     Track::Track()
     {
@@ -38,6 +50,8 @@ namespace mode7
             return;
         }
         m_data.transform(m_scene->getWorldMatrix());
+
+        genTrackZones();
 
 #ifdef _BUILD_DEBUG_TOOLS
      
@@ -75,11 +89,27 @@ namespace mode7
 #endif /* _BUILD_DEBUG_TOOLS */
     }
 
+    void Track::genTrackZones()
+    {
+        assert(m_data.getNumZones() > 0);
+
+        m_zones.reserve(m_data.getNumZones());
+
+        TrackZone tz;
+        for (uint32_t i = 0; i < m_data.getNumZones(); ++i)
+        {
+            tz.m_trackRect = quad_to_rect(&m_data.getTrackBounds()[i]);
+            tz.m_runoffRect = quad_to_rect(&m_data.getRunoffBounds()[i]);
+            tz.m_wallRect = quad_to_rect(&m_data.getWallBounds()[i]);
+            m_zones.push_back(tz);
+        }
+    }
+
     void Track::placeCarOnGrid(Car* car, uint32_t pos)
     {
-        auto clp = m_data.getCenterLinePts();
-        float ox = clp[0].x;
-        float oy = clp[0].y;
+        auto centerLines = m_data.getCenterLines();
+        float ox = centerLines[0].p1[0];
+        float oy = centerLines[0].p1[1];
         float dx = 1;
         float dy = 1.5;
 
@@ -130,6 +160,21 @@ namespace mode7
     std::vector<TrackZone*> Track::getNearbyZones(uint32_t curZone)
     {
         std::vector<TrackZone*> out;
+        uint32_t back;
+        uint32_t front;
+        uint32_t d = 10;
+
+        out.reserve(d * 2 + 1);
+
+        back = (curZone - d) % m_data.getNumZones();
+        front = (curZone + d) % m_data.getNumZones();
+
+        uint32_t i = front;
+        while (i != back)
+        {
+            out.push_back(&m_zones[i]);
+            i = (i - 1) % m_data.getNumZones();
+        }
 
         return out;
     }

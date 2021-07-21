@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include <cstdint>
 
 #include "geometry.h"
 #include "line.h"
@@ -23,6 +24,31 @@ namespace mode7
         std::vector<glm::vec2> getTrackBoundPts();
         std::vector<glm::vec2> getRunoffBoundPts();
         std::vector<glm::vec2> getWallBoundPts();
+
+        inline std::vector<line>& getCenterLines()
+        {
+            return m_centerLines;
+        }
+        
+        inline std::vector<quad>& getTrackBounds()
+        {
+            return m_trackBounds;
+        }
+        
+        inline std::vector<quad>& getRunoffBounds()
+        {
+            return m_runoffBounds;
+        }
+
+        inline std::vector<quad>& getWallBounds()
+        {
+            return m_wallBounds;
+        }
+
+        inline uint32_t getNumZones()
+        {
+            return m_centerLines.size();
+        }
 
     private:
         std::vector<line> m_centerLines;

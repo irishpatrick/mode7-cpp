@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
+#include <cassert>
 
 using json = nlohmann::json;
 
@@ -242,7 +243,27 @@ namespace mode7
             return;
         }
 
-        
+        glm::vec2 pos(position.x, position.z);
+        auto zones = m_track->getNearbyZones(m_currentZone);
+        std::cout << "zone: " << m_currentZone << std::endl;
+        assert(zones.size() > 0);
+        int i = 0;
+        for (auto& e : zones)
+        {
+            std::cout << i++;
+            if (e->onTrack(pos))
+            {
+                std::cout << "ontrack" << std::endl;
+            }
+            else if (e->onRunoff(pos))
+            {
+                std::cout << "onrunoff" << std::endl;
+            }
+            else if (e->onWall(pos))
+            {
+                std::cout << "onwall" << std::endl;
+            }
+        }
     }
 
     void Car::updateEffects()

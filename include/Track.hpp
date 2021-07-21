@@ -33,12 +33,12 @@ namespace mode7
 
         inline bool onTrack(glm::vec2 v)
         {
-            return m_trackRect.checkIntersect(v);
+            return m_trackRect.checkIntersect(v) && m_runoffRect.checkIntersect(v) && m_wallRect.checkIntersect(v);
         }
 
         inline bool onRunoff(glm::vec2 v)
         {
-            return m_runoffRect.checkIntersect(v);
+            return m_runoffRect.checkIntersect(v) && m_wallRect.checkIntersect(v);
         }
 
         inline bool onWall(glm::vec2 v)
@@ -50,6 +50,8 @@ namespace mode7
         Rect m_trackRect;
         Rect m_runoffRect;
         Rect m_wallRect;
+
+        friend class Track;
     };
 
     class Track
@@ -61,6 +63,7 @@ namespace mode7
 
         void open(const std::string&);
         void attachData(const std::string&);
+        void genTrackZones();
         Scene* getScene();
         void placeCarOnGrid(Car*, uint32_t);
         void update();

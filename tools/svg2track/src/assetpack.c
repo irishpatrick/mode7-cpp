@@ -69,15 +69,6 @@ int assetpack_open(assetpack* ap, const char* fn)
         return 1;
     }
 
-    /*err = zip_fseek(obj_file, 0, SEEK_END);
-    if (err)
-    {
-        fprintf(stderr, "fatal error\n");
-        return 1;
-    }
-    int64_t obj_file_size = zip_ftell(obj_file);
-    err = zip_fseek(obj_file, 0, SEEK_SET);*/
-
     zip_stat_t obj_file_stat;
     err = zip_stat_index(archive, obj_file_indx, 0, &obj_file_stat);
     int64_t obj_file_size = obj_file_stat.size;

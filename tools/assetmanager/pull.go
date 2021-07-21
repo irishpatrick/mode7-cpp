@@ -176,6 +176,7 @@ var pullCmd = &cobra.Command{
 
 		_, err = io.Copy(out, httpresp.Body)
 		if err != nil {
+			os.Remove("./assets.zip")
 			log.Fatal(err)
 		}
 

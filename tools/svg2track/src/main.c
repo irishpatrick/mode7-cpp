@@ -40,9 +40,9 @@ int main(int argc, char** argv)
     }
 
     // parse flags
-    float track_width;
-    float runoff_width;
-    float wall_width;
+    float track_width = 5.0;
+    float runoff_width = 10.0;
+    float wall_width = 1.0;
     char* flag;
     char* val;
     for (int i = 4; i < argc; ++i)

@@ -92,6 +92,8 @@ void mesh_finish_building(mesh* m)
         return;
     }
     m->indices = newu;
+
+    mesh_compute_bbox(m);
 }
 
 void mesh_copy(mesh* dest, mesh* src)
@@ -104,6 +106,7 @@ void mesh_copy(mesh* dest, mesh* src)
         return;
     }
     memcpy(dest->vertices, src->vertices, dest->n_vertices * sizeof(vertex));
+    memcpy(dest->length, src->length, 3 * sizeof(float));
 
     dest->n_normals = src->n_normals;
     dest->max_normals = src->max_normals;
@@ -229,4 +232,56 @@ void mesh_add_index(mesh* m, uint32_t v, uint32_t t, uint32_t n)
     m->indices[m->n_indices * 3 + 1] = t;
     m->indices[m->n_indices * 3 + 2] = n;
     m->n_indices += 1;
+}
+
+void mesh_compute_bbox(mesh* m)
+{
+    if (m->n_vertices < 1)
+    {
+        return;
+    }
+
+    float* v;
+    v = &m->vertices[0];
+    float xmin = v[0];
+    float xmax = v[0];
+    float ymin = v[1];
+    float ymax = v[1];
+    float zmin = v[2];
+    float zmax = v[2];
+
+    for (uint32_t i = 1; i < m->n_vertices; ++i)
+    {
+        v = &m->vertices[i * 3];
+        if (v[0] < xmin)
+        {
+            xmin = v[0];
+        }
+        if (v[0] > xmax)
+        {
+            xmax = v[0];
+        }
+        if (v[1] < ymin)
+        {
+            ymin = v[1];
+        }
+        if (v[1] > ymax)
+        {
+            ymax = v[1];
+        }
+        if (v[2] < zmin)
+        {
+            zmin = v[2];
+        }
+        if (v[2] > zmax)
+        {
+            zmax = v[2];
+        }
+    }
+
+    m->length[0] = xmax - xmin;
+    m->length[1] = ymax - ymin;
+    m->length[2] = zmax - zmin;
+
+    printf("bounding box: %fx%fx%f\n", m->length[0], m->length[1], m->length[2]);
 }

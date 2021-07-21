@@ -167,6 +167,12 @@ set(sources
     src/Util.cpp
 )
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/Catch2)
+add_executable(tests tests/test.cpp ${sources})
+target_compile_options(tests PRIVATE -DTESTS)
+target_include_directories(tests PRIVATE ${incl} ${CMAKE_SOURCE_DIR}/3rdparty/Catch2/src/catch2)
+target_link_libraries(tests PRIVATE Catch2::Catch2 ${libs}  )
+
 add_subdirectory(./geometry)
 add_subdirectory(./worker)
 add_subdirectory(./qtree)

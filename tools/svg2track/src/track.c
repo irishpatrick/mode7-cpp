@@ -282,6 +282,7 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn, float track_width
     mesh* meshes = malloc(n_meshes * sizeof(mesh));
     if (meshes == NULL)
     {
+        free(lines);
         return;
     }
 
@@ -308,15 +309,18 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn, float track_width
 
         cur = &meshes[i];
         mesh_copy(cur, stock);
+        float half_width = cur->length[2] / 2.0;
+
         for (int k = 0; k < cur->n_vertices; ++k)
         {
             // grab current vertex
             v = &cur->vertices[k * 3];
-            
+
             // snap vertices to line
-            v[2] += 4.5; // adjust to midpoint;
-            t = v[2] / 4.5; // for line calculation
-            assert (t >= -1.f && t <= 1.f);
+            v[2] += half_width; // adjust to midpoint;
+            t = v[2] / cur->length[2] + 0.5; // for line calculation
+            assert(t >= 0.0 && t <= 1.0);
+
             // back vertices
             if (v[0] == 0.0f)
             {
@@ -327,6 +331,7 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn, float track_width
             {
                 line_solve(front, t, fbuf);
             }
+
             v[0] = fbuf[0];
             v[2] = fbuf[1];
         }
@@ -341,5 +346,7 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn, float track_width
     strcpy(tdat_fn, out_fn);
     strcat(tdat_fn, ".tdat");
     trackdata_save(&tr->tdata, tdat_fn);
+
+    free(meshes);
 }
 

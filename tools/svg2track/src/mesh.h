@@ -24,6 +24,8 @@ typedef struct _mesh
     uint32_t max_normals;
     uint32_t max_uvs;
     uint32_t max_indices;
+
+    float length[3];
 } mesh;
 
 void mesh_init(mesh*);
@@ -37,5 +39,6 @@ void mesh_add_normal(mesh*, vertex);
 void mesh_add_uv(mesh*, float*);
 void mesh_add_index(mesh*, uint32_t, uint32_t, uint32_t);
 void mesh_connect(mesh*);
+void mesh_compute_bbox(mesh*);
 
 #endif /* MESH_H */

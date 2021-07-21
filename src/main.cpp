@@ -1,3 +1,5 @@
+#ifndef TESTS
+
 #include "Camera.hpp"
 #include "Screen.hpp"
 #include "Shader.hpp"
@@ -269,3 +271,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+#endif /* TESTS */
