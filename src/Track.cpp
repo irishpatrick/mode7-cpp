@@ -4,6 +4,7 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 #include "ModelLoader.hpp"
+#include "Car.hpp"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -41,9 +42,13 @@ namespace mode7
 #ifdef _BUILD_DEBUG_TOOLS
      
         m_centerLineDbg.init();
+        m_centerLineDbg.setColor(1.0, 1.0, 1.0);
         m_trackBoundDbg.init();
+        m_trackBoundDbg.setColor(0.0, 1.0, 0.0);
         m_runoffBoundDbg.init();
+        m_runoffBoundDbg.setColor(1.0, 1.0, 0.0);
         m_wallBoundDbg.init();
+        m_wallBoundDbg.setColor(1.0, 0.0, 0.0);
     
         std::vector<glm::vec2> pts;
 
@@ -70,6 +75,21 @@ namespace mode7
 #endif /* _BUILD_DEBUG_TOOLS */
     }
 
+    void Track::placeCarOnGrid(Car* car, uint32_t pos)
+    {
+        auto clp = m_data.getCenterLinePts();
+        float ox = clp[0].x;
+        float oy = clp[0].y;
+        float dx = 1;
+        float dy = 1.5;
+
+        int side = (pos + 1) % 2;
+
+        car->position.x = ox + dx * side;
+        car->position.z = oy + dy * (pos / 2);
+        
+    }
+
     Scene* Track::getScene()
     {
         return m_scene.get();
@@ -94,10 +114,10 @@ namespace mode7
 #ifdef _BUILD_DEBUG_TOOLS
 
         glDisable(GL_DEPTH_TEST);
-        m_centerLineDbg.draw();
-        m_trackBoundDbg.draw();
-        m_runoffBoundDbg.draw();
         m_wallBoundDbg.draw();
+        m_runoffBoundDbg.draw();
+        m_trackBoundDbg.draw();
+        m_centerLineDbg.draw();        
         glEnable(GL_DEPTH_TEST);
 
 #endif /* _BUILD_DEBUG_TOOLS */
@@ -105,5 +125,12 @@ namespace mode7
 
     void Track::destroy()
     {
+    }
+
+    std::vector<TrackZone*> Track::getNearbyZones(uint32_t curZone)
+    {
+        std::vector<TrackZone*> out;
+
+        return out;
     }
 }

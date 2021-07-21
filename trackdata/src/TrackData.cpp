@@ -140,7 +140,13 @@ namespace mode7
             b = glm::vec3(matrix * glm::vec4(b, 1));
             c = glm::vec3(matrix * glm::vec4(c, 1));
             d = glm::vec3(matrix * glm::vec4(d, 1));
-            quad_connect_raw(cur_quad, &a[0], &b[0], &c[0], &d[0]);
+            quad_connect_raw(
+                cur_quad,
+                &(glm::vec2(a.x, a.z))[0],
+                &(glm::vec2(b.x, b.z))[0],
+                &(glm::vec2(c.x, c.z))[0],
+                &(glm::vec2(d.x, d.z))[0]
+            );
 
             cur_quad = &m_runoffBounds[i];
             a = glm::vec3(cur_quad->p[0].x, 0, cur_quad->p[0].y);
@@ -151,7 +157,13 @@ namespace mode7
             b = glm::vec3(matrix * glm::vec4(b, 1));
             c = glm::vec3(matrix * glm::vec4(c, 1));
             d = glm::vec3(matrix * glm::vec4(d, 1));
-            quad_connect_raw(cur_quad, &a[0], &b[0], &c[0], &d[0]);
+            quad_connect_raw(
+                cur_quad,
+                &(glm::vec2(a.x, a.z))[0],
+                &(glm::vec2(b.x, b.z))[0],
+                &(glm::vec2(c.x, c.z))[0],
+                &(glm::vec2(d.x, d.z))[0]
+            );
             
             cur_quad = &m_wallBounds[i];
             a = glm::vec3(cur_quad->p[0].x, 0, cur_quad->p[0].y);
@@ -162,7 +174,13 @@ namespace mode7
             b = glm::vec3(matrix * glm::vec4(b, 1));
             c = glm::vec3(matrix * glm::vec4(c, 1));
             d = glm::vec3(matrix * glm::vec4(d, 1));
-            quad_connect_raw(cur_quad, &a[0], &b[0], &c[0], &d[0]);
+            quad_connect_raw(
+                cur_quad,
+                &(glm::vec2(a.x, a.z))[0],
+                &(glm::vec2(b.x, b.z))[0],
+                &(glm::vec2(c.x, c.z))[0],
+                &(glm::vec2(d.x, d.z))[0]
+            );
         }
 
         return n_processed;

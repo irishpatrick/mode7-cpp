@@ -12,7 +12,8 @@ DebugPath::DebugPath() :
     m_isReady(false),
     vao(-1),
     vbo(-1),
-    num_lines(0)
+    num_lines(0),
+    m_color(1.0, 0.0, 1.0)
 {
 
 }
@@ -25,6 +26,7 @@ DebugPath::~DebugPath()
 void DebugPath::init()
 {
     shader.open("assets/shaders/debugpath_v.glsl", "assets/shaders/debugpath_f.glsl");
+    m_colorUniform = glGetUniformLocation(shader.pid(), "color");
 }
 
 void DebugPath::createFromPoints(std::vector<glm::vec2>& points)
@@ -61,6 +63,7 @@ void DebugPath::draw()
     if (m_isReady)
     {
         shader.use();
+        glUniform3fv(m_colorUniform, 1, &m_color[0]);
         shader.setModel(*this);
 
         glBindVertexArray(vao);

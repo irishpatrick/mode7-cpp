@@ -158,7 +158,7 @@ static int interpolate_bezier(float* start, bezier* ln, int n_points)
     return n_points;
 }
 
-void track_meshify(track* tr, mesh* stock, const char* out_fn)
+void track_meshify(track* tr, mesh* stock, const char* out_fn, float track_width, float runoff_width, float wall_width)
 {
     // start with 100 pairs allocated
     int max_points = 1000;
@@ -229,7 +229,7 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn)
         return;
     }
 
-    float track_width = 2.f; // todo change
+    //float track_width = 2.f; // todo change
 
     float* a;
     float* b;
@@ -301,9 +301,9 @@ void track_meshify(track* tr, mesh* stock, const char* out_fn)
         // add bounds to trackdata, compute bounds for runoff, walls
         trackdata_track_bounds(&tr->tdata, front->p1, front->p2, back->p2, back->p1);
         trackdata_push_tbp(&tr->tdata);
-        trackdata_runoff_bounds(&tr->tdata, 4.0);
+        trackdata_runoff_bounds(&tr->tdata, runoff_width);
         trackdata_push_rbp(&tr->tdata);
-        trackdata_walls_bounds(&tr->tdata, 1.0);
+        trackdata_walls_bounds(&tr->tdata, wall_width);
         trackdata_push_wbp(&tr->tdata);
 
         cur = &meshes[i];

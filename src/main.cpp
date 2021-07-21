@@ -211,8 +211,10 @@ int main(int argc, char** argv)
     car.addChild(&Camera::getObject());
     car.setTracked(true);
     car.setAltShader(shadowShader);
-    car.rotate(0.f, -M_PI/2.f, 0.f);
-    car.setRacingLine(&rltest);
+    car.rotate(0.f, M_PI/2.f, 0.f);
+
+    car.setTrack(&track);
+    track.placeCarOnGrid(&car, 1);
 
     hud.setCar(&car);
     hud.init();
@@ -223,7 +225,6 @@ int main(int argc, char** argv)
     aitest.position.x = 1;
     //aitest.addChild(&Camera::getObject());
     aitest.setAltShader(shadowShader);
-    aitest.setRacingLine(&rltest);
     //aitest.setTracked(true);
     aitest.rotate(0.f, -M_PI/2.f + 0.03f, 0.f);
     aitest.update();

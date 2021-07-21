@@ -27,12 +27,19 @@ public:
         return m_isReady;
     }
 
+    inline void setColor(float r, float g, float b)
+    {
+        m_color = glm::vec3(r, g, b);
+    }
+
 private:
 
     bool m_isReady;
+    glm::vec3 m_color;
     GLuint vao;
     GLuint vbo;
     GLuint num_lines;
+    GLuint m_colorUniform;
     Shader shader;
 };
 
