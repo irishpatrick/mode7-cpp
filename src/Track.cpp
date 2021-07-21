@@ -93,12 +93,12 @@ namespace mode7
 
 #ifdef _BUILD_DEBUG_TOOLS
 
-        //glDisable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
         m_centerLineDbg.draw();
-        //glEnable(GL_DEPTH_TEST);
-        //m_trackBoundDbg.draw();
-        //m_runoffBoundDbg.draw();
-        //m_wallBoundDbg.draw();
+        m_trackBoundDbg.draw();
+        m_runoffBoundDbg.draw();
+        m_wallBoundDbg.draw();
+        glEnable(GL_DEPTH_TEST);
 
 #endif /* _BUILD_DEBUG_TOOLS */
     }
