@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -123,6 +124,7 @@ func extract_zip(src string, dst string) {
 	}
 
 	for _, f := range r.File {
+		fmt.Printf("\t%s\n", f.Name)
 		err := extractAndWriteFile(f)
 		if err != nil {
 			log.Fatal(err)
@@ -135,6 +137,8 @@ var pullCmd = &cobra.Command{
 	Short: "get version",
 	Long:  "version",
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("pulling...")
+
 		cfg, err := config.LoadDefaultConfig(context.TODO())
 		if err != nil {
 			log.Fatal(err)
@@ -175,6 +179,7 @@ var pullCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		fmt.Println("unpacking...")
 		extract_zip("./assets.zip", "../../assets")
 		os.Remove("./assets.zip")
 	},
