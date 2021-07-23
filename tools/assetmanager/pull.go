@@ -100,8 +100,7 @@ func extract_zip(src string, dst string) {
 
 		path := filepath.ToSlash(path.Join(dst, f.Name))
 
-		// Check for ZipSlip (Directory traversal)
-		if !strings.HasPrefix(path, filepath.ToSlash(filepath.Clean(dst))+string(os.PathSeparator)) {
+		if !strings.HasPrefix(path, filepath.ToSlash(filepath.Clean(dst))) {
 			log.Fatalf("illegal file path: %s", path)
 		}
 
