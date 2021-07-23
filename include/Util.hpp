@@ -3,10 +3,11 @@
 
 #include <assimp/Importer.hpp>
 #include "gl.hpp"
+#include "Line2D.hpp"
 
-#ifdef __linux__
-#include <X11/Xlib.h>
-#endif
+#include <vector>
+
+using namespace mode7;
 
 class Util
 {
@@ -17,6 +18,7 @@ public:
     static glm::vec3 xAxis();
     static glm::vec3 yAxis();
     static glm::vec3 zAxis();
+    static bool sat(std::vector<Line2D*>&, std::vector<Line2D*>&);
     static float lerp(float, float, float);
     static float map(float, float, float, float, float);
     static glm::mat4 fromAi(const aiMatrix4x4&);

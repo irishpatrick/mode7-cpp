@@ -1,10 +1,16 @@
 #include "Util.hpp"
+
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
+
 #ifdef _WIN32
 #include <WinUser.h>
 #endif /* _WIN32 */
+#ifdef __linux__
+#include <X11/Xlib.h>
+#endif
 
 static glm::vec3 ax = { 1, 0, 0 };
 static glm::vec3 ay = { 0, 1, 0 };
@@ -34,6 +40,71 @@ void Util::seed()
     v[1] = y;
     v[2] = z;
 }*/
+
+static glm::vec2 project(std::vector<Line2D*>& shape, Line2D* line)
+{
+    glm::vec2 a;
+    glm::vec2 b;
+    glm::vec2 origin = line->p();
+    glm::vec2 dir = line->v();
+    glm::vec2 proj(FLT_MAX, FLT_MIN); // should be fine
+
+    for (auto& e : shape)
+    {
+        a = e->p() - origin;
+        b = e->e() - origin;
+        proj.x = fmin(proj.x, glm::dot(a, dir));
+        proj.y = fmax(proj.y, glm::dot(b, dir));
+    }
+
+    return proj;
+}
+
+static inline bool check_overlap(glm::vec2 a, glm::vec2 b)
+{
+    return
+        a.x >= b.x && a.x <= b.y ||
+        a.y >= b.x && a.y <= b.y || 
+        b.x >= a.x && b.x <= a.y ||
+        b.y >= a.x && b.y <= a.y;
+}
+
+bool Util::sat(std::vector<Line2D*>& a, std::vector<Line2D*>& b)
+{
+    bool result = true;
+    glm::vec2 axis;
+    glm::vec2 proj_a;
+    glm::vec2 proj_b;
+    Line2D* line;
+
+    for (auto& e : a)
+    {
+        axis = glm::normalize(e->v());
+        line = e;
+
+        proj_a = project(a, e);
+        proj_b = project(b, e);
+
+        //std::cout << "A: proj_a=" << glm::to_string(proj_a) << "\tproj_b=" << glm::to_string(proj_b) << " : " << check_overlap(proj_a, proj_b) << std::endl;
+
+        result &= check_overlap(proj_a, proj_b);
+    }
+
+    for (auto& e : b)
+    {
+        axis = glm::normalize(e->v());
+        line = e;
+
+        proj_a = project(a, e);
+        proj_b = project(b, e);
+
+        //std::cout << "B: proj_a=" << glm::to_string(proj_a) << "\tproj_b=" << glm::to_string(proj_b) << " : " << check_overlap(proj_a, proj_b) << std::endl;
+
+        result &= check_overlap(proj_a, proj_b);
+    }
+
+    return result;
+}
 
 float Util::lerp(float v0, float v1, float t)
 {

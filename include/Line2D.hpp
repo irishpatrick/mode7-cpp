@@ -3,6 +3,9 @@
 
 #include "gl.hpp"
 
+#include <string>
+#include <sstream>
+
 namespace mode7
 {
 
@@ -12,6 +15,13 @@ public:
 
     inline Line2D() {}
     inline ~Line2D() {}
+
+    inline std::string str()
+    {
+        std::stringstream ss;
+        ss << glm::to_string(m_p) << " --> " << glm::to_string(m_e);
+        return ss.str();
+    }
 
     inline void create(glm::vec2 a, glm::vec2 b)
     {

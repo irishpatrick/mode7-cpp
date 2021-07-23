@@ -22,6 +22,11 @@ void line_solve(line* l, float t, float out[2])
     out[1] = (1.f - t) * l->p1[1] + t * l->p2[1];
 }
 
+float line_solve_y(line* l, float x)
+{
+    return line_slope(l) * x + line_intercept(l);
+}
+
 float line_calc_distance(line* l)
 {
     float a[2];
@@ -43,4 +48,58 @@ void line_print(line* l)
         l->p1[1], 
         l->p2[0], 
         l->p2[1]);
+}
+
+float line_slope(line* l)
+{
+    return (l->p2[1] - l->p1[1]) / (l->p2[0] - l->p1[0]);
+}
+
+float line_intercept(line* l)
+{
+    return l->p1[1] - line_slope(l) * l->p1[0];
+}
+
+float line_inverse(line* l, float x, float y)
+{
+
+}
+
+float line_length(line* l)
+{
+    float dx = l->p2[0] - l->p1[0];
+    float dy = l->p2[1] - l->p1[1];
+    return sqrt(dx * dx + dy * dy);
+}
+
+bool line_intersects(line* l1, line* l2)
+{
+    line_print(l1);
+    printf("intersects\n");
+    line_print(l2);
+
+    float dm = line_slope(l1) - line_slope(l2);
+    if (dm == 0.0)
+    {
+        return false;
+    }
+
+    float db = line_intercept(l2) - line_intercept(l1);
+
+    float xint = db / dm;
+    printf("xint %f\n", xint);
+    //float yint = line_solve_y(l1, xint);
+
+    float mag = line_length(l1);
+    float xdir = (l1->p2[0] - l1->p1[0]);
+    printf("xdir %f\n", xdir);
+
+    float t_int = (xint - l1->p1[0]) / xdir;
+    
+    //if (t_int >= 0.0 && t_int <= 1.0)
+    {
+        printf("%f\n", t_int);
+    }
+
+    return t_int >= 0.002 && t_int <= 1.0 - .002;
 }

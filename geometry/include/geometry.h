@@ -23,9 +23,11 @@ typedef struct _quad
     float area;
 } quad;
 
-void quad_connect(quad*, vec2, vec2, vec2, vec2);
-void quad_connect_raw(quad*, float*, float*, float*, float*);
-void quad_from_buffer(quad*, float*);
+int quad_connect(quad*, vec2, vec2, vec2, vec2);
+int quad_connect_raw(quad*, float*, float*, float*, float*);
+int quad_from_buffer(quad*, float*);
+int quad_orient(quad*, int);
+void quad_print(quad*);
 
 float vec2_magnitude(vec2*);
 void vec2_normalize(vec2*);

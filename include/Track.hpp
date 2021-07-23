@@ -33,12 +33,12 @@ namespace mode7
 
         inline bool onTrack(glm::vec2 v)
         {
-            return m_trackRect.checkIntersect(v) && m_runoffRect.checkIntersect(v) && m_wallRect.checkIntersect(v);
+            return m_trackRect.checkIntersect(v);
         }
 
         inline bool onRunoff(glm::vec2 v)
         {
-            return m_runoffRect.checkIntersect(v) && m_wallRect.checkIntersect(v);
+            return m_runoffRect.checkIntersect(v);
         }
 
         inline bool onWall(glm::vec2 v)
@@ -69,7 +69,7 @@ namespace mode7
         void update();
         void draw(Shader&);
         void destroy();
-        std::vector<TrackZone*> getNearbyZones(uint32_t);
+        std::vector<std::pair<uint32_t, TrackZone*>> getNearbyZones(uint32_t);
 
     private:
 

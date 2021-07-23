@@ -14,7 +14,7 @@ using json = nlohmann::json;
 
 namespace mode7
 {
-    inline static Rect quad_to_rect(quad* q)
+    static inline Rect quad_to_rect(quad* q)
     {
         Rect out;
         out.connect(
@@ -22,6 +22,10 @@ namespace mode7
             glm::vec2(q->p[1].x, q->p[1].y),
             glm::vec2(q->p[2].x, q->p[2].y),
             glm::vec2(q->p[3].x, q->p[3].y)
+            // glm::vec2(q->p[3].x, q->p[3].y),
+            // glm::vec2(q->p[2].x, q->p[2].y),
+            // glm::vec2(q->p[1].x, q->p[1].y),
+            // glm::vec2(q->p[0].x, q->p[0].y)
         );
         return out;
     }
@@ -157,24 +161,37 @@ namespace mode7
     {
     }
 
-    std::vector<TrackZone*> Track::getNearbyZones(uint32_t curZone)
+    int32_t pymod(int32_t n, int32_t m)
     {
-        std::vector<TrackZone*> out;
+        return ((n % m) + m) % m;
+    }
+
+    std::vector<std::pair<uint32_t, TrackZone*>> Track::getNearbyZones(uint32_t curZone)
+    {
+        std::vector<std::pair<uint32_t, TrackZone*>> out;
         uint32_t back;
         uint32_t front;
-        uint32_t d = 10;
+        uint32_t d = 20;
 
-        out.reserve(d * 2 + 1);
+        out.reserve(d * 2);
 
-        back = (curZone - d) % m_data.getNumZones();
-        front = (curZone + d) % m_data.getNumZones();
+        // (b + (a%b)) % b
+        // ((-1 % 10) + 10) % 10
+        //back = (m_data.getNumZones() + ((int32_t)curZone - d) % m_data.getNumZones()) % m_data.getNumZones();
+        back = pymod((int32_t)curZone - (int32_t)d * 3 / 2, m_data.getNumZones());
+        front = ((int32_t)curZone + (int32_t)d / 2) % m_data.getNumZones();
+
+        //std::cout << "cur=" << curZone << "\tback=" << back << "\tfront=" << front  << "\tnzones=" << m_data.getNumZones() << std::endl;
 
         uint32_t i = front;
         while (i != back)
         {
-            out.push_back(&m_zones[i]);
-            i = (i - 1) % m_data.getNumZones();
+            out.push_back(std::pair<uint32_t, TrackZone*>(i, &m_zones[i]));
+            //i = (m_data.getNumZones() + ((int32_t)i - 1) % m_data.getNumZones()) % m_data.getNumZones();
+            i = pymod((int32_t)i - 1, m_data.getNumZones());
         }
+
+        assert(out.size() == d * 2);
 
         return out;
     }

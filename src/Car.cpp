@@ -245,23 +245,37 @@ namespace mode7
 
         glm::vec2 pos(position.x, position.z);
         auto zones = m_track->getNearbyZones(m_currentZone);
-        std::cout << "zone: " << m_currentZone << std::endl;
+        //std::cout << "zone: " << m_currentZone << std::endl;
         assert(zones.size() > 0);
         int i = 0;
         for (auto& e : zones)
         {
-            std::cout << i++;
-            if (e->onTrack(pos))
+            //std::cout << i++;
+            if (e.second->onTrack(pos))
             {
+                m_currentZone = e.first;
+                std::cout << "zone: " << m_currentZone << std::endl;
                 std::cout << "ontrack" << std::endl;
+                break;
             }
-            else if (e->onRunoff(pos))
+            else if (e.second->onRunoff(pos))
             {
+                m_currentZone = e.first;
+                std::cout << "zone: " << m_currentZone << std::endl;
                 std::cout << "onrunoff" << std::endl;
+                break;
             }
-            else if (e->onWall(pos))
+            else if (e.second->onWall(pos))
             {
+                m_currentZone = e.first;
+                std::cout << "zone: " << m_currentZone << std::endl;
                 std::cout << "onwall" << std::endl;
+                break;
+            }
+            else
+            {
+                //std::cout << "FATAL: ZONE " << m_currentZone << std::endl;  
+                //std::cout << "none" << std::endl;
             }
         }
     }

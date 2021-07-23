@@ -95,7 +95,15 @@ static void extend_quad(quad* dest, quad* src, line* cl, float amt)
     ortho[1]->p2[0] += amt * vecs[1].x;
     ortho[1]->p2[1] += amt * vecs[1].y;
 
-    quad_connect_raw(dest, ortho[0]->p1, ortho[0]->p2, ortho[1]->p1, ortho[1]->p2);
+    int res = quad_connect_raw(dest, ortho[0]->p1, ortho[0]->p2, ortho[1]->p1, ortho[1]->p2);
+    if (res > 0)
+    {
+        printf("NEED TO FIX\n");
+        quad_print(dest);
+        res = quad_orient(dest, res);
+        assert(res == 0);
+        printf("SUCCESS\n\n");
+    }
 }
 
 void trackdata_init(trackdata* td)
