@@ -143,13 +143,21 @@ glm::mat4 Util::fromAi(const aiMatrix4x4& from)
 
 std::pair<int, int> Util::getMonitorRes()
 {
-    std::pair<int, int> out;
+    std::pair<int, int> out(0, 0);
 #ifdef _WIN32
     out.first = GetSystemMetrics(SM_CXSCREEN);
     out.second = GetSystemMetrics(SM_CYSCREEN);
 #elif defined __linux__
     Display* d = XOpenDisplay(NULL);
+    if (!d)
+    {
+        return out;
+    }
     Screen* s = DefaultScreenOfDisplay(d);
+    if (!s)
+    {
+        return out;
+    }
     out.first = s->width;
     out.second = s->height;
 #endif
