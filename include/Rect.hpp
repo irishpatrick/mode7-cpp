@@ -63,13 +63,13 @@ namespace mode7
 
             bool status = da >= 0 && db >= 0 && dc >= 0 && dd >= 0;
            
-            if (status)
-            {
-                std::cout << "\t" << da << " ";
-                std::cout << "\t" << db << " ";
-                std::cout << "\t" << dc << " ";
-                std::cout << "\t" << dd << std::endl;
-            }
+            // if (status)
+            // {
+            //     std::cout << "\t" << da << " ";
+            //     std::cout << "\t" << db << " ";
+            //     std::cout << "\t" << dc << " ";
+            //     std::cout << "\t" << dd << std::endl;
+            // }
 
             return status;
         }

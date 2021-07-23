@@ -74,9 +74,9 @@ float line_length(line* l)
 
 bool line_intersects(line* l1, line* l2)
 {
-    line_print(l1);
-    printf("intersects\n");
-    line_print(l2);
+    // line_print(l1);
+    // printf("intersects\n");
+    // line_print(l2);
 
     float dm = line_slope(l1) - line_slope(l2);
     if (dm == 0.0)
@@ -87,18 +87,18 @@ bool line_intersects(line* l1, line* l2)
     float db = line_intercept(l2) - line_intercept(l1);
 
     float xint = db / dm;
-    printf("xint %f\n", xint);
+    //printf("xint %f\n", xint);
     //float yint = line_solve_y(l1, xint);
 
     float mag = line_length(l1);
     float xdir = (l1->p2[0] - l1->p1[0]);
-    printf("xdir %f\n", xdir);
+    //printf("xdir %f\n", xdir);
 
     float t_int = (xint - l1->p1[0]) / xdir;
     
     //if (t_int >= 0.0 && t_int <= 1.0)
     {
-        printf("%f\n", t_int);
+        //printf("%f\n", t_int);
     }
 
     return t_int >= 0.002 && t_int <= 1.0 - .002;
