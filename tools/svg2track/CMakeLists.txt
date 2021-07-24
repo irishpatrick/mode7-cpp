@@ -21,11 +21,11 @@ find_package(PkgConfig)
 
 pkg_check_modules(CAIRO REQUIRED cairo)
 
-find_library(LIBMSVG_L libmsvg.a REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libmsvg/src)
+find_library(LIBMSVG_L libmsvg.a NO_CACHE REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libmsvg/src)
 find_path(LIBMSVG_I msvg.h REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libmsvg/src)
 find_path(LIBZIP_I zip.h REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libzip/lib)
 find_path(LIBZIP_ZIPCONF zipconf.h REQUIRED PATHS ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/libzip)
-find_library(LIBZIP_L libzip.so REQUIRED PATHS ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/libzip/lib)
+find_library(LIBZIP_L libzip.so NO_CACHE REQUIRED PATHS ${CMAKE_CURRENT_BINARY_DIR}/3rdparty/libzip/lib)
 
 set(cflags -D_GNU_SOURCE -Wall)
 set(incl 

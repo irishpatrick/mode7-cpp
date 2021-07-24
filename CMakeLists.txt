@@ -15,10 +15,6 @@ else()
     set(libs X11)
 endif()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(flags ${flags} -D_BUILD_DEBUG_TOOLS -pg)
-endif()
-
 find_program(PYTHON3 python3)
 if (NOT PYTHON3)
     find_program(PYTHON3 python)
@@ -123,8 +119,6 @@ find_path(BOOST_INCL boost)
 find_path(GLM_INCL glm)
 find_path(JSON_INCL nlohmann)
 set(incl ${incl} ${GLM_INCL} ${BOOST_INCL} ${JSON_INCL})
-
-#file(GLOB sources src/* include/*)
 
 set(sources
     src/AI.cpp
