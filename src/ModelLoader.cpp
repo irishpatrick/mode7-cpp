@@ -154,7 +154,7 @@ std::vector<Texture*> ModelLoader::loadTextures(aiMaterial* mat, aiTextureType t
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string fn = "assets/textures/" + std::string(str.C_Str());
-        std::cout << "[ModelLoader] load texture " << fn << std::endl;
+        //std::cout << "[ModelLoader] load texture " << fn << std::endl;
         out.push_back(TexCache::open(fn, tt));
     }
     return out;

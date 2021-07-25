@@ -13,6 +13,12 @@
 #include <memory>
 #include <cstdint>
 
+#define ZONE_TRACK 0x01
+#define ZONE_RUNOFF 0x02
+#define ZONE_WALL 0x04
+
+#define IS_IN_ZONE(x, y) (x & y)
+
 namespace mode7
 {
     // Forward declarations

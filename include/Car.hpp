@@ -16,6 +16,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #define IDLE  0
 #define ACCEL 1
@@ -114,30 +115,25 @@ namespace mode7
         float throttle;
         float topSpeed;
 
-        float m_power;
+        /*float m_power;
         float m_maxPower;
         float m_gasPos;
         float m_brakePos;
         float m_wheelPos;
         float m_driftPos;
-        float m_brake;
+        float m_brake;*/
 
+        // track data
+        Track* m_track;
         int m_currentZone;
+        uint8_t m_zoneType;
+        uint8_t m_zoneChangeDetected;
 
         bool m_change;
         bool m_drawEffects;
 
-        Track* m_track;
-        int32_t m_curTrackRect;
-
-        //RacingLine* m_racingLine;
-
         Object sprite;
         Animation anim;
-        std::vector<Line> velCurve;
-        ResponseCurve m_vCurve;
-        ResponseCurve m_wheelCurve;
-        ResponseCurve m_tractionCurve;
         car_properties m_props;
         
         // controls
@@ -145,9 +141,11 @@ namespace mode7
         ControlMap m_brakeMap;
         ControlMap m_driftMap;
         ControlMap m_turnMap;
-        ControlSlider thr;
-        ControlSlider brake;
-        ControlSlider wheel;
+        ControlSlider m_thr;
+        ControlSlider m_brake;
+        ControlSlider m_wheel;
+        glm::vec3 m_velMod;
+        float m_turnMod;
 
         // particles
         ParticleEmitter m_wheelParticlesL;

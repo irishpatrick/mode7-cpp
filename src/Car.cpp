@@ -30,16 +30,12 @@ namespace mode7
         speed(0.0f),
         drift(0.0f),
         throttle(0.0f),
-        m_gasPos(0.f),
-        m_brakePos(0.f),
-        m_wheelPos(50.f),
-        m_driftPos(50.f),
-        m_power(0.f),
-        m_brake(0.f),
-        m_maxPower(3.f),
         topSpeed(2.0f),
         m_change(false),
-        m_drawEffects(false)
+        m_drawEffects(false),
+        m_velMod(0.f),
+        m_turnMod(0.f),
+        m_zoneChangeDetected(0)
     {
 
     }
@@ -63,12 +59,6 @@ namespace mode7
 
     void Car::open(const std::string& fn)
     {
-        std::stringstream ss;
-        ss << fn << "/";
-        m_vCurve.open(ss.str() + "gas.txt");
-        m_wheelCurve.open(ss.str() + "wheel.txt");
-        m_tractionCurve.open(ss.str() + "drift.txt");
-
         shadow.create();
         shadow.position.y = -1.f;
 
@@ -111,25 +101,25 @@ namespace mode7
             std::cout << "bad config" << std::endl;
             return;
         }
-        thr.setAutoUp(true);
-        thr.setDownRate(obj["thr_rate"][0]);
-        thr.setUpRate(obj["thr_rate"][1]);
+        m_thr.setAutoUp(true);
+        m_thr.setDownRate(obj["thr_rate"][0]);
+        m_thr.setUpRate(obj["thr_rate"][1]);
 
         if (obj["brake_rate"].size() != 2)
         {
             std::cout << "bad config" << std::endl;
             return;
         }
-        brake.setAutoUp(true);
-        brake.setDownRate(obj["brake_rate"][0]);
-        brake.setUpRate(obj["brake_rate"][1]);
+        m_brake.setAutoUp(true);
+        m_brake.setDownRate(obj["brake_rate"][0]);
+        m_brake.setUpRate(obj["brake_rate"][1]);
 
         if (obj["wheel_rate"].size() != 3)
         {
             std::cout << "bad config" << std::endl;
             return;
         }
-        wheel.setRestoreRates(
+        m_wheel.setRestoreRates(
             obj["wheel_rate"][0], 
             obj["wheel_rate"][1], 
             obj["wheel_rate"][2]);
@@ -139,56 +129,76 @@ namespace mode7
 
     void Car::updateControls()
     {
+        if (m_zoneChangeDetected == 1)
+        {
+            m_zoneChangeDetected = 0;
+
+            if (IS_IN_ZONE(m_zoneType, ZONE_TRACK))
+            {
+                // TODO reset all changes
+            }
+            else if (IS_IN_ZONE(m_zoneType, ZONE_RUNOFF))
+            {
+                // TODO apply more laggy, slippery steering profile
+                // TODO apply more drift
+                // TODO apply random steering oscillations
+                // TODO apply random drift oscillations
+            }
+            else if (IS_IN_ZONE(m_zoneType, ZONE_WALL))
+            {
+                // TODO handle collision
+                // not sure if collisions will be handled here or elsewhere
+            }
+        }
+        
         float vel_percent;
         float turn_amt = 0.5f;
         float drift_amt;
         float brake_amt;
         float top_speed = m_props.MAX_SPEED;
 
-        thr.update();
-        brake.update();
-        wheel.update();
+        m_thr.update();
+        m_brake.update();
+        m_wheel.update();
 
-        float wp_adj = wheel.getPosition() * 0.5 + 0.5;
+        float wp_adj = m_wheel.getPosition() * 0.5 + 0.5;
 
-        vel_percent = m_accelMap.calculate(1.0, thr.getPosition());
+        vel_percent = m_accelMap.calculate(1.0, m_thr.getPosition());
         turn_amt = m_turnMap.calculate(wp_adj, velocity.z / top_speed);
-        drift_amt = m_driftMap.calculate(fabs(wheel.getPosition()), velocity.z / top_speed);
-        brake_amt = m_brakeMap.calculate(brake.getPosition(), velocity.z / top_speed);
-
-        //std::cout << wheel.getPosition() << std::endl;
+        drift_amt = m_driftMap.calculate(fabs(m_wheel.getPosition()), velocity.z / top_speed);
+        brake_amt = m_brakeMap.calculate(m_brake.getPosition(), velocity.z / top_speed);
 
         turn_amt *= (1.0 - (brake_amt / 1.25));
         brake_amt *= (1.0 - (turn_amt / 1.25));
 
-        float desired = vel_percent * top_speed;
+        float desired_vz = vel_percent * top_speed + m_velMod.z;
         float last_vz = velocity.z;
         float last_vx = velocity.x;
 
-        if (desired < velocity.z && thr.getSp() < 1)
+        if (desired_vz < velocity.z && m_thr.getSp() < 1)
         {
-            thr.pushCurrentState();
-            thr.setDownRate(0.07);
+            m_thr.pushCurrentState();
+            m_thr.setDownRate(0.07);
         }
-        else if (desired >= velocity.z && thr.getSp() > 0)
+        else if (desired_vz >= velocity.z && m_thr.getSp() > 0)
         {
-            thr.popCurrentState();
+            m_thr.popCurrentState();
         }
 
-        velocity.z = fmaxf(last_vz, desired);
+        velocity.z = fmaxf(last_vz, desired_vz);
         velocity.z -= brake_amt * 0.075;
         velocity.z -= 0.04 * last_vz / top_speed;
         velocity.z = fmaxf(velocity.z, 0.f);
 
         float drift_dir = 1.0 * (wp_adj < 0.50) - 1.0 * (wp_adj > 0.50);
-        float propvx = drift_dir * drift_amt * 0.8;
-        if (fabsf(propvx) < fabsf(last_vx))
+        float desired_vx = drift_dir * drift_amt * 0.8 + m_velMod.x;
+        if (fabsf(desired_vx) < fabsf(last_vx))
         {
             velocity.x = last_vx;
         }
         else
         {
-            velocity.x = propvx;
+            velocity.x = desired_vx;
         }
         float drift_decay = 0.01;
         velocity.x -= copysignf(1.f, velocity.x) * drift_decay;
@@ -197,7 +207,7 @@ namespace mode7
             velocity.x = 0.0;
         }
         
-        float turn_rate = wheel.getPosition() * turn_amt * 0.0375;
+        float turn_rate = m_wheel.getPosition() * turn_amt * 0.0375 + m_turnMod;
         rotate(0, -turn_rate, 0);
     }
 
@@ -245,37 +255,27 @@ namespace mode7
 
         glm::vec2 pos(position.x, position.z);
         auto zones = m_track->getNearbyZones(m_currentZone);
-        std::cout << "zone: " << m_currentZone << std::endl;
         assert(zones.size() > 0);
         int i = 0;
+        uint8_t lastZoneType = m_zoneType;
+        uint8_t detectedZone;
         for (auto& e : zones)
         {
-            //std::cout << i++;
-            if (e.second->onTrack(pos))
+            detectedZone =
+                (ZONE_TRACK  * e.second->onTrack(pos))  |
+                (ZONE_RUNOFF * e.second->onRunoff(pos)) |
+                (ZONE_WALL   * e.second->onWall(pos));
+
+            if (detectedZone > 0)
             {
+                m_zoneType = detectedZone;
+                if (lastZoneType != m_zoneType)
+                {
+                    m_zoneChangeDetected = 1;
+                }
+
                 m_currentZone = e.first;
-                //std::cout << "zone: " << m_currentZone << std::endl;
-                //std::cout << "ontrack" << std::endl;
                 break;
-            }
-            else if (e.second->onRunoff(pos))
-            {
-                m_currentZone = e.first;
-                //std::cout << "zone: " << m_currentZone << std::endl;
-                //std::cout << "onrunoff" << std::endl;
-                break;
-            }
-            else if (e.second->onWall(pos))
-            {
-                m_currentZone = e.first;
-                //std::cout << "zone: " << m_currentZone << std::endl;
-                //std::cout << "onwall" << std::endl;
-                break;
-            }
-            else
-            {
-                //std::cout << "FATAL: ZONE " << m_currentZone << std::endl;  
-                //std::cout << "none" << std::endl;
             }
         }
     }
@@ -363,11 +363,11 @@ namespace mode7
 
         if (Keyboard::isDown("c"))
         {
-            thr.down();
+            m_thr.down();
         }
         else if (Keyboard::isDown("x"))
         {
-            brake.down();
+            m_brake.down();
         }
         else
         {
@@ -375,11 +375,11 @@ namespace mode7
 
         if (left)
         {
-            wheel.left();
+            m_wheel.left();
         }
         if (right)
         {
-            wheel.right();
+            m_wheel.right();
         }
     }
 
@@ -391,8 +391,6 @@ namespace mode7
 
     void Car::stun()
     {
-        m_gasPos = 0.f;
-        m_brakePos = 0.f;
         m_inStun = true;
         traction = 0.1;
         ticks = 40;

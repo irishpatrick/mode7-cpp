@@ -15,8 +15,6 @@ set(sources
     ${CMAKE_CURRENT_SOURCE_DIR}/src/wavefront.c
 )
 
-message(STATUS ${sources})
-
 find_package(PkgConfig)
 
 pkg_check_modules(CAIRO REQUIRED cairo)

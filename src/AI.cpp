@@ -125,10 +125,10 @@ void AI::update()
 
     Object::move();
 
-    velocity.z += m_power - (velocity.z * (0.005f + m_brake));
+    /*velocity.z += m_power - (velocity.z * (0.005f + m_brake));
     velocity.x += drift - (velocity.x * 0.05f);
     //velocity.x += drift - (velocity.x * 0.005f);
-    drift = 0.0f;
+    drift = 0.0f;*/
 
     Car::updateSprite();
     Car::shadow.update();
