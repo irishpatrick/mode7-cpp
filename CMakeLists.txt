@@ -46,7 +46,7 @@ set(incl ${incl}
     ./qtree/include
 )
 
-set(libs ${libs} worker trackdata geometry qtree)
+set(libs ${libs} worker trackdata geometry qtree audio)
 
 # using vcpkg
 if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
@@ -57,6 +57,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
     find_package(assimp CONFIG REQUIRED)
     find_package(Bullet CONFIG REQUIRED)
     find_package(glm CONFIG REQUIRED)
+    find_package(portaudio CONFIG REQUIRED)
 
     set(incl
         ${incl}
@@ -75,6 +76,7 @@ if (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL "")
         BulletDynamics
         BulletSoftBody
         glm::glm
+        portaudio
     )
 else ()
 
@@ -169,6 +171,7 @@ target_link_libraries(tests PRIVATE Catch2::Catch2 ${libs})
 
 add_subdirectory(./geometry)
 add_subdirectory(./worker)
+add_subdirectory(./audio)
 add_subdirectory(./qtree)
 add_subdirectory(./trackdata)
 
