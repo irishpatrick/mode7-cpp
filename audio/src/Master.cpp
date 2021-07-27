@@ -10,14 +10,21 @@ static int pa_callback(
     PaStreamCallbackFlags statusFlags,
     void* userData)
 {
-    return 0;
+    return paContinue;
 }
 
 Master::Master() : 
+    Input(),
+    Output(),
+
     m_sampleRate(44100),
     m_framesPerBuffer(128),
     m_maxChannels(64),
-    m_numChannels(0)
+    m_numChannels(0),
+    m_soundData(),
+    m_stream(nullptr),
+    m_pdi(nullptr),
+    m_output_params()
 {
     setMaxSinks(1);
 }
@@ -43,5 +50,52 @@ int Master::init()
     m_output_params.suggestedLatency = m_pdi->defaultLowOutputLatency;
     m_output_params.hostApiSpecificStreamInfo = nullptr;
 
-    err = Pa_OpenStream(&m_stream, NULL, &m_output_params, m_sampleRate, m_framesPerBuffer, paClipOff, pa_callback, nullptr);
+    err = Pa_OpenStream(
+        &m_stream, 
+        NULL, 
+        &m_output_params, 
+        m_sampleRate, 
+        m_framesPerBuffer, 
+        paClipOff, 
+        pa_callback, 
+        nullptr
+    );
+    if (err != paNoError)
+    {
+        shutdown();
+        return 1;
+    }
+
+    err = Pa_StartStream(m_stream);
+    if (err != paNoDevice)
+    {
+        shutdown();
+        return 1;
+    }
+}
+
+int Master::stop()
+{
+    PaError err;
+
+    err = Pa_StopStream(m_stream);
+    if (err != paNoError)
+    {
+        shutdown();
+        return 1;
+    }
+
+    err = Pa_CloseStream(m_stream);
+    if (err != paNoError)
+    {
+        shutdown();
+        return 1;
+    }
+
+    return 0;
+}
+
+void Master::shutdown()
+{
+    Pa_Terminate();
 }

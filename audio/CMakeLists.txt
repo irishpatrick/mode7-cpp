@@ -5,6 +5,7 @@ project(audio)
 set(sources
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Master.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Mixer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/WaveformGenerator.cpp
 )
 
 set(audio_incl
