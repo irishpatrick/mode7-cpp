@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-
 #include "mesh.h"
 #include "bezier.h"
 #include "track.h"
@@ -11,6 +5,10 @@
 #include "preview.h"
 #include "svg.h"
 #include "assetpack.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 static void print_usage(void)
 {

@@ -11,8 +11,13 @@ out/
 .vscode/
 .vs/
 **/installer
-**/assetmanager
 **/target
+
+# Tools
+*assetmanager
+!assetmanager/
+*licensetool
+!licensetool/
 
 # Glade
 *.ui~
