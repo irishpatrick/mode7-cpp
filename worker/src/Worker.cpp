@@ -5,9 +5,15 @@
 namespace mode7
 {
     Worker::Worker(uint32_t id=0) :
-        m_isdone(false),
-        m_should_begin(false),
-        m_id(id)
+        m_isDone(false),
+        m_running(false),
+        m_autoStop(false),
+        m_shouldBegin(false),
+        m_id(id),
+        m_thread(),
+        m_syncData(nullptr),
+        m_jobqMutex(),
+        m_jobq()
     {
 
     }
@@ -23,10 +29,10 @@ namespace mode7
         void* cur;
         while (w->m_running)
         {
-            auto lk = w->m_syncdata->getUniqueLock();
-            w->m_syncdata->getWakeWorkerCV()->wait(lk, [w]{return w->m_should_begin;});
+            auto lk = w->m_syncData->getUniqueLock(); // lock here
+            w->m_syncData->getWakeWorkerCV()->wait(lk, [w]{return w->m_shouldBegin;});
             lk.unlock();
-            w->m_syncdata->getWakeWorkerCV()->notify_one();
+            w->m_syncData->getWakeWorkerCV()->notify_one();
             if (!w->m_running)
             {
                 break;
@@ -36,23 +42,22 @@ namespace mode7
             {
                 started = true;
 
-                //w->m_jobq_mutex.lock();
                 cur = w->m_jobq.front();
                 w->m_jobq.pop();
-                //w->m_jobq_mutex.unlock();
 
                 w->job(cur);
             }
 
-            w->m_should_begin = false;
+            w->m_shouldBegin = false;
 
+            // separate scope enables delete after block
             {
-                std::lock_guard<std::mutex> lg(w->m_syncdata->getLockMutex());
-                w->m_syncdata->decrement();
+                std::lock_guard<std::mutex> lg(w->m_syncData->getLockMutex());
+                w->m_syncData->decrement();
             }
-            w->m_syncdata->getWakeSchedulerCV()->notify_one();
+            w->m_syncData->getWakeSchedulerCV()->notify_one();
             
-            if (started && w->m_autostop)
+            if (started && w->m_autoStop)
             {
                 w->m_running = false;
             }
@@ -61,15 +66,13 @@ namespace mode7
 
     void Worker::queue(void* data)
     {
-        //m_jobq_mutex.lock();
         m_jobq.push(data);
-        //m_jobq_mutex.unlock();
     }
 
     void Worker::start(bool autostop)
     {
         m_running = true;
-        m_autostop = autostop;
+        m_autoStop = autostop;
         m_thread = std::make_unique<std::thread>(jobLoop, this);
     }
 

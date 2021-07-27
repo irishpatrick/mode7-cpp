@@ -21,12 +21,12 @@ namespace mode7
 
         inline void setSyncData(SyncData* sd)
         {
-            m_syncdata = sd;
+            m_syncData = sd;
         }
 
         inline void go()
         {
-            m_should_begin = true;
+            m_shouldBegin = true;
         }
 
         inline void stop()
@@ -44,16 +44,16 @@ namespace mode7
     private:
         static void jobLoop(Worker*);
 
-        bool m_isdone;
+        bool m_isDone;
         bool m_running;
-        bool m_autostop;
-        bool m_should_begin;
+        bool m_autoStop;
+        bool m_shouldBegin;
 
         uint32_t m_id;
 
         std::unique_ptr<std::thread> m_thread;
-        SyncData* m_syncdata;
-        std::mutex m_jobq_mutex;
+        SyncData* m_syncData;
+        std::mutex m_jobqMutex;
         std::queue<void*> m_jobq;
     };
 }
