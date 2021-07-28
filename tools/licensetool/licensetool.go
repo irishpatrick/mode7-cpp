@@ -114,7 +114,8 @@ func CheckSimilarity(a []byte, b []byte) int {
 	la := 0
 	lb := 0
 	dot := 0
-	for i := 0; i < len(a); i++ {
+    iter := int(math.Min(float64(len(a)), float64(len(b))))
+    for i := 0; i < iter; i++ {
 		la += int(a[i]) * int(a[i])
 		lb += int(b[i]) * int(b[i])
 		dot += int(a[i]) * int(b[i])
@@ -132,7 +133,8 @@ func InjectNotice(fn string, notice string) {
 	}
 	defer fp.Close()
 
-	existingNotice := src[:len(notice)]
+    existingLen := int(math.Min(float64(len(notice)), float64(len(src))))
+	existingNotice := src[:existingLen]
 	if CheckSimilarity([]byte(notice), []byte(existingNotice)) > SIMILARITY_THRESHOLD {
 		src = src[strings.Index(src, "\n\n")+2:]
 	}
@@ -168,12 +170,36 @@ func main() {
 	}
 
 	fn := os.Args[1]
-	style := DetectCommentStyle(fn)
-	if style == COMMENT_UNKNOWN {
-		fmt.Println("unknown file type")
-		return
-	}
+    fi, err := os.Stat(fn)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	notice = CommentString(notice, style)
-	InjectNotice(fn, notice)
+    switch mode := fi.Mode(); {
+        case mode.IsDir():
+            err := filepath.Walk(fn, func(path string, info os.FileInfo, rerr error) error {
+                if info.Mode().IsRegular() {
+                    fmt.Println(path)
+                    style := DetectCommentStyle(path)
+                    if style == COMMENT_UNKNOWN {
+                        return rerr
+                    }
+                    InjectNotice(path, CommentString(notice, style))
+                }
+                return rerr
+            })
+
+            if err != nil {
+                log.Fatal(err)
+            }
+
+        case mode.IsRegular():
+            style := DetectCommentStyle(fn)
+            if style == COMMENT_UNKNOWN {
+                fmt.Println("unknown file type")
+                return
+            }
+            InjectNotice(fn, CommentString(notice, style))
+    }
 }
+
