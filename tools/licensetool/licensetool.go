@@ -20,9 +20,9 @@ const (
 	COMMENT_UNKNOWN
 )
 
-var blockStartLookup = [...]string{"/**", ""}
+var blockStartLookup = [...]string{"/**\n", ""}
 var blockFillLookup = [...]string{" * ", "# "}
-var blockEndLookup = [...]string{"**/", ""}
+var blockEndLookup = [...]string{"**/\n", ""}
 
 var symbolTable = map[string]string{}
 
@@ -89,7 +89,7 @@ func CommentString(data string, style CommentStyle) string {
 
 	blockStart, blockFill, blockEnd := GetCommentStyle(style)
 
-	formatted += blockStart + "\n"
+	formatted += blockStart
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	for scanner.Scan() {
 		content := scanner.Text()
@@ -105,7 +105,7 @@ func CommentString(data string, style CommentStyle) string {
 		}
 		formatted += blockFill + content + "\n"
 	}
-	formatted += blockEnd + "\n" + "\n"
+	formatted += blockEnd + "\n"
 
 	return formatted
 }
@@ -114,8 +114,14 @@ func CheckSimilarity(a []byte, b []byte) int {
 	la := 0
 	lb := 0
 	dot := 0
-    iter := int(math.Min(float64(len(a)), float64(len(b))))
-    for i := 0; i < iter; i++ {
+	min := math.Min(float64(len(a)), float64(len(b)))
+	max := math.Max(float64(len(a)), float64(len(b)))
+	if min/max < 0.6 {
+		return 0
+	}
+
+	iter := int(min)
+	for i := 0; i < iter; i++ {
 		la += int(a[i]) * int(a[i])
 		lb += int(b[i]) * int(b[i])
 		dot += int(a[i]) * int(b[i])
@@ -133,7 +139,7 @@ func InjectNotice(fn string, notice string) {
 	}
 	defer fp.Close()
 
-    existingLen := int(math.Min(float64(len(notice)), float64(len(src))))
+	existingLen := int(math.Min(float64(len(notice)), float64(len(src))))
 	existingNotice := src[:existingLen]
 	if CheckSimilarity([]byte(notice), []byte(existingNotice)) > SIMILARITY_THRESHOLD {
 		src = src[strings.Index(src, "\n\n")+2:]
@@ -170,36 +176,38 @@ func main() {
 	}
 
 	fn := os.Args[1]
-    fi, err := os.Stat(fn)
-    if err != nil {
-        log.Fatal(err)
-    }
+	fi, err := os.Stat(fn)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    switch mode := fi.Mode(); {
-        case mode.IsDir():
-            err := filepath.Walk(fn, func(path string, info os.FileInfo, rerr error) error {
-                if info.Mode().IsRegular() {
-                    fmt.Println(path)
-                    style := DetectCommentStyle(path)
-                    if style == COMMENT_UNKNOWN {
-                        return rerr
-                    }
-                    InjectNotice(path, CommentString(notice, style))
-                }
-                return rerr
-            })
+	switch mode := fi.Mode(); {
+	case mode.IsDir():
+		err := filepath.Walk(fn, func(path string, info os.FileInfo, rerr error) error {
+			if info.Mode().IsRegular() {
+				if strings.Contains(path, "3rdparty") || strings.Contains(path, "build") {
+					return rerr
+				}
+				style := DetectCommentStyle(path)
+				if style == COMMENT_UNKNOWN {
+					return rerr
+				}
+				fmt.Println("Add notice to\t" + path)
+				InjectNotice(path, CommentString(notice, style))
+			}
+			return rerr
+		})
 
-            if err != nil {
-                log.Fatal(err)
-            }
+		if err != nil {
+			log.Fatal(err)
+		}
 
-        case mode.IsRegular():
-            style := DetectCommentStyle(fn)
-            if style == COMMENT_UNKNOWN {
-                fmt.Println("unknown file type")
-                return
-            }
-            InjectNotice(fn, CommentString(notice, style))
-    }
+	case mode.IsRegular():
+		style := DetectCommentStyle(fn)
+		if style == COMMENT_UNKNOWN {
+			fmt.Println("unknown file type")
+			return
+		}
+		InjectNotice(fn, CommentString(notice, style))
+	}
 }
-
