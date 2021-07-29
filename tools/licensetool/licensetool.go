@@ -149,11 +149,31 @@ func InjectNotice(fn string, notice string) {
 	fp.Write([]byte(src))
 }
 
+func BlindDelete(src string, lines int) string {
+    return src[lines:]
+}
+
+func TryRemoveNotice(src string, notice string) string {
+	existingLen := int(math.Min(float64(len(notice)), float64(len(src))))
+	existingNotice := src[:existingLen]
+	if CheckSimilarity([]byte(notice), []byte(existingNotice)) > SIMILARITY_THRESHOLD {
+        return ForceRemoveNotice(src, notice)
+	}
+
+    return src
+}
+
+func ForceRemoveNotice(src string, notice string) string {
+    return BlindDelete(src, strings.Count(notice, "\n"))
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		PrintHelp()
 		return
 	}
+
+    operation := 0
 
 	if len(os.Args) > 2 {
 		for i := 2; i < len(os.Args); i++ {
@@ -162,58 +182,85 @@ func main() {
 				arg := arg[2:]
 				slice := strings.Split(arg, "=")
 				DefineSymbol(slice[0], slice[1])
-			} else {
-				// TODO other flags
-			}
+			} else if strings.HasPrefix(arg, "-r") || strings.HasPrefix(arg, "--remove") {
+                operation = 1
+			} else if strings.HasPrefix(arg, "-rf") || strings.HasPrefix(arg, "--remove-force") {
+                operation = 2
+            } else {
+                fmt.Println("unknown flag: " + arg)
+                return
+            }
 		}
 	}
 
-	FillDefaultValues()
+    notice := LoadLicenseNotice()
+    if len(notice) < 1 {
+        log.Fatalln("license notice cannot be empty")
+    }
 
-	notice := LoadLicenseNotice()
-	if len(notice) < 1 {
-		log.Fatalln("license notice cannot be empty")
-	}
+    fn := os.Args[1]
+    fi, err := os.Stat(fn)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	fn := os.Args[1]
-	fi, err := os.Stat(fn)
-	if err != nil {
-		log.Fatal(err)
-	}
+    if operation == 0 {
+        FillDefaultValues()
 
-	switch mode := fi.Mode(); {
-	case mode.IsDir():
-		err := filepath.Walk(fn, func(path string, info os.FileInfo, rerr error) error {
-			if info.Mode().IsRegular() {
-				if strings.Contains(path, "3rdparty") || strings.Contains(path, "build") {
-					return rerr
-				}
-                cwd, err := os.Executable()
-                if err != nil {
-                    log.Fatal(err)
+        switch mode := fi.Mode(); {
+        case mode.IsDir():
+            err := filepath.Walk(fn, func(path string, info os.FileInfo, rerr error) error {
+                if info.Mode().IsRegular() {
+                    if strings.Contains(path, "3rdparty") || strings.Contains(path, "build") {
+                        return rerr
+                    }
+                    cwd, err := os.Executable()
+                    if err != nil {
+                        log.Fatal(err)
+                    }
+                    if strings.Contains(path, filepath.Base(filepath.Dir(cwd))) {
+                        return rerr
+                    }
+                    style := DetectCommentStyle(path)
+                    if style == COMMENT_UNKNOWN {
+                        return rerr
+                    }
+                    InjectNotice(path, CommentString(notice, style))
                 }
-                if strings.Contains(path, filepath.Base(filepath.Dir(cwd))) {
-                    return rerr
-                }
-				style := DetectCommentStyle(path)
-				if style == COMMENT_UNKNOWN {
-					return rerr
-				}
-				InjectNotice(path, CommentString(notice, style))
-			}
-			return rerr
-		})
+                return rerr
+            })
 
-		if err != nil {
-			log.Fatal(err)
-		}
+            if err != nil {
+                log.Fatal(err)
+            }
 
-	case mode.IsRegular():
-		style := DetectCommentStyle(fn)
-		if style == COMMENT_UNKNOWN {
-			fmt.Println("unknown file type")
-			return
-		}
-		InjectNotice(fn, CommentString(notice, style))
-	}
+        case mode.IsRegular():
+            style := DetectCommentStyle(fn)
+            if style == COMMENT_UNKNOWN {
+                fmt.Println("unknown file type")
+                return
+            }
+            InjectNotice(fn, CommentString(notice, style))
+        }
+    } /*else if operation == 1 {
+	    src := LoadFileIntoString(fn)
+        src = TryRemoveNotice(src, notice)
+        fp, err := os.Create(fn)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer fp.Close()
+        fp.Write([]byte(src))
+    } else if operation == 2 {
+	    src := LoadFileIntoString(fn)
+        src = ForceRemoveNotice(src, notice)
+        fp, err := os.Create(fn)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer fp.Close()
+        fp.Write([]byte(src))
+    } else {
+        log.Fatal("internal error")
+    }*/
 }
