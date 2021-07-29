@@ -188,11 +188,17 @@ func main() {
 				if strings.Contains(path, "3rdparty") || strings.Contains(path, "build") {
 					return rerr
 				}
+                cwd, err := os.Executable()
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if strings.Contains(path, filepath.Base(filepath.Dir(cwd))) {
+                    return rerr
+                }
 				style := DetectCommentStyle(path)
 				if style == COMMENT_UNKNOWN {
 					return rerr
 				}
-				fmt.Println("Add notice to\t" + path)
 				InjectNotice(path, CommentString(notice, style))
 			}
 			return rerr
